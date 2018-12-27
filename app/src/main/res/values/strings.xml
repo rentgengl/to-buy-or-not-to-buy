@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">to buy or not to buy</string>
+    <string name="drawer_open">drawer_open</string>
+    <string name="drawer_close">drawer_close</string>
+    <string name="search_panel_text_hint">Поиск товара</string>
+    <string name="price_on_map">Показать цены на карте</string>
+    <string name="title_activity_maps">Map</string>
+</resources>

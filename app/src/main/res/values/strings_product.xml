@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_category_name">Прочее</string>
+    <string name="product_categories_not_init">Категории не инициализированы!</string>
+    <string name="barcode_not_check">Штрихкод не соответствует формату!</string>
+</resources>

@@ -1,0 +1,72 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.world.jteam.bonb"
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    //Стандартный набор
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support:design:28.0.0'
+
+    //Многоэлементная конфигурация
+    implementation 'com.android.support:multidex:1.0.3'
+
+    //Сервисы гугл
+    implementation 'com.google.android.gms:play-services:12.0.1'
+    //implementation 'com.google.android.gms:play-services-auth:16.0.1'
+
+    //Room SQL lite
+    implementation "android.arch.persistence.room:runtime:1.0.0"
+    annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+
+    //Хттп
+    implementation 'com.squareup.okhttp:okhttp:2.4.0'
+    implementation 'com.squareup.okhttp:okhttp-urlconnection:2.2.0'
+
+    implementation 'com.android.support:cardview-v7:28.0.0'
+    implementation 'com.android.support:gridlayout-v7:28.0.0'
+
+    //Слайдер картинок
+    implementation 'com.squareup.picasso:picasso:2.4.0'
+    implementation 'com.nineoldandroids:library:2.4.0'
+    implementation 'com.daimajia.slider:library:1.1.5@aar'
+    //implementation 'com.google.android.gms:play-services-maps:16.0.0'
+
+    //Фабрика иконок для карт, апи для карт
+    implementation 'com.google.maps.android:android-maps-utils:0.5+'
+
+
+    //Работа с HTTP-сервисами через ретрофит
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+
+    implementation "android.arch.paging:runtime:1.0.0"
+
+    //Подключаемые проекты
+    implementation project(path: ':Media', configuration: 'default')
+    implementation project(path: ':LDrawer', configuration: 'default')
+}

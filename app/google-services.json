@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "578680057071",
+    "firebase_url": "https://taverna-1540408382977.firebaseio.com",
+    "project_id": "taverna-1540408382977",
+    "storage_bucket": "taverna-1540408382977.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578680057071:android:56957947397a1d3c",
+        "android_client_info": {
+          "package_name": "com.world.jteam.bonb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "578680057071-4klhoujitc343430emm4bfftocrorgp0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.world.jteam.bonb",
+            "certificate_hash": "c47287bc3812fc0b18dfa5c2ae93401b32efd541"
+          }
+        },
+        {
+          "client_id": "578680057071-c94v4kdkhdmd6b0udadnot0vn7v0j1l4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNx0-qt6FuFSMYmmjL5oDaZszqywYcSbU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "578680057071-c94v4kdkhdmd6b0udadnot0vn7v0j1l4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_name_head">Имя:</string>
+    <string name="barcode_edit_hint">Штрихкод</string>
+    <string name="comment_head">Отзыв:</string>
+    <string name="price_head">Цена:</string>
+    <string name="product_category_head">Категория</string>
+    <string name="register_head">ОК</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="barcodeEditTextStyle" format="reference"/>
+    <attr name="priceEditTextStyle" format="reference"/>
+    <declare-styleable name="FlowLayout">
+        <attr name="paddingV" format="integer" />
+        <attr name="paddingH" format="integer" />
+    </declare-styleable>
+</resources>

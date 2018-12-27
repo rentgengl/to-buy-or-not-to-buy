@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    //Поиск
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <include
+            layout="@layout/fragment_search_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+        <com.world.jteam.bonb.FlowLayout
+            android:id="@+id/search_result_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:paddingH="10"
+            app:paddingV="10" >
+
+        </com.world.jteam.bonb.FlowLayout>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/productRW"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+
+
+</android.support.constraint.ConstraintLayout>
