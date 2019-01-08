@@ -37,8 +37,8 @@ public class Product {
 
         for (int i = 0; i < productCategories.length; i++) {
             productCategory = productCategories[i];
-            if (!prodCatParent.containsKey(productCategory.parentid)) {
-                prodCatParent.put(productCategory.parentid,
+            if (!prodCatParent.containsKey(productCategory.parent_id)) {
+                prodCatParent.put(productCategory.parent_id,
                         new LinkedHashMap<DatabaseApp.ProductCategories, LinkedHashMap>());
             }
         }
@@ -51,7 +51,7 @@ public class Product {
             productCategory = productCategories[i];
 
             LinkedHashMap<DatabaseApp.ProductCategories, LinkedHashMap> parentTree =
-                    prodCatParent.get(productCategory.parentid);
+                    prodCatParent.get(productCategory.parent_id);
 
             prodCatChildIdToParent.put(productCategory.id, parentTree);
 
@@ -65,22 +65,22 @@ public class Product {
             productCategory = productCategories[i];
 
             LinkedHashMap<DatabaseApp.ProductCategories, LinkedHashMap> parentTree =
-                    prodCatParent.get(productCategory.parentid);
+                    prodCatParent.get(productCategory.parent_id);
             LinkedHashMap<DatabaseApp.ProductCategories, LinkedHashMap> childTree =
                     prodCatParent.get(productCategory.id);
 
             // добавим элементы дополнительной навигации
             if (parentTree.isEmpty()) {
-                if (productCategory.parentid != 0) {
+                if (productCategory.parent_id != 0) {
                     //возврат на предыдущий уровень
                     parentTree.put(new DatabaseApp.ProductCategories(
-                                    0, "...", productCategory.parentid, CAT_NM_PRODUCT_ADD),
-                            prodCatChildIdToParent.get(productCategory.parentid));
+                                    0, "...", productCategory.parent_id, CAT_NM_PRODUCT_ADD),
+                            prodCatChildIdToParent.get(productCategory.parent_id));
 
                     //возврат по иерархии вверх
                     fillProductCategoriesNaigationBack(
                             productCategories,
-                            productCategory.parentid,
+                            productCategory.parent_id,
                             prodCatParentIdToId,
                             prodCatChildIdToParent,
                             parentTree
@@ -89,9 +89,9 @@ public class Product {
                 }
                 //текущая группа категорий
                 parentTree.put(new DatabaseApp.ProductCategories(
-                                productCategory.parentid,
+                                productCategory.parent_id,
                                 AppInstance.getAppContext().getString(R.string.default_category_name),
-                                productCategory.parentid,
+                                productCategory.parent_id,
                                 CAT_NM_PRODUCT_ADD),
                         null);
 
@@ -123,7 +123,7 @@ public class Product {
 
         fillProductCategoriesNaigationBack(
                 productCategories,
-                productCategoryParent.parentid,
+                productCategoryParent.parent_id,
                 prodCatParentIdToId,
                 prodCatChildIdToParent,
                 parentTree
@@ -132,7 +132,7 @@ public class Product {
         parentTree.put(new DatabaseApp.ProductCategories(
                         parentid,
                         "<" + productCategoryParent.name,
-                        productCategoryParent.parentid,
+                        productCategoryParent.parent_id,
                         CAT_NM_VIEW),
                 prodCatChildIdToParent.get(parentid));
     }

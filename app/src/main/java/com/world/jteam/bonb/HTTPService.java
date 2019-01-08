@@ -60,66 +60,6 @@ public class HTTPService {
 
     }
 
-    public HashMap<String, ArrayList> GetProductGroupListByName(String name) throws IOException {
-        OkHttpClient clientOk = new OkHttpClient();
-
-        ArrayList<ModelProduct> resProduct = new ArrayList<>();
-        ArrayList<ModelGroup> resGroup = new ArrayList<>();
-
-        //Подготовка HTTP запроса
-        String url = Constants.SERVICE_GET_PRODUCT_GROU_LIST_BY_NAME + "&name=" + name;
-        Request requestHTTP = new Request.Builder()
-                .url(url)
-                .build();
-        //Выполнение HTTP запроса
-        Response responseHTTP = clientOk.newCall(requestHTTP).execute();
-
-        //Если ответ не 200 верну пустую карту
-        if (!responseHTTP.isSuccessful()) {
-            return null;
-        }
-
-        //Читаю данные JSON
-        String jsonData = responseHTTP.body().string();
-        try {
-
-            JSONObject jData = new JSONObject(jsonData);
-
-            JSONArray jArrayPr = jData.getJSONArray("products");
-            JSONArray jArrayGr = jData.getJSONArray("groups");
-
-            for (int i = 0; i < jArrayPr.length()-1; i++) {
-                JSONObject object = jArrayPr.getJSONObject(i);
-                if (object!=null)
-                resProduct.add(GetProductByJObject(object));
-            }
-
-            for (int i = 0; i < jArrayGr.length(); i++) {
-                JSONObject object = jArrayGr.getJSONObject(i);
-                resGroup.add(GetGroupByJObject(object));
-            }
-            HashMap<String, ArrayList> result = new HashMap<>();
-            result.put("products", resProduct);
-            result.put("groups", resGroup);
-            return result;
-        } catch (JSONException e) {
-            return null;
-        }
-
-    }
-
-    public ModelProductFull getTovarFullById(int idProduct) throws IOException {
-
-        String url = Constants.SERVICE_GET_PRODUCTFULL_ID + "&id=" + idProduct;
-        return getTovarFullByURL(url);
-    }
-
-    public ModelProductFull getTovarFullByEAN(String EAN) throws IOException {
-        String url = Constants.SERVICE_GET_PRODUCTFULL_EAN + "&EAN=" + EAN;
-        return getTovarFullByURL(url);
-
-    }
-
     private ModelProductFull getTovarFullByURL(String url) throws IOException {
 
         OkHttpClient clientOk = new OkHttpClient();
@@ -219,21 +159,6 @@ public class HTTPService {
         return res;
 
     }
-
-    ModelGroup GetGroupByJObject(JSONObject jData) {
-
-        ModelGroup res;
-        try {
-            res = new ModelGroup(
-                    jData.getInt("id"),
-                    jData.getString("name"));
-
-        } catch (JSONException e) {
-            return null;
-        }
-        return res;
-    }
-
 
     ModelProductFull GetProductFullByJObject(JSONObject jData) {
 

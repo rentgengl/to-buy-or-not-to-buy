@@ -1,5 +1,6 @@
 package com.world.jteam.bonb;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -62,8 +63,14 @@ public class MainActivity extends AppCompatActivity {
                 invalidateOptionsMenu();
             }
         };
+
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
+
+        Intent intent = new Intent(MainActivity.this, AuthenticationActivity.class);
+        intent.putExtra("userID",1);
+        startActivity(intent);
+
     }
 
     @Override

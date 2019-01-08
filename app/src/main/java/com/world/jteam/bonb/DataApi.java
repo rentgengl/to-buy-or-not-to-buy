@@ -22,4 +22,6 @@ public interface DataApi {
     @GET("GetProductFullByEAN.php")
     Call<ModelProductFull> getProductFullByEAN(@Query("EAN") String ean);
 
+    @GET("GetGroupList.php")
+    Call<List<ModelGroup>> getGroupList();
 }

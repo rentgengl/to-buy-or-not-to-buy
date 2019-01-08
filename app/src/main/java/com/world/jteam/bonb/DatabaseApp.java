@@ -17,88 +17,104 @@ import android.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class DatabaseApp {
     private static DatabaseApp databaseApp;
     private AppRoomDatabase database;
 
-    private DatabaseApp(){
+    private DatabaseApp() {
 
     }
 
-    public static void initDatabaseApp(Context context){
-        if (databaseApp!=null)
+    public static void initDatabaseApp(Context context) {
+        if (databaseApp != null)
             return;
 
-        databaseApp=new DatabaseApp();
+        databaseApp = new DatabaseApp();
         databaseApp.database = Room.databaseBuilder(context, DatabaseApp.AppRoomDatabase.class, "database")
                 .build();
 
         //Категории
         //- Получение версии категорий с сервера
-        int categoryVersionServer=1;
+        int categoryVersionServer = 1;
         //- Обновление данных по версии
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int categoryVersion=sharedPreferences.getInt("product_categories_version",0);
+        int categoryVersion = sharedPreferences.getInt("product_categories_version", 0);
 
-        if (categoryVersion!=categoryVersionServer){
+        if (categoryVersion != categoryVersionServer) {
             //- Получение данных по категориям с сервера
-            ArrayList<ProductCategories> productCategories=new ArrayList<>();
+            DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
+            Call<List<ModelGroup>> serviceCall = mDataApi.getGroupList();
+            serviceCall.enqueue(new Callback<List<ModelGroup>>() {
+                @Override
+                public void onResponse(Call<List<ModelGroup>> call, Response<List<ModelGroup>> response) {
+                    List<ModelGroup> ss = response.body();
+                    initGroupList(ss);
+                }
 
-            productCategories.add(new ProductCategories(10,"Продукты",0));
-                productCategories.add(new ProductCategories(11,"Крупы",10));
-                productCategories.add(new ProductCategories(12,"Конфеты",10));
-                productCategories.add(new ProductCategories(13,"Чипсы",10));
-                productCategories.add(new ProductCategories(14,"Кетчуп",10));
-            productCategories.add(new ProductCategories(20,"Химия",0));
-                productCategories.add(new ProductCategories(21,"Порошки",20));
-                productCategories.add(new ProductCategories(22,"Шампуни",20));
-                productCategories.add(new ProductCategories(23,"Зуб паста",20));
-            productCategories.add(new ProductCategories(30,"Хозтовары",0));
-                productCategories.add(new ProductCategories(31,"Лампочки",30));
-                productCategories.add(new ProductCategories(32,"Прищепки",30));
-                productCategories.add(new ProductCategories(33,"Тарелки",30));
-                productCategories.add(new ProductCategories(34,"Полотенца",30));
-                productCategories.add(new ProductCategories(35,"Батарейки",30));
-                productCategories.add(new ProductCategories(36,"Инструменты",30));
-                productCategories.add(new ProductCategories(37,"Тапки",30));
+                @Override
+                public void onFailure(Call<List<ModelGroup>> call, Throwable t) {
+                    int a = 2;
+                    a=3;
+                }
+            });
 
-            AppRoomDao appRoomDao=databaseApp.database.appRoomDao();
-            appRoomDao.deleteAllProductCategories();
-            appRoomDao.insertProductCategories(productCategories);
 
             //- Сохранение версии
             SharedPreferences.Editor edit = sharedPreferences.edit();
             edit.putInt("product_categories_version", categoryVersionServer);
             edit.commit();
+
         }
     }
 
-    public static AppRoomDao getAppRoomDao(){
+
+    public static void initGroupList(List<ModelGroup> groupList) {
+        ArrayList<ProductCategories> productCategories = new ArrayList<>();
+
+        for(ModelGroup group:groupList){
+            productCategories.add(new ProductCategories(group.id, group.name, group.parent_id, group.logo_link));
+        }
+
+        AppRoomDao appRoomDao = databaseApp.database.appRoomDao();
+        appRoomDao.deleteAllProductCategories();
+        appRoomDao.insertProductCategories(productCategories);
+
+    }
+
+    public static AppRoomDao getAppRoomDao() {
         return databaseApp.database.appRoomDao();
     }
 
     @Entity
-    public static class ProductCategories{
+    public static class ProductCategories {
         @PrimaryKey
         public int id;
         public String name;
+        //public int parentid;
         @ColumnInfo(name = "parent_id")
-        public int parentid;
+        public int parent_id;
+        @ColumnInfo(name = "logo_link")
+        public String logo_link;
 
         @Ignore
         public int navigation_method;
 
-        public ProductCategories(int id,String name,int parentid){
-            this.id=id;
-            this.name=name;
-            this.parentid=parentid;
+        public ProductCategories(int id, String name, int parent_id, String logo_link) {
+            this.id = id;
+            this.name = name;
+            this.parent_id = parent_id;
+            this.logo_link = logo_link;
         }
 
-        public ProductCategories(int id,String name,int parentid,int navigation_method){
-            this.id=id;
-            this.name=name;
-            this.parentid=parentid;
-            this.navigation_method=navigation_method;
+        public ProductCategories(int id, String name, int parent_id, int navigation_method) {
+            this.id = id;
+            this.name = name;
+            this.parent_id = parent_id;
+            this.navigation_method = navigation_method;
         }
 
         @Override

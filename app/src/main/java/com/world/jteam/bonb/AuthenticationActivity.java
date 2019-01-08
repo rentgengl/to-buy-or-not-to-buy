@@ -124,7 +124,7 @@ public class AuthenticationActivity extends AppCompatActivity {
 
     private void getStart(String userID){
 
-        Intent intent = new Intent(AuthenticationActivity.this, MainActivity.class);
+        Intent intent = new Intent(AuthenticationActivity.this, ViewProductList.class);
         intent.putExtra("userID",userID);
         startActivity(intent);
 
