@@ -48,9 +48,9 @@ public class AuthenticationActivity extends AppCompatActivity {
         //user_id
         checkCacheDir();
 
-        getStart("1");
+        //getStart("1");
 
-        //signIn();
+        signIn();
 
     }
 

@@ -54,8 +54,13 @@ public class ViewProductList extends Activity implements View.OnClickListener {
 
     public void onClick(View v) {
 
+        showErrorSearch();
+
         if (v.getId() == R.id.search_panel_button) {
             EditText searchText = findViewById(R.id.search_panel_text);
+
+            //Получить ШК
+
 
             showProductDetailByEAN(searchText.getText().toString());
 
@@ -68,11 +73,6 @@ public class ViewProductList extends Activity implements View.OnClickListener {
 
     }
 
-    public void onClickProductList(int idProduct) {
-
-        showProductDetailById(idProduct);
-
-    }
 
     private void showProductDetailById(int id){
 
@@ -124,7 +124,7 @@ public class ViewProductList extends Activity implements View.OnClickListener {
 
         //Подгрузка списка товаров
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-        Call<ModelSearchResult> serviceCall = mDataApi.getProductGroupListByName(name);
+        Call<ModelSearchResult> serviceCall = mDataApi.getProductGroupListByName(name,1,100);
         serviceCall.enqueue(new Callback<ModelSearchResult>() {
             @Override
             public void onResponse(Call<ModelSearchResult> call, Response<ModelSearchResult> response) {
@@ -247,6 +247,27 @@ public class ViewProductList extends Activity implements View.OnClickListener {
             mHandler.post(command);
         }
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2){
+            if (data!=null){
+                String barcodeResult=data.getStringExtra(getApplicationContext().getPackageName()+".barcode");
+
+                if (resultCode==RESULT_OK){
+                    //barcode_view.setText(barcodeResult);
+                } else{
+                    //Toast.makeText(mThis,barcodeResult,Toast.LENGTH_LONG).show();
+                }
+            }
+
+            return;
+        }
+    }
+
+
 
 }
 

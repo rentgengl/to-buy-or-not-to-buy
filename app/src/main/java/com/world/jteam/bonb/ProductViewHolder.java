@@ -1,6 +1,8 @@
 package com.world.jteam.bonb;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,8 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ProductViewHolder extends RecyclerView.ViewHolder {
     TextView view_midPrice;//Средняя цена
@@ -30,7 +37,38 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
         view_textRaiting = itemView.findViewById(R.id.textRaiting);//Количество отзывов
         view_productRaiting = itemView.findViewById(R.id.productRaiting);//Рейтинг
         picture = itemView.findViewById(R.id.imageView);
-        //itemView.setOnClickListener(mListener);
+
+
+        view_productName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+
+                DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
+                Call<ModelProductFull> serviceCall = mDataApi.getProductFullById((int)v.getTag());
+                serviceCall.enqueue(new Callback<ModelProductFull>() {
+                    @Override
+                    public void onResponse(Call<ModelProductFull> call, Response<ModelProductFull> response) {
+                        Context mContext = v.getContext();
+                        ModelProductFull ss = response.body();
+                        //Context mContext = AppInstance.getAppContext();
+                        Intent intent = new Intent(mContext, ViewProduct.class);
+                        intent.putExtra("object", ss);
+                        mContext.startActivity(intent);
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ModelProductFull> call, Throwable t) {
+
+                    }
+                });
+
+
+
+
+
+            }
+        });
     }
 
     public static ProductViewHolder create(ViewGroup parent) {

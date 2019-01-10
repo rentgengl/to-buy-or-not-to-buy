@@ -148,7 +148,6 @@ public class ViewProduct extends AppCompatActivity implements BaseSliderView.OnS
 
     }
 
-
     // Обработчики слайдера картинок
     @Override
     protected void onStop() {
