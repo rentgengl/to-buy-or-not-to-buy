@@ -18,6 +18,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.world.denacid.media.BarcodeActivity;
+
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -27,7 +29,15 @@ import retrofit2.Response;
 
 public class ViewProductList extends Activity implements View.OnClickListener {
 
-    public EditText searchText;
+
+    private static final int BARCODE_REQUEST = 1;
+    //Режимы поиска по наименованию или группе
+    private static final int SEARCH_BY_NAME = 1;
+    private static final int SEARCH_BY_GROUP = 2;
+    public ModelSearchProductMethod searchMethod;
+    private String searchText;
+    private int searchGroup;
+
 
     private MainThreadExecutor executor;
     private ProductListAdapter adapter;
@@ -42,37 +52,29 @@ public class ViewProductList extends Activity implements View.OnClickListener {
 
         EditText searchText = this.findViewById(R.id.search_panel_text);
         searchText.setOnKeyListener(new OnKeyPress());
-        //Подгрузка списка товаров первой группы
-        //showProductListByGroup(1);
         executor = new MainThreadExecutor();
 
-        RecyclerView recyclerView = this.findViewById(R.id.productRW);
-
+        this.searchMethod = new ModelSearchProductMethod(1);
         pagingStart();
 
     }
 
     public void onClick(View v) {
 
-        showErrorSearch();
-
         if (v.getId() == R.id.search_panel_button) {
-            EditText searchText = findViewById(R.id.search_panel_text);
-
             //Получить ШК
-
-
-            showProductDetailByEAN(searchText.getText().toString());
+            Intent barcodeIntent=new Intent(this,BarcodeActivity.class);
+            startActivityForResult(barcodeIntent,BARCODE_REQUEST);
 
         } else {
             //Клик по группе
             //Подгрузка списка товаров
-            int idGroup = (int) v.getTag();
-            //showProductListByGroup(idGroup);
+            this.searchMethod = new ModelSearchProductMethod((int) v.getTag());
+            pagingStart();
+
         }
 
     }
-
 
     private void showProductDetailById(int id){
 
@@ -120,7 +122,10 @@ public class ViewProductList extends Activity implements View.OnClickListener {
 
     }
 
-    private void serchByName(String name) {
+    private void searchByName(String name) {
+
+        searchMethod = new ModelSearchProductMethod(name);
+        pagingStart();
 
         //Подгрузка списка товаров
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
@@ -156,7 +161,7 @@ public class ViewProductList extends Activity implements View.OnClickListener {
                 EditText editText = v.findViewById(R.id.search_panel_text);
                 String strCatName = editText.getText().toString();
                 if (!strCatName.equals(""))
-                    serchByName(strCatName);
+                    searchByName(strCatName);
 
                 return true;
             }
@@ -190,7 +195,7 @@ public class ViewProductList extends Activity implements View.OnClickListener {
     //Пагинация
     private void pagingStart() {
         setupRecyclerView();
-        setupDataSource("dsf");
+        setupDataSource(searchMethod);
     }
 
 
@@ -206,11 +211,11 @@ public class ViewProductList extends Activity implements View.OnClickListener {
         recyclerView.setOnClickListener(this);
     }
 
-    private void setupDataSource(String queryString) {
+    private void setupDataSource(ModelSearchProductMethod mSearchMethod) {
 
         // Initialize Data Source
         ProductDataSource dataSource = new ProductDataSource();//Добавить строку поиска по группе
-
+        dataSource.searchMethod = mSearchMethod;
         // Configure paging
         PagedList.Config config = new PagedList.Config.Builder()
                 // Number of items to fetch at once. [Required]
@@ -252,11 +257,12 @@ public class ViewProductList extends Activity implements View.OnClickListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 2){
+        if (requestCode == BARCODE_REQUEST){
             if (data!=null){
                 String barcodeResult=data.getStringExtra(getApplicationContext().getPackageName()+".barcode");
 
                 if (resultCode==RESULT_OK){
+                    showProductDetailByEAN(barcodeResult);
                     //barcode_view.setText(barcodeResult);
                 } else{
                     //Toast.makeText(mThis,barcodeResult,Toast.LENGTH_LONG).show();

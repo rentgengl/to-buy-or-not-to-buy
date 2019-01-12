@@ -57,8 +57,6 @@ public class DatabaseApp {
 
                 @Override
                 public void onFailure(Call<List<ModelGroup>> call, Throwable t) {
-                    int a = 2;
-                    a=3;
                 }
             });
 

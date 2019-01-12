@@ -9,7 +9,7 @@ import retrofit2.http.Query;
 public interface DataApi {
 
     @GET("GetProductListByGroup.php")
-    Call<List<ModelProduct>> getProductListByGroup(@Query("id") int groupId,
+    Call<ModelSearchResult> getProductListByGroup(@Query("id") int groupId,
                                                    @Query("page") long page,
                                                    @Query("pageSize") int pageSize);
 

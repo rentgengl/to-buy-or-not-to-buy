@@ -25,7 +25,6 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     TextView view_textRaiting;//Количество отзывов
     RatingBar view_productRaiting;//Рейтинг
     ImageView picture;
-    public View.OnClickListener mListener;
 
 
     private ProductViewHolder(View itemView) {
