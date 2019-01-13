@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public class MainActivity extends AppCompatActivity {
-    //Леонов
-    //Шакун
+
     private final AppCompatActivity mThis=this;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -30,6 +29,17 @@ public class MainActivity extends AppCompatActivity {
     private Product.CategoriesAdapter mCategoriesAdapter;
     private LinkedHashMap<DatabaseApp.ProductCategories,LinkedHashMap> mProductCategoriesCurrent; //В момент выбора
     private LinkedHashMap<DatabaseApp.ProductCategories,LinkedHashMap> mProductCategoriesSelected; //Выбранный
+
+
+    //Идентификатор результата сканирования ШК
+    private static final int BARCODE_REQUEST = 1;
+    //Режимы поиска по наименованию или группе
+    public ModelSearchProductMethod searchMethod;
+
+    //Переменные пагинации
+    private ViewProductList.MainThreadExecutor executor;
+    private ProductListAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

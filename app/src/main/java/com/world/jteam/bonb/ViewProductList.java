@@ -95,6 +95,23 @@ public class ViewProductList extends Activity implements View.OnClickListener {
 
     }
 
+    //Обработчик ввода текста в поле поиска
+    private class OnKeyPress implements View.OnKeyListener {
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN){
+                    //(keyCode == KeyEvent.KEYCODE_ENTER)) {
+                // сохраняем текст, введенный до нажатия Enter в переменную
+                EditText editText = v.findViewById(R.id.search_panel_text);
+                String strCatName = editText.getText().toString();
+                if (!strCatName.equals(""))
+                    searchByName(strCatName);
+
+                return true;
+            }
+            return false;
+        }
+    }
+
     //Показать карточку товара по ШК
     private void showProductDetailByEAN(String EAN){
 
@@ -131,22 +148,6 @@ public class ViewProductList extends Activity implements View.OnClickListener {
     public void showErrorSearch() {
         Toast mt = Toast.makeText(this,"Ничего не найдено", Toast.LENGTH_LONG);
         mt.show();
-    }
-
-    private class OnKeyPress implements View.OnKeyListener {
-        public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN &&
-                    (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                // сохраняем текст, введенный до нажатия Enter в переменную
-                EditText editText = v.findViewById(R.id.search_panel_text);
-                String strCatName = editText.getText().toString();
-                if (!strCatName.equals(""))
-                    searchByName(strCatName);
-
-                return true;
-            }
-            return false;
-        }
     }
 
     public void showGroupList(List<ModelGroup> groupList){
