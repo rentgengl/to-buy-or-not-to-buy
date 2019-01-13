@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 
 public class MainActivity extends AppCompatActivity {
     //Леонов
-    //Шакун2
+    //Шакун3
     private final AppCompatActivity mThis=this;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
