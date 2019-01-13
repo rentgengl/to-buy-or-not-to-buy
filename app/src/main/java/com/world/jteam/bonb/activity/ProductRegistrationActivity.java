@@ -1,4 +1,4 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.activity;
 
 import android.Manifest;
 import android.content.Intent;
@@ -25,6 +25,11 @@ import android.widget.Toast;
 import com.world.denacid.media.BarcodeActivity;
 import com.world.denacid.media.CameraManager;
 import com.world.denacid.media.ImageManager;
+import com.world.jteam.bonb.model.BarcodeEditView;
+import com.world.jteam.bonb.Constants;
+import com.world.jteam.bonb.DatabaseApp;
+import com.world.jteam.bonb.Product;
+import com.world.jteam.bonb.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
