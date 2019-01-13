@@ -5,7 +5,7 @@
     android:id="@+id/product_registration_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.world.jteam.bonb.ProductRegistrationActivity">
+    tools:context="com.world.jteam.bonb.activity.ProductRegistrationActivity">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/product_registration_constraint"
@@ -16,7 +16,7 @@
         android:focusableInTouchMode="true">
 
 
-        <com.world.jteam.bonb.BarcodeEditView
+        <com.world.jteam.bonb.model.BarcodeEditView
             android:id="@+id/barcode"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
             app:layout_constraintBaseline_toBaselineOf="@+id/price"
             app:layout_constraintStart_toEndOf="@+id/rating_product" />
 
-        <com.world.jteam.bonb.PriceEditView
+        <com.world.jteam.bonb.model.PriceEditView
             android:id="@+id/price"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

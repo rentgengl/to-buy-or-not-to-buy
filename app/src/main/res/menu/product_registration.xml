@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.world.jteam.bonb.ProductRegistrationActivity">
+    tools:context="com.world.jteam.bonb.activity.ProductRegistrationActivity">
     <item
         android:id="@+id/register_product"
         app:showAsAction="always"

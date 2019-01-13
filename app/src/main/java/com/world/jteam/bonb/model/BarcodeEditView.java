@@ -1,9 +1,11 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.model;
 
 import android.content.Context;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.AttributeSet;
+
+import com.world.jteam.bonb.R;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
