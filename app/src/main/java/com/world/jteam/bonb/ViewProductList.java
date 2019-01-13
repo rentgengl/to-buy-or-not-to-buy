@@ -29,16 +29,12 @@ import retrofit2.Response;
 
 public class ViewProductList extends Activity implements View.OnClickListener {
 
-
+    //Идентификатор результата сканирования ШК
     private static final int BARCODE_REQUEST = 1;
     //Режимы поиска по наименованию или группе
-    private static final int SEARCH_BY_NAME = 1;
-    private static final int SEARCH_BY_GROUP = 2;
     public ModelSearchProductMethod searchMethod;
-    private String searchText;
-    private int searchGroup;
 
-
+    //Переменные пагинации
     private MainThreadExecutor executor;
     private ProductListAdapter adapter;
 
@@ -47,16 +43,40 @@ public class ViewProductList extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_list);
 
+        //Обработчик клика по кнопке сканирования
         ImageButton searchButton = this.findViewById(R.id.search_panel_button);
         searchButton.setOnClickListener(this);
 
+        //Обработчик ввода текста в строку поиска
         EditText searchText = this.findViewById(R.id.search_panel_text);
         searchText.setOnKeyListener(new OnKeyPress());
         executor = new MainThreadExecutor();
 
+        //По умолчанию отображаю товары первой группы
         this.searchMethod = new ModelSearchProductMethod(1);
+
+        //Формирование списка товаров
         pagingStart();
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == BARCODE_REQUEST){
+            //Обрабочик скана ШК
+            if (data!=null){
+                String barcodeResult=data.getStringExtra(getApplicationContext().getPackageName()+".barcode");
+                if (resultCode==RESULT_OK){
+                    //Попробую открыть карточку товара по ШК
+                    showProductDetailByEAN(barcodeResult);
+                } else{
+                    //Ошибка сканирования ШК
+                }
+            }
+
+            return;
+        }
     }
 
     public void onClick(View v) {
@@ -69,36 +89,19 @@ public class ViewProductList extends Activity implements View.OnClickListener {
         } else {
             //Клик по группе
             //Подгрузка списка товаров
-            this.searchMethod = new ModelSearchProductMethod((int) v.getTag());
-            pagingStart();
+            searchByGroup((int) v.getTag());
 
         }
 
     }
 
-    private void showProductDetailById(int id){
-
-        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-        Call<ModelProductFull> serviceCall = mDataApi.getProductFullById(id);
-        serviceCall.enqueue(new Callback<ModelProductFull>() {
-            @Override
-            public void onResponse(Call<ModelProductFull> call, Response<ModelProductFull> response) {
-                ModelProductFull ss = response.body();
-                showProductDetail(ss);
-            }
-
-            @Override
-            public void onFailure(Call<ModelProductFull> call, Throwable t) {
-                showErrorSearch();
-            }
-        });
-
-    }
-
+    //Показать карточку товара по ШК
     private void showProductDetailByEAN(String EAN){
 
+        //Запрос на сервер
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
         Call<ModelProductFull> serviceCall = mDataApi.getProductFullByEAN(EAN);
+        //Обработчик ответа сервера
         serviceCall.enqueue(new Callback<ModelProductFull>() {
             @Override
             public void onResponse(Call<ModelProductFull> call, Response<ModelProductFull> response) {
@@ -108,12 +111,15 @@ public class ViewProductList extends Activity implements View.OnClickListener {
 
             @Override
             public void onFailure(Call<ModelProductFull> call, Throwable t) {
+                //Товар не найден, предложим ввести новый
                 showErrorSearch();
+                //Леонов
             }
         });
 
     }
 
+    //Показать карточку товара по объекту
     private void showProductDetail(ModelProductFull prod){
 
         Intent intent = new Intent(this, ViewProduct.class);
@@ -121,32 +127,6 @@ public class ViewProductList extends Activity implements View.OnClickListener {
         startActivity(intent);
 
     }
-
-    private void searchByName(String name) {
-
-        searchMethod = new ModelSearchProductMethod(name);
-        pagingStart();
-
-        //Подгрузка списка товаров
-        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-        Call<ModelSearchResult> serviceCall = mDataApi.getProductGroupListByName(name,1,100);
-        serviceCall.enqueue(new Callback<ModelSearchResult>() {
-            @Override
-            public void onResponse(Call<ModelSearchResult> call, Response<ModelSearchResult> response) {
-                ModelSearchResult ss = response.body();
-                showGroupList(ss.getGroups());
-
-            }
-
-            @Override
-            public void onFailure(Call<ModelSearchResult> call, Throwable t) {
-                showErrorSearch();
-            }
-        });
-
-
-    }
-
 
     public void showErrorSearch() {
         Toast mt = Toast.makeText(this,"Ничего не найдено", Toast.LENGTH_LONG);
@@ -193,12 +173,45 @@ public class ViewProductList extends Activity implements View.OnClickListener {
     }
 
     //Пагинация
+    //Поиск товаров по имени
+    private void searchByName(String name) {
+
+        searchMethod = new ModelSearchProductMethod(name);
+        pagingStart();
+
+        //Подгрузка списка групп
+        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
+        Call<ModelSearchResult> serviceCall = mDataApi.getProductGroupListByName(name,1,100);
+        serviceCall.enqueue(new Callback<ModelSearchResult>() {
+            @Override
+            public void onResponse(Call<ModelSearchResult> call, Response<ModelSearchResult> response) {
+                ModelSearchResult ss = response.body();
+                showGroupList(ss.getGroups());
+
+            }
+
+            @Override
+            public void onFailure(Call<ModelSearchResult> call, Throwable t) {
+                showErrorSearch();
+            }
+        });
+
+
+    }
+
+    //Поиск товаров по группе
+    private void searchByGroup(int groupId){
+        this.searchMethod = new ModelSearchProductMethod(groupId);
+        pagingStart();
+    }
+
+    //Основной обработчик заполнения списка товаров
     private void pagingStart() {
         setupRecyclerView();
         setupDataSource(searchMethod);
     }
 
-
+    //Инициализация объекта
     private void setupRecyclerView() {
 
         adapter = new ProductListAdapter();
@@ -211,6 +224,7 @@ public class ViewProductList extends Activity implements View.OnClickListener {
         recyclerView.setOnClickListener(this);
     }
 
+    //Инициализация источника данных
     private void setupDataSource(ModelSearchProductMethod mSearchMethod) {
 
         // Initialize Data Source
@@ -252,28 +266,6 @@ public class ViewProductList extends Activity implements View.OnClickListener {
             mHandler.post(command);
         }
     }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == BARCODE_REQUEST){
-            if (data!=null){
-                String barcodeResult=data.getStringExtra(getApplicationContext().getPackageName()+".barcode");
-
-                if (resultCode==RESULT_OK){
-                    showProductDetailByEAN(barcodeResult);
-                    //barcode_view.setText(barcodeResult);
-                } else{
-                    //Toast.makeText(mThis,barcodeResult,Toast.LENGTH_LONG).show();
-                }
-            }
-
-            return;
-        }
-    }
-
-
 
 }
 
