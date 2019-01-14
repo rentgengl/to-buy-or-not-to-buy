@@ -6,6 +6,12 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+import com.world.jteam.bonb.model.ModelComment;
+import com.world.jteam.bonb.model.ModelMarket;
+import com.world.jteam.bonb.model.ModelPrice;
+import com.world.jteam.bonb.model.ModelProduct;
+import com.world.jteam.bonb.model.ModelProductFull;
+import com.world.jteam.bonb.model.ModelUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,7 +22,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class HTTPService {
 

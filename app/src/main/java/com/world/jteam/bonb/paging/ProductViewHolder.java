@@ -1,4 +1,4 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.paging;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -10,9 +10,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.world.jteam.bonb.Constants;
+import com.world.jteam.bonb.DataApi;
+import com.world.jteam.bonb.R;
+import com.world.jteam.bonb.SingletonRetrofit;
+import com.world.jteam.bonb.activity.ViewProduct;
+import com.world.jteam.bonb.model.ModelProduct;
+import com.world.jteam.bonb.model.ModelProductFull;
 
 import retrofit2.Call;
 import retrofit2.Callback;

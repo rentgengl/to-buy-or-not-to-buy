@@ -1,4 +1,7 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.model;
+
+import com.world.jteam.bonb.model.ModelGroup;
+import com.world.jteam.bonb.model.ModelProduct;
 
 import java.util.List;
 

@@ -33,17 +33,17 @@
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden">
         </activity>
-        <activity android:name=".ViewProduct"
+        <activity android:name=".activity.ViewProduct"
             android:label="activity_product"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden">
         </activity>
-        <activity android:name=".ViewProductList"
+        <activity android:name=".activity.ViewProductList"
             android:label="head_activity_product_list"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden">
         </activity>
-        <activity android:name=".ViewProductPriceMap"
+        <activity android:name=".activity.ViewProductPriceMap"
             android:label=""
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden">

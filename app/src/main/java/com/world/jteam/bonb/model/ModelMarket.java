@@ -1,8 +1,10 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.model;
 
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.world.jteam.bonb.Constants;
 
 public class ModelMarket implements Parcelable {
     public String name;

@@ -1,8 +1,10 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.paging;
 
 import android.arch.paging.PagedListAdapter;
 import android.support.annotation.NonNull;
 import android.view.ViewGroup;
+
+import com.world.jteam.bonb.model.ModelProduct;
 
 public class ProductListAdapter extends PagedListAdapter<ModelProduct, ProductViewHolder> {
 

@@ -1,4 +1,4 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +22,11 @@ import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.squareup.picasso.Picasso;
+import com.world.jteam.bonb.Constants;
+import com.world.jteam.bonb.R;
+import com.world.jteam.bonb.model.ModelComment;
+import com.world.jteam.bonb.model.ModelPrice;
+import com.world.jteam.bonb.model.ModelProductFull;
 
 import java.util.ArrayList;
 

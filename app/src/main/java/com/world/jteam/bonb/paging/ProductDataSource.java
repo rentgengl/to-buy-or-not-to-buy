@@ -1,9 +1,14 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.paging;
 
 import android.arch.paging.PageKeyedDataSource;
 import android.support.annotation.NonNull;
 
-import java.util.List;
+import com.world.jteam.bonb.Constants;
+import com.world.jteam.bonb.DataApi;
+import com.world.jteam.bonb.SingletonRetrofit;
+import com.world.jteam.bonb.model.ModelProduct;
+import com.world.jteam.bonb.model.ModelSearchProductMethod;
+import com.world.jteam.bonb.model.ModelSearchResult;
 
 import retrofit2.Call;
 import retrofit2.Callback;

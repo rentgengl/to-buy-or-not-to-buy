@@ -1,4 +1,4 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.model;
 
 public class ModelSearchProductMethod {
 

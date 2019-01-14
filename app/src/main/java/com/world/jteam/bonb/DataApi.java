@@ -1,5 +1,9 @@
 package com.world.jteam.bonb;
 
+import com.world.jteam.bonb.model.ModelGroup;
+import com.world.jteam.bonb.model.ModelProductFull;
+import com.world.jteam.bonb.model.ModelSearchResult;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -10,8 +14,8 @@ public interface DataApi {
 
     @GET("GetProductListByGroup.php")
     Call<ModelSearchResult> getProductListByGroup(@Query("id") int groupId,
-                                                   @Query("page") long page,
-                                                   @Query("pageSize") int pageSize);
+                                                  @Query("page") long page,
+                                                  @Query("pageSize") int pageSize);
 
     @GET("GetProductGroupListByName.php")
     Call<ModelSearchResult> getProductGroupListByName(@Query("name") String name,

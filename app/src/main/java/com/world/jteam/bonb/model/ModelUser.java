@@ -1,4 +1,4 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

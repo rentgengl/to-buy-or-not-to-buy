@@ -1,4 +1,4 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.activity;
 
 import android.app.Activity;
 import android.arch.paging.PagedList;
@@ -19,6 +19,18 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.world.denacid.media.BarcodeActivity;
+import com.world.jteam.bonb.Constants;
+import com.world.jteam.bonb.DataApi;
+import com.world.jteam.bonb.FlowLayout;
+import com.world.jteam.bonb.paging.ProductDataSource;
+import com.world.jteam.bonb.paging.ProductListAdapter;
+import com.world.jteam.bonb.R;
+import com.world.jteam.bonb.SingletonRetrofit;
+import com.world.jteam.bonb.model.ModelGroup;
+import com.world.jteam.bonb.model.ModelProduct;
+import com.world.jteam.bonb.model.ModelProductFull;
+import com.world.jteam.bonb.model.ModelSearchProductMethod;
+import com.world.jteam.bonb.model.ModelSearchResult;
 
 import java.util.List;
 import java.util.concurrent.Executor;

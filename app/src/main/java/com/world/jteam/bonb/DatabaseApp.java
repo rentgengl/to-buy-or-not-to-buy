@@ -14,6 +14,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.world.jteam.bonb.model.ModelGroup;
+
 import java.util.ArrayList;
 import java.util.List;
 
