@@ -1,4 +1,4 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,7 +16,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-import com.world.jteam.bonb.activity.ViewProductList;
+import com.world.jteam.bonb.Constants;
+import com.world.jteam.bonb.R;
 
 import java.io.File;
 
@@ -117,7 +118,7 @@ public class AuthenticationActivity extends AppCompatActivity {
             getStart(account.getId());
 
         } catch (ApiException e) {
-
+            Log.e("Errrr", "Ошибка входа: "+e.toString());
             Toast myToast = Toast.makeText(getApplicationContext(), "Ошибка входа",Toast.LENGTH_SHORT);
             myToast.show();
         }

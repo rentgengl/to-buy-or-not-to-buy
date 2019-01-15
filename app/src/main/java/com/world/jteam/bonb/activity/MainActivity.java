@@ -1,4 +1,4 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -14,7 +14,9 @@ import android.widget.Toast;
 
 import com.world.denacid.ldrawer.ActionBarDrawerToggle;
 import com.world.denacid.ldrawer.DrawerArrowDrawable;
-import com.world.jteam.bonb.activity.ViewProductList;
+import com.world.jteam.bonb.DatabaseApp;
+import com.world.jteam.bonb.Product;
+import com.world.jteam.bonb.R;
 import com.world.jteam.bonb.model.ModelSearchProductMethod;
 import com.world.jteam.bonb.paging.ProductListAdapter;
 

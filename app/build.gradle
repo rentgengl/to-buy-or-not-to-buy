@@ -36,8 +36,9 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
     //Сервисы гугл
-    implementation 'com.google.android.gms:play-services:12.0.1'
     //implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation 'com.google.android.gms:play-services:12.0.1'
+    implementation 'com.google.firebase:firebase-core:12.0.1' //Затребовало при сборке
 
     //Room SQL lite
     implementation "android.arch.persistence.room:runtime:1.0.0"

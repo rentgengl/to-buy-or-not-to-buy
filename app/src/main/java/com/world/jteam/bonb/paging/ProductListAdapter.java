@@ -9,7 +9,7 @@ import com.world.jteam.bonb.model.ModelProduct;
 public class ProductListAdapter extends PagedListAdapter<ModelProduct, ProductViewHolder> {
 
 
-    ProductListAdapter(){
+    public ProductListAdapter(){
         super(ModelProduct.DIFF_CALLBACK);
     }
 
