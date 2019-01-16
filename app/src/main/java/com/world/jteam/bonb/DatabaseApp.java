@@ -16,6 +16,7 @@ import android.preference.PreferenceManager;
 
 import com.world.jteam.bonb.model.ModelGroup;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class DatabaseApp {
 
     }
 
-    public static void initDatabaseApp(Context context) {
+    public static void initDatabaseApp(Context context) throws IOException {
         if (databaseApp != null)
             return;
 
@@ -50,18 +51,9 @@ public class DatabaseApp {
             //- Получение данных по категориям с сервера
             DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
             Call<List<ModelGroup>> serviceCall = mDataApi.getGroupList();
-            serviceCall.enqueue(new Callback<List<ModelGroup>>() {
-                @Override
-                public void onResponse(Call<List<ModelGroup>> call, Response<List<ModelGroup>> response) {
-                    List<ModelGroup> ss = response.body();
-                    initGroupList(ss);
-                }
 
-                @Override
-                public void onFailure(Call<List<ModelGroup>> call, Throwable t) {
-                }
-            });
-
+            List<ModelGroup> ss = serviceCall.execute().body();
+            initGroupList(ss);
 
             //- Сохранение версии
             SharedPreferences.Editor edit = sharedPreferences.edit();
