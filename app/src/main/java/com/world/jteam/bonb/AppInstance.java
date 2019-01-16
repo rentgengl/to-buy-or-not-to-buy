@@ -8,6 +8,8 @@ import android.support.multidex.MultiDex;
 
 import com.world.denacid.media.BarcodeManager;
 
+import java.io.IOException;
+
 public class AppInstance extends Application {
     private static Context sContext;
     private static boolean sFirstStart;
@@ -40,7 +42,12 @@ public class AppInstance extends Application {
             }
 
             //БД
-            DatabaseApp.initDatabaseApp(sContext);
+
+            try {
+                DatabaseApp.initDatabaseApp(sContext);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             //Категории
             Product.categoryInitialisation();
