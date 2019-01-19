@@ -17,9 +17,17 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.world.jteam.bonb.Constants;
+import com.world.jteam.bonb.DataApi;
 import com.world.jteam.bonb.R;
+import com.world.jteam.bonb.SingletonRetrofit;
+import com.world.jteam.bonb.model.ModelSearchResult;
+import com.world.jteam.bonb.model.ModelUser;
 
 import java.io.File;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AuthenticationActivity extends AppCompatActivity {
 
@@ -108,14 +116,24 @@ public class AuthenticationActivity extends AppCompatActivity {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
             //Сохранение авторизационных данных
-            SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            SharedPreferences.Editor myEditor = myPreferences.edit();
-            myEditor.putString("user_id", account.getId());
-            myEditor.putString("user_displayName", account.getDisplayName());
-            myEditor.putString("user_email", account.getEmail());
-            myEditor.commit();//Записать
+            final ModelUser user = new ModelUser(account.getDisplayName(), account.getId(),account.getEmail(),1);
+            //Запись данных на сервере
+            DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
+            Call<Void> serviceCall = mDataApi.registerUser(user);
+            serviceCall.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
 
-            getStart(account.getId());
+                    getStart(user.id);
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+
+                }
+            });
+
+
 
         } catch (ApiException e) {
             Log.e("Errrr", "Ошибка входа: "+e.toString());
@@ -126,7 +144,7 @@ public class AuthenticationActivity extends AppCompatActivity {
 
     private void getStart(String userID){
 
-        Intent intent = new Intent(AuthenticationActivity.this, ViewProductList.class);
+        Intent intent = new Intent(AuthenticationActivity.this, MainActivity.class);
         intent.putExtra("userID",userID);
         startActivity(intent);
 

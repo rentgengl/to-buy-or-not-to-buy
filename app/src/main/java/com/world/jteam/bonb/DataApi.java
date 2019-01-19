@@ -3,11 +3,14 @@ package com.world.jteam.bonb;
 import com.world.jteam.bonb.model.ModelGroup;
 import com.world.jteam.bonb.model.ModelProductFull;
 import com.world.jteam.bonb.model.ModelSearchResult;
+import com.world.jteam.bonb.model.ModelUser;
 
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface DataApi {
@@ -30,4 +33,7 @@ public interface DataApi {
 
     @GET("GetGroupList.php")
     Call<List<ModelGroup>> getGroupList();
+
+    @POST("Registration.php")
+    Call<Void> registerUser(@Body ModelUser user);
 }

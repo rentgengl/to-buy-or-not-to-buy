@@ -184,11 +184,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             DatabaseApp.ProductCategories productCategory=mCategoriesAdapter.getItem(position);
             LinkedHashMap<DatabaseApp.ProductCategories,LinkedHashMap> productCategoryCategories=
                     mProductCategoriesCurrent.get(productCategory);
+
+            searchByGroup(productCategory.id);
+            //Раскрытие группы
             if (productCategoryCategories==null){
                 mProductCategoriesSelected=mProductCategoriesCurrent;
                 mDrawerLayout.closeDrawer(mDrawerList);
-
+            //Возврат к родителю группы
             } else {
+
                 mProductCategoriesCurrent =productCategoryCategories;
                 mCategoriesAdapter.clear();
                 mCategoriesAdapter.addAll(Product.getCurrentProductCategories(
