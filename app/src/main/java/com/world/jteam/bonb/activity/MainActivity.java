@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -147,36 +148,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
+    //Заполнение и обработка меню
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
-
-    //Категории
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
-                mDrawerLayout.closeDrawer(mDrawerList);
-            } else {
-
-                if (mProductCategoriesSelected==null){
-                    mProductCategoriesSelected = Product.getProductCategories();
-                }
-                if (mProductCategoriesSelected!=null){
-                    ArrayList productCategoriesList =
-                            Product.getCurrentProductCategories(mProductCategoriesSelected,Product.CAT_NM_VIEW);
-
-                    mCategoriesAdapter=new Product.CategoriesAdapter(mThis,productCategoriesList);
-                    mDrawerList.setAdapter(mCategoriesAdapter);
-                    mDrawerList.setOnItemClickListener(new ProductCategoryOnItemClickListener());
-                    mProductCategoriesCurrent=mProductCategoriesSelected;
-
-                    mDrawerLayout.openDrawer(mDrawerList);
+        switch (item.getItemId()){
+            case android.R.id.home:
+                if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
+                    mDrawerLayout.closeDrawer(mDrawerList);
                 } else {
-                    Toast.makeText(mThis,R.string.product_categories_not_init,Toast.LENGTH_LONG).show();
+
+                    if (mProductCategoriesSelected==null){
+                        mProductCategoriesSelected = Product.getProductCategories();
+                    }
+                    if (mProductCategoriesSelected!=null){
+                        ArrayList productCategoriesList =
+                                Product.getCurrentProductCategories(mProductCategoriesSelected,Product.CAT_NM_VIEW);
+
+                        mCategoriesAdapter=new Product.CategoriesAdapter(mThis,productCategoriesList);
+                        mDrawerList.setAdapter(mCategoriesAdapter);
+                        mDrawerList.setOnItemClickListener(new ProductCategoryOnItemClickListener());
+                        mProductCategoriesCurrent=mProductCategoriesSelected;
+
+                        mDrawerLayout.openDrawer(mDrawerList);
+                    } else {
+                        Toast.makeText(mThis,R.string.product_categories_not_init,Toast.LENGTH_LONG).show();
+                    }
                 }
-            }
+                break;
+            case R.id.choose_geo:
+                break;
         }
+
         return super.onOptionsItemSelected(item);
     }
+
+    //Категории
 
     private class ProductCategoryOnItemClickListener implements AdapterView.OnItemClickListener{
         @Override
@@ -201,7 +213,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

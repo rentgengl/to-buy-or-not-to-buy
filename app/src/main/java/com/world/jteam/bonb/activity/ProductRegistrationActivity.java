@@ -22,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.world.jteam.bonb.activity.BarcodeActivity;
 import com.world.jteam.bonb.media.CameraManager;
 import com.world.jteam.bonb.media.ImageManager;
 import com.world.jteam.bonb.model.BarcodeEditView;
@@ -118,7 +117,6 @@ public class ProductRegistrationActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        //Не работает
         if(SHOW_KEYBOARD){
 
             View currentFocus=this.getCurrentFocus();
@@ -133,7 +131,7 @@ public class ProductRegistrationActivity extends AppCompatActivity {
     //Заполнение и обработка меню
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.product_registration, menu);
+        getMenuInflater().inflate(R.menu.menu_product_registration, menu);
         return true;
     }
 
@@ -141,7 +139,7 @@ public class ProductRegistrationActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.register_product:
-                RegisterProduct();
+                registerProduct();
                 break;
         }
         return true;
@@ -344,7 +342,7 @@ public class ProductRegistrationActivity extends AppCompatActivity {
 
     }
 
-    private void RegisterProduct(){
+    private void registerProduct(){
         if (!barcode_view.checkBarcode()){
             Toast.makeText(mThis,R.string.barcode_not_check,Toast.LENGTH_LONG).show();
             return;
