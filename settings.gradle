@@ -1,5 +1,1 @@
 include ':app'
-include ':Media'
-project(':Media').projectDir = new File('../Media/app/')
-include ':LDrawer'
-project(':LDrawer').projectDir = new File('../LDrawer/app/')

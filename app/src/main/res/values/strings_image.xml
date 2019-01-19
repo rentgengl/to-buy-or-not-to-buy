@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="temp_file_ex">Не удалось создать временный файл!</string>
+    <string name="save_image_ex">Не удалось сохранить изображение!</string>
+    <string name="camera_not_support">Работа с камерой не поддерживается!</string>
+</resources>

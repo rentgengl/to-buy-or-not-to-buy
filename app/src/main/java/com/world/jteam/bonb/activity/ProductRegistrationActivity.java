@@ -22,9 +22,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.world.denacid.media.BarcodeActivity;
-import com.world.denacid.media.CameraManager;
-import com.world.denacid.media.ImageManager;
+import com.world.jteam.bonb.activity.BarcodeActivity;
+import com.world.jteam.bonb.media.CameraManager;
+import com.world.jteam.bonb.media.ImageManager;
 import com.world.jteam.bonb.model.BarcodeEditView;
 import com.world.jteam.bonb.Constants;
 import com.world.jteam.bonb.DatabaseApp;
@@ -362,7 +362,7 @@ public class ProductRegistrationActivity extends AppCompatActivity {
                 mImage.mImagePath,
                 Constants.DECODE_IMAGE_SIZE_LARGE,Constants.DECODE_IMAGE_SIZE_LARGE));
 
-        ImageManager.startImageDecodeService(mThis,decodeImageParamArr);
+        //ImageManager.startImageDecodeService(mThis,decodeImageParamArr);
     }
 
 
