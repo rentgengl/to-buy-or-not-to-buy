@@ -30,15 +30,15 @@ public class ModelComment implements Parcelable {
 
         ArrayList<ModelComment> res = new ArrayList<>();
 
-        res.add(new ModelComment(new ModelUser("Иван",null,null),
+        res.add(new ModelComment(new ModelUser("Иван",null,0),
                 "Отличая штука всем советую!",4.3f));
-        res.add(new ModelComment(new ModelUser("Григорий Леонидович",null,null),
+        res.add(new ModelComment(new ModelUser("Григорий Леонидович",null,0),
                 "Ерунда, не берите это дерьмо - полная хрень!",2.3f));
 
-        res.add(new ModelComment(new ModelUser("Григорий Леонидович",null,null),
+        res.add(new ModelComment(new ModelUser("Григорий Леонидович",null,0),
                 "Ерунда, не берите это дерьмо - полная хрень!",2.3f));
 
-        res.add(new ModelComment(new ModelUser("Григорий Леонидович",null,null),
+        res.add(new ModelComment(new ModelUser("Григорий Леонидович",null,0),
                 "Ерунда, не берите это дерьмо - полная хрень!",2.3f));
         return res;
 

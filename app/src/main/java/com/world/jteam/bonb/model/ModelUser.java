@@ -3,15 +3,15 @@ package com.world.jteam.bonb.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class ModelUser implements Parcelable {
+public class   ModelUser implements Parcelable {
     public String name;
     public String google_id;
-    public String id;
+    public int id;
     public String mail;
     public int city_id;
 
 
-    public ModelUser(String name, String google_id, String id){
+    public ModelUser(String name, String google_id, int id){
         this.name = name;
         this.google_id = google_id;
         this.id = id;
@@ -27,7 +27,7 @@ public class ModelUser implements Parcelable {
     protected ModelUser(Parcel in) {
         name = in.readString();
         google_id = in.readString();
-        id = in.readString();
+        id = in.readInt();
         mail = in.readString();
         city_id = in.readInt();
     }
@@ -41,7 +41,7 @@ public class ModelUser implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeString(google_id);
-        dest.writeString(id);
+        dest.writeInt(id);
         dest.writeString(mail);
         dest.writeInt(city_id);
     }

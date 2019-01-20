@@ -36,4 +36,7 @@ public interface DataApi {
 
     @POST("Registration.php")
     Call<Void> registerUser(@Body ModelUser user);
+
+    @GET("LoginUser.php")
+    Call<ModelUser> loginUser(@Query("google_id") String google_id);
 }

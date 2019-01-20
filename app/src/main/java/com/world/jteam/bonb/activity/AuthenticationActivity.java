@@ -37,6 +37,8 @@ public class AuthenticationActivity extends AppCompatActivity {
     public GoogleSignInClient mGoogleSignInClient;
     //Настройки приложения
     public SharedPreferences myPreferences;
+    public boolean onRegister = false;
+    public ModelUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,22 +118,8 @@ public class AuthenticationActivity extends AppCompatActivity {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
             //Сохранение авторизационных данных
-            final ModelUser user = new ModelUser(account.getDisplayName(), account.getId(),account.getEmail(),1);
-            //Запись данных на сервере
-            DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-            Call<Void> serviceCall = mDataApi.registerUser(user);
-            serviceCall.enqueue(new Callback<Void>() {
-                @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
-
-                    getStart(user.id);
-                }
-
-                @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-
-                }
-            });
+            this.user = new ModelUser(account.getDisplayName(), account.getId(),account.getEmail(),1);
+            login();
 
 
 
@@ -142,10 +130,48 @@ public class AuthenticationActivity extends AppCompatActivity {
         }
     }
 
-    private void getStart(String userID){
+    private void login(){
+        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
+        Call<ModelUser> serviceCall = mDataApi.loginUser(user.google_id);
+        serviceCall.enqueue(new Callback<ModelUser>() {
+            @Override
+            public void onResponse(Call<ModelUser> call, Response<ModelUser> response) {
+                ModelUser nUser = response.body();
+                if(nUser==null & onRegister==false){
+                    register();
+                }else
+                getStart(nUser);
+            }
+
+            @Override
+            public void onFailure(Call<ModelUser> call, Throwable t) {
+                register();
+            }
+        });
+    }
+
+    private void register(){
+        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
+        Call<Void> serviceCall = mDataApi.registerUser(user);
+        serviceCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                onRegister = true;
+                login();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                //Что за дичь
+            }
+        });
+    }
+
+
+    private void getStart(ModelUser mUser){
 
         Intent intent = new Intent(AuthenticationActivity.this, MainActivity.class);
-        intent.putExtra("userID",userID);
+        intent.putExtra("userID",mUser.id);
         startActivity(intent);
 
     }

@@ -313,7 +313,7 @@ public class HTTPService {
                 res.raiting = (float) jData.getDouble("raiting");
 
             if (jData.has("user_name"))
-                res.user = new ModelUser(jData.getString("user_name"), null, null);
+                res.user = new ModelUser(jData.getString("user_name"), null, 0);
         } catch (JSONException e) {
             return null;
         }
