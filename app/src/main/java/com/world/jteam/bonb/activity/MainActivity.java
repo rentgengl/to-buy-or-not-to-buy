@@ -62,8 +62,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Категории
     private Product.CategoriesAdapter mCategoriesAdapter;
-    private LinkedHashMap<DatabaseApp.ProductCategories,LinkedHashMap> mProductCategoriesCurrent; //В момент выбора
-    private LinkedHashMap<DatabaseApp.ProductCategories,LinkedHashMap> mProductCategoriesSelected; //Выбранный
+    private LinkedHashMap<ModelGroup,LinkedHashMap> mProductCategoriesCurrent; //В момент выбора
+    private LinkedHashMap<ModelGroup,LinkedHashMap> mProductCategoriesSelected; //Выбранный
 
 
     //Идентификатор результата сканирования ШК
@@ -193,8 +193,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private class ProductCategoryOnItemClickListener implements AdapterView.OnItemClickListener{
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            DatabaseApp.ProductCategories productCategory=mCategoriesAdapter.getItem(position);
-            LinkedHashMap<DatabaseApp.ProductCategories,LinkedHashMap> productCategoryCategories=
+            ModelGroup productCategory=mCategoriesAdapter.getItem(position);
+            LinkedHashMap<ModelGroup,LinkedHashMap> productCategoryCategories=
                     mProductCategoriesCurrent.get(productCategory);
 
             searchByGroup(productCategory.id);

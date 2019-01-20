@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.world.jteam.bonb.model.ModelGroup;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.TreeMap;
 
 public class Product {
     //Категории
-    private static LinkedHashMap<DatabaseApp.ProductCategories, LinkedHashMap> sProductCategories; //Дерево категорий
+    private static LinkedHashMap<ModelGroup, LinkedHashMap> sProductCategories; //Дерево категорий
     public static final int CAT_NM_PRODUCT_ADD = 1; //Метод навигации по категориям - добавление продукта
     public static final int CAT_NM_VIEW = 2; //Метод навигации по категориям - просмотр
 
@@ -28,8 +30,8 @@ public class Product {
     }
 
     public static void categoryInitialisation() {
-        DatabaseApp.ProductCategories[] productCategories = DatabaseApp.getAppRoomDao().getAllProductCategories();
-        DatabaseApp.ProductCategories productCategory;
+        ModelGroup[] productCategories = DatabaseApp.getAppRoomDao().getAllProductCategories();
+        ModelGroup productCategory;
 
         // - получим родителей с инициализированными списками
         //      находим все parentid и создаем для них пустой список
@@ -39,7 +41,7 @@ public class Product {
             productCategory = productCategories[i];
             if (!prodCatParent.containsKey(productCategory.parent_id)) {
                 prodCatParent.put(productCategory.parent_id,
-                        new LinkedHashMap<DatabaseApp.ProductCategories, LinkedHashMap>());
+                        new LinkedHashMap<ModelGroup, LinkedHashMap>());
             }
         }
 
@@ -50,7 +52,7 @@ public class Product {
         for (int i = 0; i < productCategories.length; i++) {
             productCategory = productCategories[i];
 
-            LinkedHashMap<DatabaseApp.ProductCategories, LinkedHashMap> parentTree =
+            LinkedHashMap<ModelGroup, LinkedHashMap> parentTree =
                     prodCatParent.get(productCategory.parent_id);
 
             prodCatChildIdToParent.put(productCategory.id, parentTree);
@@ -64,16 +66,16 @@ public class Product {
         for (int i = 0; i < productCategories.length; i++) {
             productCategory = productCategories[i];
 
-            LinkedHashMap<DatabaseApp.ProductCategories, LinkedHashMap> parentTree =
+            LinkedHashMap<ModelGroup, LinkedHashMap> parentTree =
                     prodCatParent.get(productCategory.parent_id);
-            LinkedHashMap<DatabaseApp.ProductCategories, LinkedHashMap> childTree =
+            LinkedHashMap<ModelGroup, LinkedHashMap> childTree =
                     prodCatParent.get(productCategory.id);
 
             // добавим элементы дополнительной навигации
             if (parentTree.isEmpty()) {
                 if (productCategory.parent_id != 0) {
                     //возврат на предыдущий уровень
-                    parentTree.put(new DatabaseApp.ProductCategories(
+                    parentTree.put(new ModelGroup(
                                     0, "...", productCategory.parent_id, CAT_NM_PRODUCT_ADD),
                             prodCatChildIdToParent.get(productCategory.parent_id));
 
@@ -88,7 +90,7 @@ public class Product {
 
                 }
                 //текущая группа категорий
-                parentTree.put(new DatabaseApp.ProductCategories(
+                parentTree.put(new ModelGroup(
                                 productCategory.parent_id,
                                 AppInstance.getAppContext().getString(R.string.default_category_name),
                                 productCategory.parent_id,
@@ -110,16 +112,16 @@ public class Product {
 
     //Добавляет дополнительную навигацию категорий по иерархии вверх
     private static void fillProductCategoriesNaigationBack(
-            DatabaseApp.ProductCategories[] productCategories,
+            ModelGroup[] productCategories,
             int parentid,
             TreeMap<Integer, Integer> prodCatParentIdToId,
             TreeMap<Integer, LinkedHashMap> prodCatChildIdToParent,
-            LinkedHashMap<DatabaseApp.ProductCategories, LinkedHashMap> parentTree) {
+            LinkedHashMap<ModelGroup, LinkedHashMap> parentTree) {
 
         if (parentid == 0) //добрались до конца
             return;
 
-        DatabaseApp.ProductCategories productCategoryParent = productCategories[prodCatParentIdToId.get(parentid)];
+        ModelGroup productCategoryParent = productCategories[prodCatParentIdToId.get(parentid)];
 
         fillProductCategoriesNaigationBack(
                 productCategories,
@@ -129,7 +131,7 @@ public class Product {
                 parentTree
         );
 
-        parentTree.put(new DatabaseApp.ProductCategories(
+        parentTree.put(new ModelGroup(
                         parentid,
                         "<" + productCategoryParent.name,
                         productCategoryParent.parent_id,
@@ -138,13 +140,13 @@ public class Product {
     }
 
     //Получает массив категорий текущего списка с учетом метода навигации
-    public static ArrayList<DatabaseApp.ProductCategories> getCurrentProductCategories(
-            LinkedHashMap<DatabaseApp.ProductCategories, LinkedHashMap> currentProductCategories,
+    public static ArrayList<ModelGroup> getCurrentProductCategories(
+            LinkedHashMap<ModelGroup, LinkedHashMap> currentProductCategories,
             int navigation_method) {
 
-        ArrayList<DatabaseApp.ProductCategories> productCategories = new ArrayList<>();
+        ArrayList<ModelGroup> productCategories = new ArrayList<>();
 
-        for (DatabaseApp.ProductCategories key : currentProductCategories.keySet()) {
+        for (ModelGroup key : currentProductCategories.keySet()) {
             if (key.navigation_method != 0 && key.navigation_method != navigation_method)
                 continue;
 
@@ -154,10 +156,10 @@ public class Product {
         return productCategories;
     }
 
-    public static class CategoriesAdapter extends ArrayAdapter<DatabaseApp.ProductCategories> {
+    public static class CategoriesAdapter extends ArrayAdapter<ModelGroup> {
         private Activity mActivity;
 
-        public CategoriesAdapter(Activity activity, List<DatabaseApp.ProductCategories> objects) {
+        public CategoriesAdapter(Activity activity, List<ModelGroup> objects) {
             super(activity, R.layout.fragment_product_category_listview_item, objects);
             mActivity = activity;
         }

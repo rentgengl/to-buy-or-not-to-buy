@@ -29,6 +29,7 @@ import com.world.jteam.bonb.Constants;
 import com.world.jteam.bonb.DatabaseApp;
 import com.world.jteam.bonb.Product;
 import com.world.jteam.bonb.R;
+import com.world.jteam.bonb.model.ModelGroup;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,8 +50,8 @@ public class ProductRegistrationActivity extends AppCompatActivity {
     private ConstraintLayout product_category_groupselect;
     private Button product_category_view;
     private Product.CategoriesAdapter mCategoriesAdapter;
-    private LinkedHashMap<DatabaseApp.ProductCategories,LinkedHashMap> mProductCategoriesCurrent; //В момент выбора
-    private LinkedHashMap<DatabaseApp.ProductCategories,LinkedHashMap> mProductCategoriesSelected; //Выбранный
+    private LinkedHashMap<ModelGroup,LinkedHashMap> mProductCategoriesCurrent; //В момент выбора
+    private LinkedHashMap<ModelGroup,LinkedHashMap> mProductCategoriesSelected; //Выбранный
 
     //Инициализация
     @Override
@@ -99,12 +100,12 @@ public class ProductRegistrationActivity extends AppCompatActivity {
 
     static class SaveContainer{
         public ImageManager imageManager;
-        public LinkedHashMap<DatabaseApp.ProductCategories,LinkedHashMap> productCategoriesSelected;
+        public LinkedHashMap<ModelGroup,LinkedHashMap> productCategoriesSelected;
         public CharSequence productCategory;
 
         public SaveContainer(
                 ImageManager imageManager,
-                LinkedHashMap<DatabaseApp.ProductCategories,LinkedHashMap> productCategoriesSelected,
+                LinkedHashMap<ModelGroup,LinkedHashMap> productCategoriesSelected,
                 CharSequence productCategory){
             this.imageManager=imageManager;
             this.productCategoriesSelected=productCategoriesSelected;
@@ -263,8 +264,8 @@ public class ProductRegistrationActivity extends AppCompatActivity {
     private class ProductCategoryOnItemClickListener implements AdapterView.OnItemClickListener{
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            DatabaseApp.ProductCategories productCategory=mCategoriesAdapter.getItem(position);
-            LinkedHashMap<DatabaseApp.ProductCategories,LinkedHashMap> productCategoryCategories=
+            ModelGroup productCategory=mCategoriesAdapter.getItem(position);
+            LinkedHashMap<ModelGroup,LinkedHashMap> productCategoryCategories=
                     mProductCategoriesCurrent.get(productCategory);
             if (productCategoryCategories==null){
                 product_category_view.setText(productCategory.toString());

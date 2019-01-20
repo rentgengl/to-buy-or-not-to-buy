@@ -2,10 +2,10 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "5b00a15c6372311412012b0526270788",
+    "identityHash": "4eceea4f174205700166dc63b15b44f3",
     "entities": [
       {
-        "tableName": "ProductCategories",
+        "tableName": "ModelGroup",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT, `parent_id` INTEGER NOT NULL, `logo_link` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
@@ -45,7 +45,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"5b00a15c6372311412012b0526270788\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"4eceea4f174205700166dc63b15b44f3\")"
     ]
   }
 }

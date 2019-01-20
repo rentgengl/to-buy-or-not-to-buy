@@ -65,10 +65,10 @@ public class DatabaseApp {
 
 
     public static void initGroupList(List<ModelGroup> groupList) {
-        ArrayList<ProductCategories> productCategories = new ArrayList<>();
+        ArrayList<ModelGroup> productCategories = new ArrayList<>();
 
         for(ModelGroup group:groupList){
-            productCategories.add(new ProductCategories(group.id, group.name, group.parent_id, group.logo_link));
+            productCategories.add(new ModelGroup(group.id, group.name, group.parent_id, group.logo_link));
         }
 
         AppRoomDao appRoomDao = databaseApp.database.appRoomDao();
@@ -81,54 +81,20 @@ public class DatabaseApp {
         return databaseApp.database.appRoomDao();
     }
 
-    @Entity
-    public static class ProductCategories {
-        @PrimaryKey
-        public int id;
-        public String name;
-        //public int parentid;
-        @ColumnInfo(name = "parent_id")
-        public int parent_id;
-        @ColumnInfo(name = "logo_link")
-        public String logo_link;
-
-        @Ignore
-        public int navigation_method;
-
-        public ProductCategories(int id, String name, int parent_id, String logo_link) {
-            this.id = id;
-            this.name = name;
-            this.parent_id = parent_id;
-            this.logo_link = logo_link;
-        }
-
-        public ProductCategories(int id, String name, int parent_id, int navigation_method) {
-            this.id = id;
-            this.name = name;
-            this.parent_id = parent_id;
-            this.navigation_method = navigation_method;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-    }
-
     @Dao
     public interface AppRoomDao {
 
-        @Query("SELECT * FROM ProductCategories ORDER BY name ASC")
-        ProductCategories[] getAllProductCategories();
+        @Query("SELECT * FROM ModelGroup ORDER BY name ASC")
+        ModelGroup[] getAllProductCategories();
 
-        @Query("DELETE FROM ProductCategories")
+        @Query("DELETE FROM ModelGroup")
         void deleteAllProductCategories();
 
         @Insert
-        void insertProductCategories(List<ProductCategories> productCategories);
+        void insertProductCategories(List<ModelGroup> ModelGroup);
     }
 
-    @Database(entities = {ProductCategories.class}, version = 1)
+    @Database(entities = {ModelGroup.class}, version = 1)
     public static abstract class AppRoomDatabase extends RoomDatabase {
         public abstract AppRoomDao appRoomDao();
     }
