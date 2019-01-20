@@ -22,14 +22,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.world.denacid.media.BarcodeActivity;
-import com.world.denacid.media.CameraManager;
-import com.world.denacid.media.ImageManager;
+import com.world.jteam.bonb.media.CameraManager;
+import com.world.jteam.bonb.media.ImageManager;
 import com.world.jteam.bonb.model.BarcodeEditView;
 import com.world.jteam.bonb.Constants;
 import com.world.jteam.bonb.DatabaseApp;
 import com.world.jteam.bonb.Product;
 import com.world.jteam.bonb.R;
+import com.world.jteam.bonb.model.ModelGroup;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,8 +50,8 @@ public class ProductRegistrationActivity extends AppCompatActivity {
     private ConstraintLayout product_category_groupselect;
     private Button product_category_view;
     private Product.CategoriesAdapter mCategoriesAdapter;
-    private LinkedHashMap<DatabaseApp.ProductCategories,LinkedHashMap> mProductCategoriesCurrent; //В момент выбора
-    private LinkedHashMap<DatabaseApp.ProductCategories,LinkedHashMap> mProductCategoriesSelected; //Выбранный
+    private LinkedHashMap<ModelGroup,LinkedHashMap> mProductCategoriesCurrent; //В момент выбора
+    private LinkedHashMap<ModelGroup,LinkedHashMap> mProductCategoriesSelected; //Выбранный
 
     //Инициализация
     @Override
@@ -100,12 +100,12 @@ public class ProductRegistrationActivity extends AppCompatActivity {
 
     static class SaveContainer{
         public ImageManager imageManager;
-        public LinkedHashMap<DatabaseApp.ProductCategories,LinkedHashMap> productCategoriesSelected;
+        public LinkedHashMap<ModelGroup,LinkedHashMap> productCategoriesSelected;
         public CharSequence productCategory;
 
         public SaveContainer(
                 ImageManager imageManager,
-                LinkedHashMap<DatabaseApp.ProductCategories,LinkedHashMap> productCategoriesSelected,
+                LinkedHashMap<ModelGroup,LinkedHashMap> productCategoriesSelected,
                 CharSequence productCategory){
             this.imageManager=imageManager;
             this.productCategoriesSelected=productCategoriesSelected;
@@ -118,7 +118,6 @@ public class ProductRegistrationActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        //Не работает
         if(SHOW_KEYBOARD){
 
             View currentFocus=this.getCurrentFocus();
@@ -133,7 +132,7 @@ public class ProductRegistrationActivity extends AppCompatActivity {
     //Заполнение и обработка меню
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.product_registration, menu);
+        getMenuInflater().inflate(R.menu.menu_product_registration, menu);
         return true;
     }
 
@@ -141,7 +140,7 @@ public class ProductRegistrationActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.register_product:
-                RegisterProduct();
+                registerProduct();
                 break;
         }
         return true;
@@ -265,8 +264,8 @@ public class ProductRegistrationActivity extends AppCompatActivity {
     private class ProductCategoryOnItemClickListener implements AdapterView.OnItemClickListener{
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            DatabaseApp.ProductCategories productCategory=mCategoriesAdapter.getItem(position);
-            LinkedHashMap<DatabaseApp.ProductCategories,LinkedHashMap> productCategoryCategories=
+            ModelGroup productCategory=mCategoriesAdapter.getItem(position);
+            LinkedHashMap<ModelGroup,LinkedHashMap> productCategoryCategories=
                     mProductCategoriesCurrent.get(productCategory);
             if (productCategoryCategories==null){
                 product_category_view.setText(productCategory.toString());
@@ -344,7 +343,7 @@ public class ProductRegistrationActivity extends AppCompatActivity {
 
     }
 
-    private void RegisterProduct(){
+    private void registerProduct(){
         if (!barcode_view.checkBarcode()){
             Toast.makeText(mThis,R.string.barcode_not_check,Toast.LENGTH_LONG).show();
             return;
@@ -362,7 +361,7 @@ public class ProductRegistrationActivity extends AppCompatActivity {
                 mImage.mImagePath,
                 Constants.DECODE_IMAGE_SIZE_LARGE,Constants.DECODE_IMAGE_SIZE_LARGE));
 
-        ImageManager.startImageDecodeService(mThis,decodeImageParamArr);
+        //ImageManager.startImageDecodeService(mThis,decodeImageParamArr);
     }
 
 

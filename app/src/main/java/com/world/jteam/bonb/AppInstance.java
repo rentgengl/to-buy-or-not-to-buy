@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.multidex.MultiDex;
 
-import com.world.denacid.media.BarcodeManager;
+import com.world.jteam.bonb.media.BarcodeManager;
 
 import java.io.IOException;
 

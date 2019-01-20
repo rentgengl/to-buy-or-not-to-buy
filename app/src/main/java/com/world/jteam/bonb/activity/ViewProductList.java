@@ -18,7 +18,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.world.denacid.media.BarcodeActivity;
+import com.world.jteam.bonb.activity.BarcodeActivity;
 import com.world.jteam.bonb.Constants;
 import com.world.jteam.bonb.DataApi;
 import com.world.jteam.bonb.FlowLayout;

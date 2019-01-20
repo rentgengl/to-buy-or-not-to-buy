@@ -68,6 +68,6 @@ dependencies {
     implementation "android.arch.paging:runtime:1.0.0"
 
     //Подключаемые проекты
-    implementation project(path: ':Media', configuration: 'default')
-    implementation project(path: ':LDrawer', configuration: 'default')
+   // implementation project(path: ':Media', configuration: 'default')
+   // implementation project(path: ':LDrawer', configuration: 'default')
 }
