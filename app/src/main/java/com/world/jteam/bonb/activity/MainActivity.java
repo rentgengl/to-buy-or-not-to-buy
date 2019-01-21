@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Обработчик ввода текста в поле поиска
     private class OnKeyPress implements View.OnKeyListener {
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN){
+            if (event.getAction() == KeyEvent.ACTION_DOWN & keyCode!=KeyEvent.KEYCODE_DEL){
                 //(keyCode == KeyEvent.KEYCODE_ENTER)) {
                 // сохраняем текст, введенный до нажатия Enter в переменную
                 EditText editText = v.findViewById(R.id.search_panel_text);
