@@ -9,7 +9,7 @@ import com.world.jteam.bonb.Constants;
 public class ModelMarket implements Parcelable {
     public String name;
     public String city;
-    public String id;
+    public int id;
     public String adress;
     public double latitude;
     public double longitude;
@@ -24,12 +24,16 @@ public class ModelMarket implements Parcelable {
 
     }
 
+    public ModelMarket(int id){
+        this.id = id;
+    }
+
     public void setLatLng(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public static ModelMarket getMarketById(String idMark){
+    public static ModelMarket getMarketById(int idMark){
         ModelMarket res = new ModelMarket("Гипермаркет Ашан яблоновка",
                 "Яблоновский Гагарина 159/1",
                 Constants.SERVICE_GET_IMAGE + "logo_auchan.png");
@@ -51,7 +55,7 @@ public class ModelMarket implements Parcelable {
     protected ModelMarket(Parcel in) {
         name = in.readString();
         city = in.readString();
-        id = in.readString();
+        id = in.readInt();
         adress = in.readString();
         latitude = in.readDouble();
         longitude = in.readDouble();
@@ -67,7 +71,7 @@ public class ModelMarket implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeString(city);
-        dest.writeString(id);
+        dest.writeInt(id);
         dest.writeString(adress);
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);

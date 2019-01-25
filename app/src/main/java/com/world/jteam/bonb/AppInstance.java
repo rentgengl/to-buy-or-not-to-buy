@@ -7,12 +7,14 @@ import android.preference.PreferenceManager;
 import android.support.multidex.MultiDex;
 
 import com.world.jteam.bonb.media.BarcodeManager;
+import com.world.jteam.bonb.model.ModelUser;
 
 import java.io.IOException;
 
 public class AppInstance extends Application {
     private static Context sContext;
     private static boolean sFirstStart;
+    private static ModelUser user;
 
     @Override
     public void onCreate() {
@@ -63,4 +65,5 @@ public class AppInstance extends Application {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
+
 }

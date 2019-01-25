@@ -325,7 +325,7 @@ public class HTTPService {
     protected void setTestData(ModelProductFull pr) {
 
         ArrayList<ModelPrice> mp = new ArrayList<ModelPrice>();
-        ModelMarket mark = ModelMarket.getMarketById("22");
+        ModelMarket mark = ModelMarket.getMarketById(22);
 
         ModelPrice prc = new ModelPrice();
         prc.market = mark;
