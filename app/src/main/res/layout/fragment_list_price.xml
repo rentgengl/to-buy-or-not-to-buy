@@ -56,11 +56,11 @@
 
         <Button
             android:id="@+id/addPrice"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="0"
-            android:background="@drawable/add_price" />
+            android:background="@drawable/edit_price" />
 
 
     </LinearLayout>
