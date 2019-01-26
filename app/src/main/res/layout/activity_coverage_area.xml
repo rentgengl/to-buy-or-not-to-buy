@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activity.CoverageAreaActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Switch
+        android:id="@+id/use_auto_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="@string/auto_position"
+        app:layout_constraintBaseline_toBaselineOf="@+id/radius_area"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <fragment
+        android:id="@+id/coverage_area"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radius_area"></fragment>
+
+    <EditText
+        android:id="@+id/radius_area"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="5"
+        android:gravity="center_vertical|center_horizontal"
+        android:inputType="numberSigned"
+        app:layout_constraintEnd_toStartOf="@+id/radius_unit_head"
+        app:layout_constraintStart_toEndOf="@+id/radius_head"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/radius_unit_head"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/radius_km"
+        app:layout_constraintBaseline_toBaselineOf="@+id/radius_area"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/radius_head"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="@string/radius"
+        app:layout_constraintBaseline_toBaselineOf="@+id/radius_area"
+        app:layout_constraintStart_toEndOf="@+id/use_auto_position" />
+
+</android.support.constraint.ConstraintLayout>

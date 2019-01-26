@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auto_position">Автоопределение позиции</string>
+    <string name="radius_km">км</string>
+    <string name="radius">R</string>
+</resources>

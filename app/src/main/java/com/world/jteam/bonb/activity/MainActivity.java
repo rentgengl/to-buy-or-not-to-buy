@@ -158,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            //Категории
             case android.R.id.home:
                 if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
                     mDrawerLayout.closeDrawer(mDrawerList);
@@ -181,7 +182,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
                 break;
+            //Геопозиция
             case R.id.choose_geo:
+                Intent geoIntent=new Intent(this,CoverageAreaActivity.class);
+                startActivity(geoIntent);
                 break;
         }
 
