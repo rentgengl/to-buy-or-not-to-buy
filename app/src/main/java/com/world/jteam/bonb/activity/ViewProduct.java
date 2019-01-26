@@ -1,8 +1,10 @@
 package com.world.jteam.bonb.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -23,12 +26,19 @@ import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.squareup.picasso.Picasso;
 import com.world.jteam.bonb.Constants;
+import com.world.jteam.bonb.DataApi;
 import com.world.jteam.bonb.R;
+import com.world.jteam.bonb.SingletonRetrofit;
 import com.world.jteam.bonb.model.ModelComment;
 import com.world.jteam.bonb.model.ModelPrice;
 import com.world.jteam.bonb.model.ModelProductFull;
+import com.world.jteam.bonb.model.ModelUser;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ViewProduct extends AppCompatActivity implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 
@@ -84,7 +94,9 @@ public class ViewProduct extends AppCompatActivity implements BaseSliderView.OnS
         thisProductFull = product;
         mDemoSlider = (SliderLayout) findViewById(R.id.slider);
 
-        if (product.images_links != null & product.images_links.size() > 0) {
+        if (product.images_links != null )
+
+            if(product.images_links.size() > 0) {
 
             for (String link : product.images_links) {
                 TextSliderView textSliderView = new TextSliderView(this);
@@ -285,10 +297,18 @@ public class ViewProduct extends AppCompatActivity implements BaseSliderView.OnS
             TextView view_magazinAdres = view.findViewById(R.id.magazinAdres);
             TextView view_magazinPrice = view.findViewById(R.id.magazinPrice);
             ImageView view_imageLogo = view.findViewById(R.id.imageLogo);
+            Button view_addPrice = view.findViewById(R.id.addPrice);
 
             view_magazinName.setText(obj.market.name);
             view_magazinAdres.setText(obj.market.adress);
             view_magazinPrice.setText(obj.price + "\u20BD");
+            view_addPrice.setTag(obj.market.id);
+            view_addPrice.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startInputPrice((int) v.getTag());
+                }
+            });
 
             if (obj.market.logo_link != null) {
                 Picasso.with(ctx)
@@ -307,5 +327,66 @@ public class ViewProduct extends AppCompatActivity implements BaseSliderView.OnS
 
     }
 
+    //Запускает диалог ввода новой цены
+    public void startInputPrice(final int market_id){
 
+        // get prompts.xml view
+        LayoutInflater li = LayoutInflater.from(this);
+        View promptsView = li.inflate(R.layout.activity_dialog_new_price, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                this);
+
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(promptsView);
+
+        final EditText userInput = (EditText) promptsView
+                .findViewById(R.id.newPriceEdit);
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                // get user input and set it to result
+                                // edit text
+                                int newPR = Integer.valueOf(userInput.getText().toString());
+                                addNewPrice(newPR ,market_id);
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+
+
+    }
+
+
+    public void addNewPrice(int price,int market){
+
+        ModelPrice mprice = new ModelPrice(thisProductFull.id,price,market,1 );
+        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
+        Call<Void> serviceCall = mDataApi.addNewPrice(mprice);
+        serviceCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                //Что за дичь
+            }
+        });
+    }
 }

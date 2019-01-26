@@ -1,6 +1,7 @@
 package com.world.jteam.bonb;
 
 import com.world.jteam.bonb.model.ModelGroup;
+import com.world.jteam.bonb.model.ModelPrice;
 import com.world.jteam.bonb.model.ModelProductFull;
 import com.world.jteam.bonb.model.ModelSearchResult;
 import com.world.jteam.bonb.model.ModelUser;
@@ -39,4 +40,8 @@ public interface DataApi {
 
     @GET("LoginUser.php")
     Call<ModelUser> loginUser(@Query("google_id") String google_id);
+
+    @POST("addNewPrice.php")
+    Call<Void> addNewPrice(@Body ModelPrice price);
+
 }

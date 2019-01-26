@@ -8,11 +8,20 @@ import java.util.Date;
 public class ModelPrice implements Parcelable {
 
     public int price;
+    public int product_id;
     public ModelMarket market;
     public Date date;
     public boolean sale;
+    public int user_id;
 
     public ModelPrice(){}
+
+    public ModelPrice(int product_id,int price,int market_id, int user_id){
+        this.product_id = product_id;
+        this.price = price;
+        this.market = new ModelMarket(market_id);
+        this.user_id = user_id;
+    }
 
     protected ModelPrice(Parcel in) {
         price = in.readInt();
@@ -20,6 +29,7 @@ public class ModelPrice implements Parcelable {
         long tmpDate = in.readLong();
         date = tmpDate != -1 ? new Date(tmpDate) : null;
         sale = in.readByte() != 0x00;
+
     }
 
     @Override
@@ -33,6 +43,7 @@ public class ModelPrice implements Parcelable {
         dest.writeValue(market);
         dest.writeLong(date != null ? date.getTime() : -1L);
         dest.writeByte((byte) (sale ? 0x01 : 0x00));
+
     }
 
     @SuppressWarnings("unused")
