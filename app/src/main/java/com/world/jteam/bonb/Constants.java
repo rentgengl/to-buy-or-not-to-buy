@@ -34,4 +34,6 @@ public class Constants {
     public static final int DECODE_IMAGE_SIZE_MEDIUM=100;
     public static final int DECODE_IMAGE_SIZE_LARGE=500;
 
+    public static final int DEFAULT_RADIUS_AREA=20; //км
+
 }
