@@ -1,10 +1,14 @@
 package com.world.jteam.bonb.activity;
 
+import android.Manifest;
 import android.arch.paging.PagedList;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +29,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.world.jteam.bonb.AppInstance;
+import com.world.jteam.bonb.geo.GeoManager;
 import com.world.jteam.bonb.ldrawer.ActionBarDrawerToggle;
 import com.world.jteam.bonb.ldrawer.DrawerArrowDrawable;
 import com.world.jteam.bonb.activity.BarcodeActivity;
@@ -53,8 +59,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    //Леонов
-    //Шакун3
+
     private final AppCompatActivity mThis=this;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -74,6 +79,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Переменные пагинации
     private MainActivity.MainThreadExecutor executor;
     private ProductListAdapter adapter;
+
+    //Геолокация
+    private static final int GEO_REQUEST = 2;
 
 
     @Override
@@ -129,11 +137,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Формирование списка товаров
         pagingStart();
 
-        /*
-        Intent intent = new Intent(MainActivity.this, AuthenticationActivity.class);
-        intent.putExtra("userID",1);
-        startActivity(intent);
-        */
+        //Геолокация
+        int rc = ActivityCompat.checkSelfPermission(mThis, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (rc == PackageManager.PERMISSION_GRANTED){
+            GeoManager.starGeoPositionTrace();
+        } else {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(mThis, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                final String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
+                ActivityCompat.requestPermissions(mThis, permissions, GEO_REQUEST);
+            } else {
+                AppInstance.setAutoGeoPosition(false);
+            }
+        }
     }
 
     @Override
@@ -221,19 +236,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == BARCODE_REQUEST){
-            //Обрабочик скана ШК
-            if (data!=null){
-                String barcodeResult=data.getStringExtra(getApplicationContext().getPackageName()+".barcode");
-                if (resultCode==RESULT_OK){
-                    //Попробую открыть карточку товара по ШК
-                    showProductDetailByEAN(barcodeResult);
-                } else{
-                    //Ошибка сканирования ШК
-                }
-            }
 
-            return;
+        switch (requestCode){
+            case BARCODE_REQUEST:
+                //Обрабочик скана ШК
+                if (data!=null){
+                    String barcodeResult=data.getStringExtra(getApplicationContext().getPackageName()+".barcode");
+                    if (resultCode==RESULT_OK){
+                        //Попробую открыть карточку товара по ШК
+                        showProductDetailByEAN(barcodeResult);
+                    } else{
+                        //Ошибка сканирования ШК
+                    }
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode){
+            case GEO_REQUEST:
+                //Обработка права доступа на геолокацию
+                if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    GeoManager.starGeoPositionTrace();
+                } else {
+                    AppInstance.setAutoGeoPosition(false);
+                }
+                break;
+
         }
     }
 
@@ -425,6 +458,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mHandler.post(command);
         }
     }
+
+    //Геолокация
 
 
 }

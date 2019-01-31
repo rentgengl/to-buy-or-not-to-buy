@@ -1,12 +1,9 @@
 package com.world.jteam.bonb.activity;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -17,6 +14,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.R;
+import com.world.jteam.bonb.geo.GeoManager;
 
 public class CoverageAreaActivity extends FragmentActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
@@ -51,18 +49,9 @@ public class CoverageAreaActivity extends FragmentActivity implements OnMapReady
         boolean autoGeoPosition=mUseAutoPosView.isChecked();
         int radiusArea=Integer.parseInt(mRadiusAreaView.getText().toString());
 
-        if (autoGeoPosition!=AppInstance.isAutoGeoPosition() || radiusArea!=AppInstance.getRadiusArea()){
-            SharedPreferences sharedPreferences =
-                    PreferenceManager.getDefaultSharedPreferences(this);
+        AppInstance.setAutoGeoPosition(autoGeoPosition);
+        AppInstance.setRadiusArea(radiusArea);
 
-            SharedPreferences.Editor edit = sharedPreferences.edit();
-            edit.putBoolean("auto_geo_position", autoGeoPosition);
-            edit.putInt("radius_area", radiusArea);
-            edit.commit();
-
-            AppInstance.setAutoGeoPosition(autoGeoPosition);
-            AppInstance.setRadiusArea(radiusArea);
-        }
     }
 
     @Override

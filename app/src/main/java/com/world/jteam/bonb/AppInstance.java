@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.multidex.MultiDex;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.world.jteam.bonb.geo.GeoManager;
 import com.world.jteam.bonb.media.BarcodeManager;
 import com.world.jteam.bonb.model.ModelUser;
 
@@ -17,43 +18,40 @@ public class AppInstance extends Application {
     private static boolean sFirstStart;
     private static ModelUser user;
 
-    private static boolean sAutoGeoPosition=true;
-    private static int sRadiusArea=Constants.DEFAULT_RADIUS_AREA;
-    private static LatLng sGeoPosition=new LatLng(55.755814,37.617635); //Москва по дефолту
+    private static boolean sAutoGeoPosition = true;
+    private static int sRadiusArea = Constants.DEFAULT_RADIUS_AREA;
+    private static LatLng sGeoPosition = new LatLng(55.755814, 37.617635); //Москва по дефолту
 
     @Override
     public void onCreate() {
         super.onCreate();
         sContext = getApplicationContext();
 
-        Thread thread=new Thread(new AppInitialisation());
+        Thread thread = new Thread(new AppInitialisation());
         thread.start();
     }
 
     //Основная инициализация
-    private class AppInitialisation implements Runnable{
+    private class AppInitialisation implements Runnable {
         @Override
         public void run() {
             //Первый запуск
             SharedPreferences sharedPreferences =
                     PreferenceManager.getDefaultSharedPreferences(sContext);
-            sFirstStart=sharedPreferences.getBoolean("first_start",true);
-            if (sFirstStart){
+            sFirstStart = sharedPreferences.getBoolean("first_start", true);
+            if (sFirstStart) {
                 SharedPreferences.Editor edit = sharedPreferences.edit();
                 edit.putBoolean("first_start", false);
                 edit.commit();
             }
 
             //Геолокация
-            sAutoGeoPosition=sharedPreferences.getBoolean("auto_geo_position",sAutoGeoPosition);
-            sRadiusArea=sharedPreferences.getInt("radius_area",sRadiusArea);
-            /*sGeoPosition=new LatLng(
-                    sharedPreferences.getFloat("latitude_area",(float) sGeoPosition.latitude),
-                    sharedPreferences.getFloat("longitude_area",(float) sGeoPosition.longitude));*/
-
+            sAutoGeoPosition = GeoManager.getAutoGeoPositionFromSettings(sAutoGeoPosition);
+            sRadiusArea = GeoManager.getRadiusAreaFromSettings(sRadiusArea);
+            sGeoPosition = GeoManager.getGeoPositionFromSettings(sGeoPosition);
 
             //Штрихкодер
-            if (sFirstStart){
+            if (sFirstStart) {
                 BarcodeManager.firstInitBarcodeDetector(sContext);
             }
 
@@ -87,19 +85,26 @@ public class AppInstance extends Application {
         return sAutoGeoPosition;
     }
 
+    public static void setAutoGeoPosition(boolean flag) {
+        GeoManager.setAutoGeoPositionInSettings(flag);
+        AppInstance.sAutoGeoPosition = flag;
+    }
+
     public static int getRadiusArea() {
         return sRadiusArea;
     }
 
-    public static void setAutoGeoPosition(boolean sAutoGeoPosition) {
-        AppInstance.sAutoGeoPosition = sAutoGeoPosition;
-    }
-
-    public static void setRadiusArea(int sRadiusArea) {
-        AppInstance.sRadiusArea = sRadiusArea;
+    public static void setRadiusArea(int radius) {
+        GeoManager.setRadiusAreaInSettings(radius);
+        AppInstance.sRadiusArea = radius;
     }
 
     public static LatLng getGeoPosition() {
         return sGeoPosition;
+    }
+
+    public static void setGeoPosition(LatLng position) {
+        GeoManager.setGeoPositionInSettings(position);
+        AppInstance.sGeoPosition = position;
     }
 }
