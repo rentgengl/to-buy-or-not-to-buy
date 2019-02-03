@@ -86,6 +86,9 @@ public class AppInstance extends Application {
     }
 
     public static void setAutoGeoPosition(boolean flag) {
+        if (flag == AppInstance.sAutoGeoPosition)
+            return;
+
         GeoManager.setAutoGeoPositionInSettings(flag);
         AppInstance.sAutoGeoPosition = flag;
     }
@@ -95,6 +98,9 @@ public class AppInstance extends Application {
     }
 
     public static void setRadiusArea(int radius) {
+        if (radius == AppInstance.sRadiusArea)
+            return;
+
         GeoManager.setRadiusAreaInSettings(radius);
         AppInstance.sRadiusArea = radius;
     }
@@ -104,6 +110,10 @@ public class AppInstance extends Application {
     }
 
     public static void setGeoPosition(LatLng position) {
+        if (position.latitude == AppInstance.sGeoPosition.latitude
+                && position.longitude == AppInstance.sGeoPosition.longitude)
+            return;
+
         GeoManager.setGeoPositionInSettings(position);
         AppInstance.sGeoPosition = position;
     }

@@ -1,12 +1,23 @@
 package com.world.jteam.bonb.geo;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.Constants;
 
 public class GeoManager {
+    private static int mNumberGeoTrace=0; //Для регулирования конфликтов потоков
 
     private static final String SETTINGS_NAME="geo";
 
@@ -65,18 +76,84 @@ public class GeoManager {
         if (!AppInstance.isAutoGeoPosition())
             return;
 
+        mNumberGeoTrace = mNumberGeoTrace + 1;
+        final HandlerThread traceHandlerThread=new HandlerThread("GeoPositionTrace"+mNumberGeoTrace);
+        traceHandlerThread.start();
+
         Thread traceThread=new Thread(new Runnable() {
             @Override
             public void run() {
-                while (AppInstance.isAutoGeoPosition()){
+                int numberGeoTrace = mNumberGeoTrace;
+
+                Context context = AppInstance.getAppContext();
+
+                LocationManager locationManager =
+                        (LocationManager) context.getSystemService(context.LOCATION_SERVICE);
+
+                while (AppInstance.isAutoGeoPosition() && numberGeoTrace == mNumberGeoTrace){
+
+                    //Проверим права, а то могли поменятся
+                    int rc = ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
+                    if (rc == PackageManager.PERMISSION_DENIED) {
+                        AppInstance.setAutoGeoPosition(false);
+                        break;
+                    }
+
+                    //Обнаружим
+                    detectGeoPosition(locationManager,new GeoPositionLocationListener(),traceHandlerThread.getLooper());
+
+                    //Таймаут
                     try {
                         Thread.currentThread().sleep(Constants.UPDATE_RATE_GEO_POSITION);
                     } catch (InterruptedException e) {
-                        return;
+                        break;
                     }
                 }
+
+                traceHandlerThread.quit();
             }
         });
         traceThread.start();
     }
+
+    @SuppressWarnings("MissingPermission")
+    public static void  detectGeoPosition(LocationManager locationManager,
+                                          LocationListener locationListener,
+                                          Looper looper){
+        //Получим провайдера с приоритетом на GPS
+        String currentProvider=null;
+        if (locationManager.isProviderEnabled(locationManager.GPS_PROVIDER))
+            currentProvider = locationManager.GPS_PROVIDER;
+        else if (locationManager.isProviderEnabled(locationManager.NETWORK_PROVIDER))
+            currentProvider = locationManager.NETWORK_PROVIDER;
+
+        //Есть активный провайдер, получим координаты
+        if (currentProvider!=null) {
+            locationManager.requestSingleUpdate(
+                    currentProvider,locationListener, looper);
+        }
+    }
+
+    private static class GeoPositionLocationListener implements LocationListener{
+        @Override
+        public void onLocationChanged(Location location) {
+            AppInstance.setGeoPosition(new LatLng(location.getLatitude(), location.getLongitude()));
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    }
+
 }
