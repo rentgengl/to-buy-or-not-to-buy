@@ -34,7 +34,7 @@ public class Constants {
     public static final int DECODE_IMAGE_SIZE_MEDIUM=100;
     public static final int DECODE_IMAGE_SIZE_LARGE=500;
 
-    public static final int DEFAULT_RADIUS_AREA=20; //км
+    public static final int DEFAULT_RADIUS_AREA=5; //км
     public static final int UPDATE_RATE_GEO_POSITION=1800000; //30мин в миллисекундах
 
 }

@@ -15,6 +15,9 @@ import android.support.v4.app.ActivityCompat;
 import com.google.android.gms.maps.model.LatLng;
 import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.Constants;
+import com.world.jteam.bonb.R;
+
+import java.util.Arrays;
 
 public class GeoManager {
     private static int mNumberGeoTrace=0; //Для регулирования конфликтов потоков
@@ -122,9 +125,10 @@ public class GeoManager {
                                           Looper looper){
         //Получим провайдера с приоритетом на GPS
         String currentProvider=null;
-        if (locationManager.isProviderEnabled(locationManager.GPS_PROVIDER))
+        /*if (locationManager.isProviderEnabled(locationManager.GPS_PROVIDER))
             currentProvider = locationManager.GPS_PROVIDER;
-        else if (locationManager.isProviderEnabled(locationManager.NETWORK_PROVIDER))
+        else*/
+        if (locationManager.isProviderEnabled(locationManager.NETWORK_PROVIDER))
             currentProvider = locationManager.NETWORK_PROVIDER;
 
         //Есть активный провайдер, получим координаты
@@ -154,6 +158,27 @@ public class GeoManager {
         public void onProviderDisabled(String provider) {
 
         }
+    }
+
+    public static int getRadiusAreaItemByValue(int value){
+        Context context = AppInstance.getAppContext();
+        String[] radiusItems = context.getResources().getStringArray(R.array.radius_items);
+
+        int indexArray = -1;
+
+        String valueString = Integer.toString(value);
+
+        for (int i = 0; i < radiusItems.length; i++){
+            if (radiusItems[i].equals(valueString)){
+                indexArray = i;
+                break;
+            }
+        }
+
+        if (indexArray >=0)
+            return indexArray;
+        else
+            return getRadiusAreaItemByValue(Constants.DEFAULT_RADIUS_AREA);
     }
 
 }

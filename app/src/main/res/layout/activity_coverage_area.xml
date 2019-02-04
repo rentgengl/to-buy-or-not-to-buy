@@ -27,16 +27,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radius_area"></fragment>
 
-    <EditText
+    <Spinner
         android:id="@+id/radius_area"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:ems="5"
-        android:gravity="center_vertical|center_horizontal"
-        android:inputType="numberSigned"
+        android:entries="@array/radius_items"
+        android:gravity="center_vertical|center_horizontal|center"
         app:layout_constraintEnd_toStartOf="@+id/radius_unit_head"
-        app:layout_constraintStart_toEndOf="@+id/radius_head"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -53,10 +52,8 @@
         android:id="@+id/radius_head"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:text="@string/radius"
         app:layout_constraintBaseline_toBaselineOf="@+id/radius_area"
-        app:layout_constraintStart_toEndOf="@+id/use_auto_position" />
+        app:layout_constraintEnd_toStartOf="@+id/radius_area" />
 
 </android.support.constraint.ConstraintLayout>
