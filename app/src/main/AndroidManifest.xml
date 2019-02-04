@@ -56,6 +56,10 @@
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden">
         </activity>
+        <activity android:name=".activity.CoverageAreaActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
+        </activity>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -70,6 +74,10 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
     </application>
 

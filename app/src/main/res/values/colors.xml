@@ -6,4 +6,5 @@
     <color name="actionbar_color">#008577</color>
     <color name="colorTextGroupResultSearch">#616161</color>
     <color name="ldrawer_color">#FFFFFF</color>
+    <color name="colorGeoArea">#d4d0daff</color>
 </resources>
