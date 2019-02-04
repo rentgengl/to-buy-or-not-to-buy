@@ -14,11 +14,12 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 
-    <EditText
+    <com.world.jteam.bonb.model.PriceEditView
         android:id="@+id/newPriceEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="number" />
+
 
 </LinearLayout>

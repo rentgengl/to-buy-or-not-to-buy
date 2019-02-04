@@ -1,5 +1,6 @@
 package com.world.jteam.bonb;
 
+import com.world.jteam.bonb.model.ModelComment;
 import com.world.jteam.bonb.model.ModelGroup;
 import com.world.jteam.bonb.model.ModelPrice;
 import com.world.jteam.bonb.model.ModelProductFull;
@@ -43,5 +44,8 @@ public interface DataApi {
 
     @POST("addNewPrice.php")
     Call<Void> addNewPrice(@Body ModelPrice price);
+
+    @POST("addNewComment.php")
+    Call<Void> addNewComment(@Body ModelComment comment);
 
 }

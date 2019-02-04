@@ -170,6 +170,9 @@ public class AuthenticationActivity extends AppCompatActivity {
 
 
     private void getStart(ModelUser mUser){
+        //Сохраню тек.юзера в глобальные переменные
+        AppInstance.setUser(mUser);
+
         Intent intent = new Intent(AuthenticationActivity.this, MainActivity.class);
         intent.putExtra("userID",mUser.id);
         startActivity(intent);

@@ -12,9 +12,10 @@ import com.world.jteam.bonb.model.ModelUser;
 import java.io.IOException;
 
 public class AppInstance extends Application {
+
     private static Context sContext;
     private static boolean sFirstStart;
-    private static ModelUser user;
+    private ModelUser user;
 
     @Override
     public void onCreate() {
@@ -60,10 +61,19 @@ public class AppInstance extends Application {
         return sContext;
     }
 
+    public static ModelUser getUser(){
+        return null;
+    }
+
+    public static void setUser(ModelUser user){
+
+    }
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
+
 
 }
