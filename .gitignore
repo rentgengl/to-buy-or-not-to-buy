@@ -11,3 +11,4 @@
 .externalNativeBuild
 /credentials.json
 /.gitignore
+/.app/src/main/res/values/google_maps_api.xml
