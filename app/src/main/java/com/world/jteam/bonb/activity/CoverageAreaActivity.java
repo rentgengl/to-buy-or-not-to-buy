@@ -1,22 +1,20 @@
 package com.world.jteam.bonb.activity;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
-import android.text.InputFilter;
-import android.text.Spanned;
 import android.text.TextWatcher;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CompoundButton;
-import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Switch;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -31,16 +29,13 @@ import com.world.jteam.bonb.Constants;
 import com.world.jteam.bonb.R;
 import com.world.jteam.bonb.geo.GeoManager;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class CoverageAreaActivity extends FragmentActivity implements OnMapReadyCallback {
     private final FragmentActivity mThis=this;
 
     private GoogleMap mMap;
 
     private Switch mUseAutoPosView;
-    private EditText mRadiusAreaView;
+    private Spinner mRadiusAreaView;
     private Circle mCircleArea;
 
     private static final int GEO_REQUEST = 1;
@@ -55,10 +50,9 @@ public class CoverageAreaActivity extends FragmentActivity implements OnMapReady
         mUseAutoPosView.setChecked(AppInstance.isAutoGeoPosition());
         mUseAutoPosView.setOnCheckedChangeListener(new UseAutoPosOnCheckedChangeListener());
 
-        mRadiusAreaView=(EditText) findViewById(R.id.radius_area);
-        mRadiusAreaView.setText(Integer.toString(AppInstance.getRadiusArea()));
-        mRadiusAreaView.setFilters(new InputFilter[] {new RadiusAreaFormatInputFilter()});
-        mRadiusAreaView.addTextChangedListener(new RadiusAreaTextChangedListener());
+        mRadiusAreaView=(Spinner) findViewById(R.id.radius_area);
+        mRadiusAreaView.setSelection(GeoManager.getRadiusAreaItemByValue(AppInstance.getRadiusArea()));
+        mRadiusAreaView.setOnItemSelectedListener(new RadiusAreaItemSelectedListener());
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.coverage_area);
@@ -105,8 +99,6 @@ public class CoverageAreaActivity extends FragmentActivity implements OnMapReady
         mMap = googleMap;
         mMap.setOnMapClickListener(new MapClickListener());
         mMap.getUiSettings().setZoomControlsEnabled(true);
-        //mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        //mMap.setMyLocationEnabled(true);
 
         LatLng position = AppInstance.getGeoPosition();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position,10));
@@ -143,21 +135,17 @@ public class CoverageAreaActivity extends FragmentActivity implements OnMapReady
         }
     }
 
-    private class RadiusAreaTextChangedListener implements TextWatcher{
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
+    private class RadiusAreaItemSelectedListener implements AdapterView.OnItemSelectedListener {
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             if (mCircleArea != null)
                 mCircleArea.setRadius(getRadiusArea()*1000);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
         }
     }
 
@@ -195,35 +183,12 @@ public class CoverageAreaActivity extends FragmentActivity implements OnMapReady
 
     //Вспомогательные
     private int getRadiusArea(){
-        String radiusArea = mRadiusAreaView.getText().toString();
-        if (radiusArea.equals("")){
-            return Constants.DEFAULT_RADIUS_AREA;
-        } else {
-            return Integer.parseInt(radiusArea);
-        }
+        String radiusArea = mRadiusAreaView.getSelectedItem().toString();
+        return Integer.parseInt(radiusArea);
     }
 
     private boolean isAutoGeoPosition(){
         return mUseAutoPosView.isChecked();
-    }
-
-    private class RadiusAreaFormatInputFilter implements InputFilter {
-
-        Pattern mPattern = Pattern.compile("^|([1-9]{1,1}[0-9]{0,2})");
-
-        @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-            String result =
-                    dest.subSequence(0, dstart)
-                            + source.toString()
-                            + dest.subSequence(dend, dest.length());
-
-            Matcher matcher = mPattern.matcher(result);
-
-            if (!matcher.matches()) return dest.subSequence(dstart, dend);
-
-            return null;
-        }
     }
 
 }
