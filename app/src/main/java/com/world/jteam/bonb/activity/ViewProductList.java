@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.activity.BarcodeActivity;
 import com.world.jteam.bonb.Constants;
 import com.world.jteam.bonb.DataApi;
@@ -129,7 +130,10 @@ public class ViewProductList extends Activity implements View.OnClickListener {
 
         //Запрос на сервер
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-        Call<ModelProductFull> serviceCall = mDataApi.getProductFullByEAN(EAN);
+        Call<ModelProductFull> serviceCall = mDataApi.getProductFullByEAN(EAN,
+                AppInstance.getRadiusArea(),
+                AppInstance.getGeoPosition().latitude,
+                AppInstance.getGeoPosition().longitude);
         //Обработчик ответа сервера
         serviceCall.enqueue(new Callback<ModelProductFull>() {
             @Override

@@ -1,5 +1,6 @@
 package com.world.jteam.bonb;
 
+import com.world.jteam.bonb.model.ModelComment;
 import com.world.jteam.bonb.model.ModelGroup;
 import com.world.jteam.bonb.model.ModelPrice;
 import com.world.jteam.bonb.model.ModelProductFull;
@@ -27,10 +28,16 @@ public interface DataApi {
                                                       @Query("pageSize") int pageSize);
 
     @GET("GetProductFullById.php")
-    Call<ModelProductFull> getProductFullById(@Query("id") int id);
+    Call<ModelProductFull> getProductFullById(@Query("id") int id,
+                                              @Query("radius") int radius,
+                                              @Query("lat") double lat,
+                                              @Query("lng") double lng);
 
     @GET("GetProductFullByEAN.php")
-    Call<ModelProductFull> getProductFullByEAN(@Query("EAN") String ean);
+    Call<ModelProductFull> getProductFullByEAN(@Query("EAN") String ean,
+                                               @Query("radius") int radius,
+                                               @Query("lat") double lat,
+                                               @Query("lng") double lng);
 
     @GET("GetGroupList.php")
     Call<List<ModelGroup>> getGroupList();
@@ -43,5 +50,8 @@ public interface DataApi {
 
     @POST("addNewPrice.php")
     Call<Void> addNewPrice(@Body ModelPrice price);
+
+    @POST("addNewComment.php")
+    Call<Void> addNewComment(@Body ModelComment comment);
 
 }

@@ -12,6 +12,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.Constants;
 import com.world.jteam.bonb.DataApi;
 import com.world.jteam.bonb.R;
@@ -49,7 +50,10 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
             public void onClick(final View v) {
 
                 DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-                Call<ModelProductFull> serviceCall = mDataApi.getProductFullById((int)v.getTag());
+                Call<ModelProductFull> serviceCall = mDataApi.getProductFullById((int)v.getTag(),
+                        AppInstance.getRadiusArea(),
+                        AppInstance.getGeoPosition().latitude,
+                        AppInstance.getGeoPosition().longitude);
                 serviceCall.enqueue(new Callback<ModelProductFull>() {
                     @Override
                     public void onResponse(Call<ModelProductFull> call, Response<ModelProductFull> response) {

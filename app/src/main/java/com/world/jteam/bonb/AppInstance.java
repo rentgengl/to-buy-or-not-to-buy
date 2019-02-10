@@ -16,7 +16,7 @@ import java.io.IOException;
 public class AppInstance extends Application {
     private static Context sContext;
     private static boolean sFirstStart;
-    private static ModelUser user;
+    private static ModelUser sUser;
 
     private static boolean sAutoGeoPosition = true;
     private static int sRadiusArea = Constants.DEFAULT_RADIUS_AREA;
@@ -74,6 +74,14 @@ public class AppInstance extends Application {
     }
 
     //Мультидекс - необходимый фикс для запуска приложения
+    public static ModelUser getUser(){
+        return AppInstance.sUser;
+    }
+
+    public static void setUser(ModelUser user){
+        AppInstance.sUser = user;
+    }
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
