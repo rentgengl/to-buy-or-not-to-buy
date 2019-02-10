@@ -60,15 +60,15 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private final AppCompatActivity mThis=this;
+    private final AppCompatActivity mThis = this;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
 
     //Категории
     private Product.CategoriesAdapter mCategoriesAdapter;
-    private LinkedHashMap<ModelGroup,LinkedHashMap> mProductCategoriesCurrent; //В момент выбора
-    private LinkedHashMap<ModelGroup,LinkedHashMap> mProductCategoriesSelected; //Выбранный
+    private LinkedHashMap<ModelGroup, LinkedHashMap> mProductCategoriesCurrent; //В момент выбора
+    private LinkedHashMap<ModelGroup, LinkedHashMap> mProductCategoriesSelected; //Выбранный
 
 
     //Идентификатор результата сканирования ШК
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Геолокация
         int rc = ActivityCompat.checkSelfPermission(mThis, Manifest.permission.ACCESS_FINE_LOCATION);
-        if (rc == PackageManager.PERMISSION_GRANTED){
+        if (rc == PackageManager.PERMISSION_GRANTED) {
             GeoManager.starGeoPositionTrace();
         } else {
             if (!ActivityCompat.shouldShowRequestPermissionRationale(mThis, Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -172,34 +172,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             //Категории
             case android.R.id.home:
                 if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
                     mDrawerLayout.closeDrawer(mDrawerList);
                 } else {
 
-                    if (mProductCategoriesSelected==null){
+                    if (mProductCategoriesSelected == null) {
                         mProductCategoriesSelected = Product.getProductCategories();
                     }
-                    if (mProductCategoriesSelected!=null){
+                    if (mProductCategoriesSelected != null) {
                         ArrayList productCategoriesList =
-                                Product.getCurrentProductCategories(mProductCategoriesSelected,Product.CAT_NM_VIEW);
+                                Product.getCurrentProductCategories(mProductCategoriesSelected, Product.CAT_NM_VIEW);
 
-                        mCategoriesAdapter=new Product.CategoriesAdapter(mThis,productCategoriesList);
+                        mCategoriesAdapter = new Product.CategoriesAdapter(mThis, productCategoriesList);
                         mDrawerList.setAdapter(mCategoriesAdapter);
                         mDrawerList.setOnItemClickListener(new ProductCategoryOnItemClickListener());
-                        mProductCategoriesCurrent=mProductCategoriesSelected;
+                        mProductCategoriesCurrent = mProductCategoriesSelected;
 
                         mDrawerLayout.openDrawer(mDrawerList);
                     } else {
-                        Toast.makeText(mThis,R.string.product_categories_not_init,Toast.LENGTH_LONG).show();
+                        Toast.makeText(mThis, R.string.product_categories_not_init, Toast.LENGTH_LONG).show();
                     }
                 }
                 break;
             //Геопозиция
             case R.id.choose_geo:
-                Intent geoIntent=new Intent(this,CoverageAreaActivity.class);
+                Intent geoIntent = new Intent(this, CoverageAreaActivity.class);
                 startActivity(geoIntent);
                 break;
         }
@@ -209,25 +209,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Категории
 
-    private class ProductCategoryOnItemClickListener implements AdapterView.OnItemClickListener{
+    private class ProductCategoryOnItemClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            ModelGroup productCategory=mCategoriesAdapter.getItem(position);
-            LinkedHashMap<ModelGroup,LinkedHashMap> productCategoryCategories=
+            ModelGroup productCategory = mCategoriesAdapter.getItem(position);
+            LinkedHashMap<ModelGroup, LinkedHashMap> productCategoryCategories =
                     mProductCategoriesCurrent.get(productCategory);
 
             searchByGroup(productCategory.id);
             //Раскрытие группы
-            if (productCategoryCategories==null){
-                mProductCategoriesSelected=mProductCategoriesCurrent;
+            if (productCategoryCategories == null) {
+                mProductCategoriesSelected = mProductCategoriesCurrent;
                 mDrawerLayout.closeDrawer(mDrawerList);
-            //Возврат к родителю группы
+                //Возврат к родителю группы
             } else {
 
-                mProductCategoriesCurrent =productCategoryCategories;
+                mProductCategoriesCurrent = productCategoryCategories;
                 mCategoriesAdapter.clear();
                 mCategoriesAdapter.addAll(Product.getCurrentProductCategories(
-                        mProductCategoriesCurrent,Product.CAT_NM_VIEW));
+                        mProductCategoriesCurrent, Product.CAT_NM_VIEW));
             }
 
         }
@@ -237,15 +237,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode){
+        switch (requestCode) {
             case BARCODE_REQUEST:
                 //Обрабочик скана ШК
-                if (data!=null){
-                    String barcodeResult=data.getStringExtra(getApplicationContext().getPackageName()+".barcode");
-                    if (resultCode==RESULT_OK){
+                if (data != null) {
+                    String barcodeResult = data.getStringExtra(getApplicationContext().getPackageName() + ".barcode");
+                    if (resultCode == RESULT_OK) {
                         //Попробую открыть карточку товара по ШК
                         showProductDetailByEAN(barcodeResult);
-                    } else{
+                    } else {
                         //Ошибка сканирования ШК
                     }
                 }
@@ -257,10 +257,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        switch (requestCode){
+        switch (requestCode) {
             case GEO_REQUEST:
                 //Обработка права доступа на геолокацию
-                if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     GeoManager.starGeoPositionTrace();
                 } else {
                     AppInstance.setAutoGeoPosition(false);
@@ -274,8 +274,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (v.getId() == R.id.search_panel_button) {
             //Получить ШК
-            Intent barcodeIntent=new Intent(this,BarcodeActivity.class);
-            startActivityForResult(barcodeIntent,BARCODE_REQUEST);
+            Intent barcodeIntent = new Intent(this, BarcodeActivity.class);
+            startActivityForResult(barcodeIntent, BARCODE_REQUEST);
 
         } else {
             //Клик по группе
@@ -289,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Обработчик ввода текста в поле поиска
     private class OnKeyPress implements View.OnKeyListener {
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN & keyCode!=KeyEvent.KEYCODE_DEL){
+            if (event.getAction() == KeyEvent.ACTION_DOWN & keyCode != KeyEvent.KEYCODE_DEL) {
                 //(keyCode == KeyEvent.KEYCODE_ENTER)) {
                 // сохраняем текст, введенный до нажатия Enter в переменную
                 EditText editText = v.findViewById(R.id.search_panel_text);
@@ -304,11 +304,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //Показать карточку товара по ШК
-    private void showProductDetailByEAN(String EAN){
+    private void showProductDetailByEAN(String EAN) {
 
         //Запрос на сервер
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-        Call<ModelProductFull> serviceCall = mDataApi.getProductFullByEAN(EAN);
+        Call<ModelProductFull> serviceCall = mDataApi.getProductFullByEAN(EAN,
+                AppInstance.getRadiusArea(),
+                AppInstance.getGeoPosition().latitude,
+                AppInstance.getGeoPosition().longitude);
         //Обработчик ответа сервера
         serviceCall.enqueue(new Callback<ModelProductFull>() {
             @Override
@@ -328,7 +331,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //Показать карточку товара по объекту
-    private void showProductDetail(ModelProductFull prod){
+    private void showProductDetail(ModelProductFull prod) {
 
         Intent intent = new Intent(this, ViewProduct.class);
         intent.putExtra("object", prod);
@@ -337,11 +340,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void showErrorSearch() {
-        Toast mt = Toast.makeText(this,"Ничего не найдено", Toast.LENGTH_LONG);
+        Toast mt = Toast.makeText(this, "Ничего не найдено", Toast.LENGTH_LONG);
         mt.show();
     }
 
-    public void showGroupList(List<ModelGroup> groupList){
+    public void showGroupList(List<ModelGroup> groupList) {
         FlowLayout resultGroup = findViewById(R.id.search_result_group);
         //Подчищу старые теги групп
         resultGroup.removeAllViews();
@@ -373,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Подгрузка списка групп
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-        Call<ModelSearchResult> serviceCall = mDataApi.getProductGroupListByName(name,1,100);
+        Call<ModelSearchResult> serviceCall = mDataApi.getProductGroupListByName(name, 1, 100);
         serviceCall.enqueue(new Callback<ModelSearchResult>() {
             @Override
             public void onResponse(Call<ModelSearchResult> call, Response<ModelSearchResult> response) {
@@ -392,7 +395,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //Поиск товаров по группе
-    private void searchByGroup(int groupId){
+    private void searchByGroup(int groupId) {
         this.searchMethod = new ModelSearchProductMethod(groupId);
         pagingStart();
     }
