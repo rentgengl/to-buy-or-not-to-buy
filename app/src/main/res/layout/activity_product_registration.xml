@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             app:layout_constraintEnd_toEndOf="@+id/rating_product"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="32dp"
             android:isIndicator="false"
             android:numStars="5"
             android:rating="0"
@@ -88,7 +88,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/product_category" />
 
-        <TextView
+        <!--<TextView
             android:id="@+id/price_head"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -105,7 +105,7 @@
             android:layout_marginTop="12dp"
             app:layout_constraintEnd_toEndOf="@+id/rating_product"
             app:layout_constraintStart_toEndOf="@+id/price_head"
-            app:layout_constraintTop_toBottomOf="@+id/rating_product" />
+            app:layout_constraintTop_toBottomOf="@+id/rating_product" />-->
 
         <Button
             android:id="@+id/product_category"

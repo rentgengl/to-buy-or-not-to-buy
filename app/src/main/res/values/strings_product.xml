@@ -3,4 +3,8 @@
     <string name="default_category_name">Прочее</string>
     <string name="product_categories_not_init">Категории не инициализированы!</string>
     <string name="barcode_not_check">Штрихкод не соответствует формату!</string>
+    <string name="more_comment">Больше...</string>
+    <string name="minimize_comment">Свернуть</string>
+    <string name="more_price">Больше...</string>
+    <string name="minimize_price">Свернуть</string>
 </resources>

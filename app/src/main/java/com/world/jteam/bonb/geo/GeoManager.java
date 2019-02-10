@@ -24,6 +24,10 @@ public class GeoManager {
 
     private static final String SETTINGS_NAME="geo";
 
+    private GeoManager(){
+
+    }
+
     public static boolean getAutoGeoPositionFromSettings(boolean defval){
         SharedPreferences sp = AppInstance.getAppContext().getSharedPreferences(SETTINGS_NAME,0);
         return sp.getBoolean("auto_geo_position",defval);
