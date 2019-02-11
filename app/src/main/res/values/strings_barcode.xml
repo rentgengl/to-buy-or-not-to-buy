@@ -4,4 +4,5 @@
     <string name="not_camera_permission">Приложению запрещено использовать камеру</string>
     <string name="service_barcode">Внутренние штрихкоды не поддреживаются</string>
     <string name="error_start_barcode_detector">Не удалось запустить считыватель штрихкода</string>
+    <string name="barcode_read_info">Наведите на штрихкод</string>
 </resources>
