@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -102,6 +103,16 @@ public class ViewProduct extends AppCompatActivity implements BaseSliderView.OnS
                     commentListViewLite.setVisibility(View.VISIBLE);
                     showCommentView.setText(R.string.more_comment);
                 }
+            }
+        });
+
+        //Обработчик рейтинга
+        RatingBar productRaitingView = this.findViewById(R.id.productRaiting);
+        productRaitingView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                startInputComment();
+                return false;
             }
         });
     }
@@ -450,7 +461,6 @@ public class ViewProduct extends AppCompatActivity implements BaseSliderView.OnS
 
     }
 
-
     public void addNewPrice(int price, int market) {
 
         ModelPrice mprice = new ModelPrice(thisProductFull.id, price, market, AppInstance.getUser().id);
@@ -467,5 +477,47 @@ public class ViewProduct extends AppCompatActivity implements BaseSliderView.OnS
                 //Что за дичь
             }
         });
+    }
+
+    //Запускает диалог ввода отзыва и рейтнга
+    public void startInputComment() {
+
+        // get prompts.xml view
+        LayoutInflater li = LayoutInflater.from(this);
+        View commentView = li.inflate(R.layout.activity_dialog_new_comment, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(commentView);
+
+        final RatingBar productRaiting = commentView.findViewById(R.id.productRaiting);
+        final EditText productComment = commentView.findViewById(R.id.productComment);
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                addNewComment(productRaiting.getRating(), productComment.getText().toString());
+                            }
+                        })
+                .setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
+
+    public void addNewComment(float rating, String comment){
+
     }
 }

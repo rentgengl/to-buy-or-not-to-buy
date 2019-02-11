@@ -11,14 +11,14 @@
 
         android:id="@+id/productRaiting"
         style="@style/Widget.AppCompat.RatingBar.Indicator"
-        android:layout_margin="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
+        android:layout_margin="8dp"
+        android:isIndicator="false"
         android:numStars="5"
-        android:rating="1"
-        android:stepSize="1"
+        android:rating="0"
+        android:stepSize="0.5"
         android:theme="@style/ProductRaitigBar" />
 
     <android.support.design.widget.TextInputLayout
@@ -26,9 +26,13 @@
         android:layout_height="match_parent">
 
         <android.support.design.widget.TextInputEditText
+            android:id="@+id/productComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Комментарий" />
+            android:gravity="top|left"
+            android:hint="@string/product_comment_hint"
+            android:inputType="textMultiLine"
+            android:minLines="3" />
     </android.support.design.widget.TextInputLayout>
 
 
