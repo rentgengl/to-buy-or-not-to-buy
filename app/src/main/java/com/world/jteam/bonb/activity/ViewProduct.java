@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -107,12 +108,14 @@ public class ViewProduct extends AppCompatActivity implements BaseSliderView.OnS
         });
 
         //Обработчик рейтинга
-        RatingBar productRaitingView = this.findViewById(R.id.productRaiting);
-        productRaitingView.setOnTouchListener(new View.OnTouchListener() {
+        RatingBar productRaitingView = findViewById(R.id.productRaiting);
+        productRaitingView.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                startInputComment();
-                return false;
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                if (fromUser) {
+                    startInputComment(rating);
+                    ratingBar.setRating(thisProductFull.raiting);
+                }
             }
         });
     }
@@ -480,7 +483,7 @@ public class ViewProduct extends AppCompatActivity implements BaseSliderView.OnS
     }
 
     //Запускает диалог ввода отзыва и рейтнга
-    public void startInputComment() {
+    public void startInputComment(float rating) {
 
         // get prompts.xml view
         LayoutInflater li = LayoutInflater.from(this);
@@ -491,8 +494,11 @@ public class ViewProduct extends AppCompatActivity implements BaseSliderView.OnS
         // set prompts.xml to alertdialog builder
         alertDialogBuilder.setView(commentView);
 
-        final RatingBar productRaiting = commentView.findViewById(R.id.productRaiting);
-        final EditText productComment = commentView.findViewById(R.id.productComment);
+        final RatingBar productRaitingView = findViewById(R.id.productRaiting);
+        final RatingBar productRaitingNewView = commentView.findViewById(R.id.productRaiting);
+        final EditText productCommentNewView = commentView.findViewById(R.id.productComment);
+
+        productRaitingNewView.setRating(rating);
 
         // set dialog message
         alertDialogBuilder
@@ -500,7 +506,8 @@ public class ViewProduct extends AppCompatActivity implements BaseSliderView.OnS
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                addNewComment(productRaiting.getRating(), productComment.getText().toString());
+                                addNewComment(productRaitingNewView.getRating(), productCommentNewView.getText().toString());
+                                productRaitingView.setIsIndicator(true);
                             }
                         })
                 .setNegativeButton(R.string.cancel,
@@ -511,7 +518,16 @@ public class ViewProduct extends AppCompatActivity implements BaseSliderView.OnS
                         });
 
         // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+
+        productCommentNewView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                }
+            }
+        });
 
         // show it
         alertDialog.show();
