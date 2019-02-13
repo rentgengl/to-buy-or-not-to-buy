@@ -1,4 +1,4 @@
-package com.world.jteam.bonb.model;
+package com.world.jteam.bonb.activity;
 
 import android.content.Context;
 import android.text.InputFilter;

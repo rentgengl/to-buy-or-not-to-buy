@@ -33,14 +33,11 @@ import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.geo.GeoManager;
 import com.world.jteam.bonb.ldrawer.ActionBarDrawerToggle;
 import com.world.jteam.bonb.ldrawer.DrawerArrowDrawable;
-import com.world.jteam.bonb.activity.BarcodeActivity;
 import com.world.jteam.bonb.Constants;
-import com.world.jteam.bonb.DataApi;
-import com.world.jteam.bonb.DatabaseApp;
-import com.world.jteam.bonb.FlowLayout;
+import com.world.jteam.bonb.server.DataApi;
 import com.world.jteam.bonb.Product;
 import com.world.jteam.bonb.R;
-import com.world.jteam.bonb.SingletonRetrofit;
+import com.world.jteam.bonb.server.SingletonRetrofit;
 import com.world.jteam.bonb.model.ModelGroup;
 import com.world.jteam.bonb.model.ModelProduct;
 import com.world.jteam.bonb.model.ModelProductFull;
@@ -333,7 +330,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Показать карточку товара по объекту
     private void showProductDetail(ModelProductFull prod) {
 
-        Intent intent = new Intent(this, ViewProduct.class);
+        Intent intent = new Intent(this, ProductActivity.class);
         intent.putExtra("object", prod);
         startActivity(intent);
 
@@ -345,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void showGroupList(List<ModelGroup> groupList) {
-        FlowLayout resultGroup = findViewById(R.id.search_result_group);
+        FlowLayoutView resultGroup = findViewById(R.id.search_result_group);
         //Подчищу старые теги групп
         resultGroup.removeAllViews();
         for (ModelGroup strGr : groupList) {

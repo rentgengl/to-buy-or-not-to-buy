@@ -70,20 +70,20 @@
                     android:textAppearance="@style/TextTitle1" />
             </LinearLayout>
 
-            <com.world.jteam.bonb.NonScrollListView
+            <com.world.jteam.bonb.activity.NonScrollListView
                 android:id="@+id/comment_list_lite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:visibility="visible">
-            </com.world.jteam.bonb.NonScrollListView>
+            </com.world.jteam.bonb.activity.NonScrollListView>
 
-            <com.world.jteam.bonb.NonScrollListView
+            <com.world.jteam.bonb.activity.NonScrollListView
                 android:id="@+id/comment_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:visibility="gone"></com.world.jteam.bonb.NonScrollListView>
+                android:visibility="gone"></com.world.jteam.bonb.activity.NonScrollListView>
 
             <Button
                 android:id="@+id/show_comment"
@@ -131,19 +131,19 @@
                     android:visibility="visible" />
             </LinearLayout>
 
-            <com.world.jteam.bonb.NonScrollListView
+            <com.world.jteam.bonb.activity.NonScrollListView
                 android:id="@+id/price_list_lite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:visibility="visible"></com.world.jteam.bonb.NonScrollListView>
+                android:visibility="visible"></com.world.jteam.bonb.activity.NonScrollListView>
 
-            <com.world.jteam.bonb.NonScrollListView
+            <com.world.jteam.bonb.activity.NonScrollListView
                 android:id="@+id/price_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:visibility="gone"></com.world.jteam.bonb.NonScrollListView>
+                android:visibility="gone"></com.world.jteam.bonb.activity.NonScrollListView>
 
             <Button
                 android:id="@+id/show_price"

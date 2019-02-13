@@ -4,8 +4,8 @@ import android.arch.paging.PageKeyedDataSource;
 import android.support.annotation.NonNull;
 
 import com.world.jteam.bonb.Constants;
-import com.world.jteam.bonb.DataApi;
-import com.world.jteam.bonb.SingletonRetrofit;
+import com.world.jteam.bonb.server.DataApi;
+import com.world.jteam.bonb.server.SingletonRetrofit;
 import com.world.jteam.bonb.model.ModelProduct;
 import com.world.jteam.bonb.model.ModelSearchProductMethod;
 import com.world.jteam.bonb.model.ModelSearchResult;

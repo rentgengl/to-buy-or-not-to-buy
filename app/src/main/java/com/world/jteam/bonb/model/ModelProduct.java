@@ -2,7 +2,7 @@ package com.world.jteam.bonb.model;
 
 import android.support.v7.util.DiffUtil;
 
-import com.world.jteam.bonb.HTTPService;
+import com.world.jteam.bonb.server.HTTPService;
 
 import java.io.IOException;
 

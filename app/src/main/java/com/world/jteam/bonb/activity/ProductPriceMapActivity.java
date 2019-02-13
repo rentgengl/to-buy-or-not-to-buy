@@ -16,7 +16,7 @@ import com.google.maps.android.ui.IconGenerator;
 
 import com.world.jteam.bonb.R; //Временно до объединения пакетов
 
-public class ViewProductPriceMap extends FragmentActivity implements OnMapReadyCallback {
+public class ProductPriceMapActivity extends FragmentActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
 
     @Override

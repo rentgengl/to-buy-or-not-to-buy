@@ -14,10 +14,10 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.Constants;
-import com.world.jteam.bonb.DataApi;
+import com.world.jteam.bonb.server.DataApi;
 import com.world.jteam.bonb.R;
-import com.world.jteam.bonb.SingletonRetrofit;
-import com.world.jteam.bonb.activity.ViewProduct;
+import com.world.jteam.bonb.server.SingletonRetrofit;
+import com.world.jteam.bonb.activity.ProductActivity;
 import com.world.jteam.bonb.model.ModelProduct;
 import com.world.jteam.bonb.model.ModelProductFull;
 
@@ -60,7 +60,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
                         Context mContext = v.getContext();
                         ModelProductFull ss = response.body();
                         //Context mContext = AppInstance.getAppContext();
-                        Intent intent = new Intent(mContext, ViewProduct.class);
+                        Intent intent = new Intent(mContext, ProductActivity.class);
                         intent.putExtra("object", ss);
                         mContext.startActivity(intent);
 

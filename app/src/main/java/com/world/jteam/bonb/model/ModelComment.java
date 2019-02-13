@@ -3,7 +3,7 @@ package com.world.jteam.bonb.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.world.jteam.bonb.HTTPService;
+import com.world.jteam.bonb.server.HTTPService;
 
 import java.util.ArrayList;
 

@@ -8,7 +8,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -29,14 +28,12 @@ import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.squareup.picasso.Picasso;
 import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.Constants;
-import com.world.jteam.bonb.DataApi;
-import com.world.jteam.bonb.NonScrollListView;
+import com.world.jteam.bonb.server.DataApi;
 import com.world.jteam.bonb.R;
-import com.world.jteam.bonb.SingletonRetrofit;
+import com.world.jteam.bonb.server.SingletonRetrofit;
 import com.world.jteam.bonb.model.ModelComment;
 import com.world.jteam.bonb.model.ModelPrice;
 import com.world.jteam.bonb.model.ModelProductFull;
-import com.world.jteam.bonb.model.ModelUser;
 
 import java.util.ArrayList;
 
@@ -44,7 +41,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ViewProduct extends AppCompatActivity implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
+public class ProductActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 
     public ModelProductFull thisProductFull;
     private SliderLayout mDemoSlider;
@@ -137,7 +134,7 @@ public class ViewProduct extends AppCompatActivity implements BaseSliderView.OnS
 
         }
 
-        Intent intent = new Intent(this, ViewProductPriceMap.class);
+        Intent intent = new Intent(this, ProductPriceMapActivity.class);
         intent.putExtra("name", arrName);
         intent.putExtra("lat", arrLat);
         intent.putExtra("lng", arrLng);

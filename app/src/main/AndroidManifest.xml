@@ -37,17 +37,12 @@
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden">
         </activity>
-        <activity android:name=".activity.ViewProduct"
+        <activity android:name=".activity.ProductActivity"
             android:label="activity_product"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden">
         </activity>
-        <activity android:name=".activity.ViewProductList"
-            android:label="head_activity_product_list"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden">
-        </activity>
-        <activity android:name=".activity.ViewProductPriceMap"
+        <activity android:name=".activity.ProductPriceMapActivity"
             android:label=""
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden">

@@ -25,14 +25,14 @@
                 android:layout_height="wrap_content" />
 
 
-            <com.world.jteam.bonb.FlowLayout
+            <com.world.jteam.bonb.activity.FlowLayoutView
                 android:id="@+id/search_result_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:paddingH="10"
                 app:paddingV="10" >
 
-            </com.world.jteam.bonb.FlowLayout>
+            </com.world.jteam.bonb.activity.FlowLayoutView>
 
 
             <android.support.v7.widget.RecyclerView

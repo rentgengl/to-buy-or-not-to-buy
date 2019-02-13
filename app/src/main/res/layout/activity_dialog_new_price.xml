@@ -14,7 +14,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 
-    <com.world.jteam.bonb.model.PriceEditView
+    <com.world.jteam.bonb.activity.PriceEditView
         android:id="@+id/newPriceEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

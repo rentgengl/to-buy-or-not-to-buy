@@ -24,9 +24,7 @@ import android.widget.Toast;
 
 import com.world.jteam.bonb.media.CameraManager;
 import com.world.jteam.bonb.media.ImageManager;
-import com.world.jteam.bonb.model.BarcodeEditView;
 import com.world.jteam.bonb.Constants;
-import com.world.jteam.bonb.DatabaseApp;
 import com.world.jteam.bonb.Product;
 import com.world.jteam.bonb.R;
 import com.world.jteam.bonb.model.ModelGroup;
