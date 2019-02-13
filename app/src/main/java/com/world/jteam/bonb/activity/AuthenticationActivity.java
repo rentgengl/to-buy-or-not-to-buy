@@ -18,10 +18,9 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.Constants;
-import com.world.jteam.bonb.DataApi;
+import com.world.jteam.bonb.server.DataApi;
 import com.world.jteam.bonb.R;
-import com.world.jteam.bonb.SingletonRetrofit;
-import com.world.jteam.bonb.model.ModelSearchResult;
+import com.world.jteam.bonb.server.SingletonRetrofit;
 import com.world.jteam.bonb.model.ModelUser;
 
 import java.io.File;

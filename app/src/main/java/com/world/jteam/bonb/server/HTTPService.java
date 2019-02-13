@@ -1,4 +1,4 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.server;
 
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.MultipartBuilder;
@@ -6,6 +6,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+import com.world.jteam.bonb.Constants;
 import com.world.jteam.bonb.model.ModelComment;
 import com.world.jteam.bonb.model.ModelMarket;
 import com.world.jteam.bonb.model.ModelPrice;

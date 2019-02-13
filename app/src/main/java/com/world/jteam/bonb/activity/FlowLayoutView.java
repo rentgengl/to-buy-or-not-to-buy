@@ -1,18 +1,19 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.activity;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import com.world.jteam.bonb.R; //Временно до объединения пакетов
 
-public class FlowLayout extends ViewGroup {
+import com.world.jteam.bonb.R;
+
+public class FlowLayoutView extends ViewGroup {
     // padding bettwen elements
     private int PAD_H, PAD_V;
     private int mHeight;
 
-    public FlowLayout(Context context) {
+    public FlowLayoutView(Context context) {
         super(context);
         setPaddings(0, 0);
     }
@@ -24,9 +25,9 @@ public class FlowLayout extends ViewGroup {
 
     protected void setPaddings(Context ctx, AttributeSet attrs) {
         TypedArray a = ctx
-                .obtainStyledAttributes(attrs, R.styleable.FlowLayout);
-        String H = a.getString(R.styleable.FlowLayout_paddingH);
-        String V = a.getString(R.styleable.FlowLayout_paddingV);
+                .obtainStyledAttributes(attrs, R.styleable.FlowLayoutView);
+        String H = a.getString(R.styleable.FlowLayoutView_paddingH);
+        String V = a.getString(R.styleable.FlowLayoutView_paddingV);
         // LOG.d("H = " + H + "V=" + V);
         if (H == null || V == null)
             setPaddings(V == null ? 0 : Integer.parseInt(V), H == null ? 0 : Integer.parseInt(H));
@@ -37,12 +38,12 @@ public class FlowLayout extends ViewGroup {
 
     }
 
-    public FlowLayout(Context context, AttributeSet attrs) {
+    public FlowLayoutView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setPaddings(context, attrs);
     }
 
-    public FlowLayout(Context context, AttributeSet attrs, int defStyle) {
+    public FlowLayoutView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         setPaddings(context, attrs);
     }

@@ -1,7 +1,8 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.server;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.world.jteam.bonb.Constants;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

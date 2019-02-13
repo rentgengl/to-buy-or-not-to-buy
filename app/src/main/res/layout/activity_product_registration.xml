@@ -15,7 +15,7 @@
         android:focusable="true"
         android:focusableInTouchMode="true">
 
-        <com.world.jteam.bonb.model.BarcodeEditView
+        <com.world.jteam.bonb.activity.BarcodeEditView
             android:id="@+id/barcode"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -98,7 +98,7 @@
             app:layout_constraintBaseline_toBaselineOf="@+id/price"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <com.world.jteam.bonb.model.PriceEditView
+        <com.world.jteam.bonb.activity.PriceEditView
             android:id="@+id/price"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

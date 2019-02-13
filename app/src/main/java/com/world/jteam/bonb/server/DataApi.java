@@ -1,4 +1,4 @@
-package com.world.jteam.bonb;
+package com.world.jteam.bonb.server;
 
 import com.world.jteam.bonb.model.ModelComment;
 import com.world.jteam.bonb.model.ModelGroup;
