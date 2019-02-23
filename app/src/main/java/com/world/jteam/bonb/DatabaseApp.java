@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.world.jteam.bonb.model.ModelGroup;
+import com.world.jteam.bonb.model.Versions;
 import com.world.jteam.bonb.server.DataApi;
 import com.world.jteam.bonb.server.SingletonRetrofit;
 
@@ -28,6 +29,11 @@ public class DatabaseApp {
 
     }
 
+    //Получение версий данных на сервере
+
+    //Обновление данных с учетом версий
+
+
     public static void initDatabaseApp(Context context) throws IOException {
         if (databaseApp != null)
             return;
@@ -38,14 +44,17 @@ public class DatabaseApp {
 
         //Категории
         //- Получение версии категорий с сервера
-        int categoryVersionServer = 1;
+        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
+        Call<Versions> versionsCall = mDataApi.getVersions();
+        Versions servVersions = versionsCall.execute().body();
+        int categoryVersionServer = servVersions.groupVersion;
+
         //- Обновление данных по версии
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         int categoryVersion = sharedPreferences.getInt("product_categories_version", 0);
 
         if (categoryVersion != categoryVersionServer) {
             //- Получение данных по категориям с сервера
-            DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
             Call<List<ModelGroup>> serviceCall = mDataApi.getGroupList();
 
             List<ModelGroup> ss = serviceCall.execute().body();
@@ -58,6 +67,9 @@ public class DatabaseApp {
 
         }
     }
+
+
+
 
 
     public static void initGroupList(List<ModelGroup> groupList) {
