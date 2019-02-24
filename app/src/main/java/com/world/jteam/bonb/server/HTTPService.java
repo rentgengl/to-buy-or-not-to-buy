@@ -307,15 +307,27 @@ public class HTTPService {
 
         ModelComment res;
         try {
-            res = new ModelComment(null, null, 0f);
+            res = new ModelComment(0, null, null, 0f);
             if (jData.has("comment"))
                 res.comment = jData.getString("comment");
+
             if (jData.has("raiting"))
                 res.raiting = (float) jData.getDouble("raiting");
 
             if (jData.has("user_name"))
                 res.user = new ModelUser(jData.getString("user_name"), null, 0);
+
+            if (jData.has("product_id"))
+                res.product_id = jData.getInt("product_id");
+
+            if (jData.has("date")) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy");
+                res.date = dateFormat.parse(jData.getString("date"));
+            }
+
         } catch (JSONException e) {
+            return null;
+        } catch (ParseException e) {
             return null;
         }
         return res;
@@ -323,7 +335,7 @@ public class HTTPService {
     }
 
 
-    protected void setTestData(ModelProductFull pr) {
+    /*protected void setTestData(ModelProductFull pr) {
 
         ArrayList<ModelPrice> mp = new ArrayList<ModelPrice>();
         ModelMarket mark = ModelMarket.getMarketById(22);
@@ -336,7 +348,7 @@ public class HTTPService {
         pr.prices = mp;
         pr.comments = ModelComment.getTestData();
 
-    }
+    }*/
 
     //Получить из продукта JSON-объект
     JSONObject GetJObjectByProduct(ModelProduct product) {

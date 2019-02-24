@@ -35,6 +35,8 @@ import com.world.jteam.bonb.model.ModelComment;
 import com.world.jteam.bonb.model.ModelPrice;
 import com.world.jteam.bonb.model.ModelProductFull;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -272,6 +274,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         LayoutInflater lInflater;
         ArrayList<ModelComment> objects;
         boolean fullMode;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
 
         CommentListAdapter(Context context, ArrayList<ModelComment> comments, boolean fullMode) {
             this.ctx = context;
@@ -315,15 +318,18 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
 
             TextView view_user_comment = view.findViewById(R.id.user_comment);
             RatingBar view_user_raiting = view.findViewById(R.id.user_raiting);
+
             view_user_comment.setText(obj.comment);
             view_user_raiting.setRating(obj.raiting);
 
             if (fullMode) {
                 TextView view_user_name = view.findViewById(R.id.user_name);
                 TextView view_user_raiting_text = view.findViewById(R.id.user_raiting_text);
+                TextView view_user_raiting_date = view.findViewById(R.id.user_raiting_date);
                 if (obj.user != null)
                     view_user_name.setText(obj.user.name);
                 view_user_raiting_text.setText(obj.raiting + " из 5");
+                view_user_raiting_date.setText(dateFormat.format(obj.date));
             }
 
             return view;
@@ -531,6 +537,19 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
     }
 
     public void addNewComment(float rating, String comment){
+        ModelComment mcomment = new ModelComment(thisProductFull.id, AppInstance.getUser(), comment, rating);
+        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
+        Call<Void> serviceCall = mDataApi.addNewComment(mcomment);
+        serviceCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
 
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
     }
 }

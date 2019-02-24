@@ -6,14 +6,17 @@ import android.os.Parcelable;
 import com.world.jteam.bonb.server.HTTPService;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ModelComment implements Parcelable {
+    public int product_id;
     public ModelUser user;
     public String comment;
     public float raiting = 0;
+    public Date date;
 
-
-    public ModelComment(ModelUser user, String comment, float raiting){
+    public ModelComment(int product_id, ModelUser user, String comment, float raiting){
+        this.product_id = product_id;
         this.user = user;
         this.comment = comment;
         this.raiting = raiting;
@@ -26,7 +29,7 @@ public class ModelComment implements Parcelable {
 
     }
 
-    public static ArrayList<ModelComment> getTestData(){
+    /*public static ArrayList<ModelComment> getTestData(){
 
         ArrayList<ModelComment> res = new ArrayList<>();
 
@@ -42,13 +45,16 @@ public class ModelComment implements Parcelable {
                 "Ерунда, не берите это дерьмо - полная хрень!",2.3f));
         return res;
 
-    }
+    }*/
 
 
     protected ModelComment(Parcel in) {
-        user = (ModelUser) in.readValue(ModelUser.class.getClassLoader());
+        product_id = in.readInt();
+        user = (ModelUser) in.readParcelable(ModelUser.class.getClassLoader());
         comment = in.readString();
         raiting = in.readFloat();
+        long tmpDate = in.readLong();
+        date = tmpDate != -1 ? new Date(tmpDate) : null;
     }
 
     @Override
@@ -58,9 +64,11 @@ public class ModelComment implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(user);
+        dest.writeInt(product_id);
+        dest.writeParcelable(user,0);
         dest.writeString(comment);
         dest.writeFloat(raiting);
+        dest.writeLong(date != null ? date.getTime() : -1L);
     }
 
     @SuppressWarnings("unused")
