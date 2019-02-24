@@ -9,14 +9,19 @@ import android.support.multidex.MultiDex;
 import com.google.android.gms.maps.model.LatLng;
 import com.world.jteam.bonb.geo.GeoManager;
 import com.world.jteam.bonb.media.BarcodeManager;
+import com.world.jteam.bonb.model.ModelGroup;
 import com.world.jteam.bonb.model.ModelUser;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.TreeMap;
 
 public class AppInstance extends Application {
     private static Context sContext;
     private static boolean sFirstStart;
     private static ModelUser sUser;
+
+    private static LinkedHashMap<ModelGroup, LinkedHashMap> sProductGroups; //Дерево категорий
 
     private static boolean sAutoGeoPosition = true;
     private static int sRadiusArea = Constants.DEFAULT_RADIUS_AREA;
@@ -63,7 +68,7 @@ public class AppInstance extends Application {
             }
 
             //Категории
-            Product.categoryInitialisation();
+            productGroupsInitialisation();
 
         }
     }
@@ -86,6 +91,126 @@ public class AppInstance extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+
+    //Группы товаров
+    public static void setProductGroups(LinkedHashMap productGroups) {
+        sProductGroups = productGroups;
+    }
+
+    public static LinkedHashMap getProductGroups() {
+        return sProductGroups;
+    }
+
+    public static void productGroupsInitialisation() {
+        ModelGroup[] productGroups = DatabaseApp.getAppRoomDao().getAllProductGroups();
+        ModelGroup group;
+
+        // - получим родителей с инициализированными списками
+        //      находим все parentid и создаем для них пустой список
+        LinkedHashMap<Integer, LinkedHashMap> prodGroupsParent = new LinkedHashMap<>();
+
+        for (int i = 0; i < productGroups.length; i++) {
+            group = productGroups[i];
+            if (!prodGroupsParent.containsKey(group.parent_id)) {
+                prodGroupsParent.put(group.parent_id,
+                        new LinkedHashMap<ModelGroup, LinkedHashMap>());
+            }
+        }
+
+        // - определим родителей элементов
+        //      для каждого элемента ищем родительский список, в котором он будет находиться
+        TreeMap<Integer, LinkedHashMap> prodGroupsChildIdToParent = new TreeMap<>();
+        TreeMap<Integer, Integer> prodGroupsParentIdToId = new TreeMap<>(); //для поиска самого объекта категории родителя
+        for (int i = 0; i < productGroups.length; i++) {
+            group = productGroups[i];
+
+            LinkedHashMap<ModelGroup, LinkedHashMap> parentTree =
+                    prodGroupsParent.get(group.parent_id);
+
+            prodGroupsChildIdToParent.put(group.id, parentTree);
+
+            if (prodGroupsParent.containsKey(group.id))
+                prodGroupsParentIdToId.put(group.id, i);
+        }
+
+        // - распределим элементы по родителям
+        //      берем родительский элемент и в него добавляем текущий со своим списком
+        for (int i = 0; i < productGroups.length; i++) {
+            group = productGroups[i];
+
+            LinkedHashMap<ModelGroup, LinkedHashMap> parentTree =
+                    prodGroupsParent.get(group.parent_id);
+            LinkedHashMap<ModelGroup, LinkedHashMap> childTree =
+                    prodGroupsParent.get(group.id);
+
+            // добавим элементы дополнительной навигации
+            if (parentTree.isEmpty()) {
+                if (group.parent_id != 0) {
+                    //возврат на предыдущий уровень
+                    parentTree.put(new ModelGroup(
+                                    0, "...", group.parent_id, ModelGroup.GROUP_NM_PRODUCT_ADD),
+                            prodGroupsChildIdToParent.get(group.parent_id));
+
+                    //возврат по иерархии вверх
+                    fillProductGroupsNaigationBack(
+                            productGroups,
+                            group.parent_id,
+                            prodGroupsParentIdToId,
+                            prodGroupsChildIdToParent,
+                            parentTree
+                    );
+
+                }
+                //текущая группа категорий
+                parentTree.put(new ModelGroup(
+                                group.parent_id,
+                                getAppContext().getString(R.string.default_product_group_name),
+                                group.parent_id,
+                                ModelGroup.GROUP_NM_PRODUCT_ADD),
+                        null);
+
+
+            }
+            /*if (childTree!=null){
+                group.name=group.name+">";
+            }*/
+
+            parentTree.put(group, childTree);
+        }
+
+        // - запишем в статик
+        setProductGroups(prodGroupsParent.get(0));
+    }
+
+    private static void fillProductGroupsNaigationBack(
+            ModelGroup[] productGroups,
+            int parentid,
+            TreeMap<Integer, Integer> prodGroupsParentIdToId,
+            TreeMap<Integer, LinkedHashMap> prodGroupsChildIdToParent,
+            LinkedHashMap<ModelGroup, LinkedHashMap> parentTree) {
+
+        //Добавляет дополнительную навигацию категорий по иерархии вверх
+
+        if (parentid == 0) //добрались до конца
+            return;
+
+        ModelGroup productGroupParent = productGroups[prodGroupsParentIdToId.get(parentid)];
+
+        fillProductGroupsNaigationBack(
+                productGroups,
+                productGroupParent.parent_id,
+                prodGroupsParentIdToId,
+                prodGroupsChildIdToParent,
+                parentTree
+        );
+
+        parentTree.put(new ModelGroup(
+                        parentid,
+                        "<" + productGroupParent.name,
+                        productGroupParent.parent_id,
+                        ModelGroup.GROUP_NM_VIEW),
+                prodGroupsChildIdToParent.get(parentid));
     }
 
     //Гео

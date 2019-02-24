@@ -22,10 +22,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.media.CameraManager;
 import com.world.jteam.bonb.media.ImageManager;
 import com.world.jteam.bonb.Constants;
-import com.world.jteam.bonb.Product;
 import com.world.jteam.bonb.R;
 import com.world.jteam.bonb.model.ModelGroup;
 
@@ -45,11 +45,11 @@ public class ProductRegistrationActivity extends AppCompatActivity {
     private FrameLayout product_registration_frame;
 
     //Категории
-    private ConstraintLayout product_category_groupselect;
-    private Button product_category_view;
-    private Product.CategoriesAdapter mCategoriesAdapter;
-    private LinkedHashMap<ModelGroup,LinkedHashMap> mProductCategoriesCurrent; //В момент выбора
-    private LinkedHashMap<ModelGroup,LinkedHashMap> mProductCategoriesSelected; //Выбранный
+    private ConstraintLayout product_groups_groupselect;
+    private Button product_group_view;
+    private ModelGroup.ProductGroupsAdapter mProductGroupsAdapter;
+    private LinkedHashMap<ModelGroup,LinkedHashMap> mProductGroupsCurrent; //В момент выбора
+    private LinkedHashMap<ModelGroup,LinkedHashMap> mProductGroupsSelected; //Выбранный
 
     //Инициализация
     @Override
@@ -58,7 +58,7 @@ public class ProductRegistrationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_product_registration);
 
         product_registration_frame=(FrameLayout) findViewById(R.id.product_registration_frame);
-        product_category_view=(Button) findViewById(R.id.product_category);
+        product_group_view =(Button) findViewById(R.id.product_group);
         image_product_view=(ImageView) findViewById(R.id.image_product);
         barcode_view =(BarcodeEditView) findViewById(R.id.barcode);
 
@@ -68,8 +68,8 @@ public class ProductRegistrationActivity extends AppCompatActivity {
             mImage=saveContainer.imageManager;
             mImage.linkContext(mThis);
             setProductImage();
-            mProductCategoriesSelected=saveContainer.productCategoriesSelected;
-            product_category_view.setText(saveContainer.productCategory);
+            mProductGroupsSelected =saveContainer.productGroupsSelected;
+            product_group_view.setText(saveContainer.productGroup);
         }
 
         //Продукт
@@ -79,7 +79,7 @@ public class ProductRegistrationActivity extends AppCompatActivity {
         barcode_view.setOnFocusChangeListener(new BarcodeOnFocusChangeListener());
 
         //Категория
-        product_category_view.setOnClickListener(new ProductCategoryOnClick());
+        product_group_view.setOnClickListener(new ProductGroupOnClick());
 
         //Инициализация работы с картинками
         if (mImage==null)
@@ -91,23 +91,23 @@ public class ProductRegistrationActivity extends AppCompatActivity {
         mImage.unLinkContext();
         return new SaveContainer(
                 mImage,
-                mProductCategoriesSelected,
-                product_category_view.getText()
+                mProductGroupsSelected,
+                product_group_view.getText()
         );
     }
 
     static class SaveContainer{
         public ImageManager imageManager;
-        public LinkedHashMap<ModelGroup,LinkedHashMap> productCategoriesSelected;
-        public CharSequence productCategory;
+        public LinkedHashMap<ModelGroup,LinkedHashMap> productGroupsSelected;
+        public CharSequence productGroup;
 
         public SaveContainer(
                 ImageManager imageManager,
-                LinkedHashMap<ModelGroup,LinkedHashMap> productCategoriesSelected,
-                CharSequence productCategory){
+                LinkedHashMap<ModelGroup,LinkedHashMap> productGroupsSelected,
+                CharSequence productGroup){
             this.imageManager=imageManager;
-            this.productCategoriesSelected=productCategoriesSelected;
-            this.productCategory=productCategory;
+            this.productGroupsSelected = productGroupsSelected;
+            this.productGroup = productGroup;
 
         }
     }
@@ -176,106 +176,106 @@ public class ProductRegistrationActivity extends AppCompatActivity {
     }
 
     //Категории
-    private class ProductCategoryOnClick implements View.OnClickListener{
+    private class ProductGroupOnClick implements View.OnClickListener{
         @Override
         public void onClick(View v) {
-            if (mProductCategoriesSelected==null){
-                mProductCategoriesSelected = Product.getProductCategories();
+            if (mProductGroupsSelected ==null){
+                mProductGroupsSelected = AppInstance.getProductGroups();
             }
-            if (mProductCategoriesSelected==null){
-                Toast.makeText(mThis,R.string.product_categories_not_init,Toast.LENGTH_LONG).show();
+            if (mProductGroupsSelected ==null){
+                Toast.makeText(mThis,R.string.product_groups_not_init,Toast.LENGTH_LONG).show();
                 return;
             }
 
-            if (product_category_groupselect==null){
+            if (product_groups_groupselect ==null){
                 //Выведем лайаут со списком
                 LayoutInflater ltInflater = getLayoutInflater();
                 ltInflater.inflate(
-                        R.layout.fragment_product_category_listview,
+                        R.layout.fragment_product_groups_listview,
                         product_registration_frame,
                         //product_registration_constr,
                         true);
 
                 //Настроим список
-                ListView product_category_select=(ListView) findViewById(R.id.product_category_select);
-                ArrayList productCategoriesList =
-                        Product.getCurrentProductCategories(mProductCategoriesSelected,Product.CAT_NM_PRODUCT_ADD);
+                ListView product_groups_select =(ListView) findViewById(R.id.product_groups_select);
+                ArrayList productGroupsList =
+                        ModelGroup.getCurrentProductGroups(mProductGroupsSelected, ModelGroup.GROUP_NM_PRODUCT_ADD);
 
-                mCategoriesAdapter=new Product.CategoriesAdapter(mThis,productCategoriesList);
-                product_category_select.setAdapter(mCategoriesAdapter);
-                product_category_select.setOnItemClickListener(new ProductCategoryOnItemClickListener());
+                mProductGroupsAdapter =new ModelGroup.ProductGroupsAdapter(mThis, productGroupsList);
+                product_groups_select.setAdapter(mProductGroupsAdapter);
+                product_groups_select.setOnItemClickListener(new ProductGroupOnItemClickListener());
 
-                float productCategoryPosY=product_category_view.getY()+product_category_view.getHeight();
-                product_category_groupselect=(ConstraintLayout) findViewById(R.id.product_category_groupselect);
-                product_category_groupselect.setY(productCategoryPosY); //Спозиционируем на кнопку
-                product_category_groupselect.setX(product_category_view.getX()); //Спозиционируем на кнопку
-                resizeProductCategorySelectedView(); //Подгоним список
+                float productGroupPosY = product_group_view.getY()+ product_group_view.getHeight();
+                product_groups_groupselect =(ConstraintLayout) findViewById(R.id.product_groups_groupselect);
+                product_groups_groupselect.setY(productGroupPosY); //Спозиционируем на кнопку
+                product_groups_groupselect.setX(product_group_view.getX()); //Спозиционируем на кнопку
+                resizeProductGroupSelectedView(); //Подгоним список
 
-                mProductCategoriesCurrent=mProductCategoriesSelected;
+                mProductGroupsCurrent = mProductGroupsSelected;
 
             } else {
-                removeProductCategorySelectedView();
+                removeProductGroupSelectedView();
             }
         }
     }
 
-    private void removeProductCategorySelectedView(){
-        product_registration_frame.removeView(product_category_groupselect);
-        product_category_groupselect=null;
+    private void removeProductGroupSelectedView(){
+        product_registration_frame.removeView(product_groups_groupselect);
+        product_groups_groupselect =null;
     }
 
-    private void resizeProductCategorySelectedView(){
+    private void resizeProductGroupSelectedView(){
         boolean setDefaultParam=false;
-        ViewGroup.LayoutParams layoutParams= product_category_groupselect.getLayoutParams();
+        ViewGroup.LayoutParams layoutParams= product_groups_groupselect.getLayoutParams();
         if (layoutParams.height!=ViewGroup.LayoutParams.WRAP_CONTENT){
             layoutParams.height=ViewGroup.LayoutParams.WRAP_CONTENT;
             setDefaultParam=true;
         }
 
-        int maxCategoryWidth=product_category_view.getWidth();
-        if (layoutParams.width!=maxCategoryWidth){
-            layoutParams.width=maxCategoryWidth;
+        int maxGroupWidth = product_group_view.getWidth();
+        if (layoutParams.width!= maxGroupWidth){
+            layoutParams.width= maxGroupWidth;
             setDefaultParam=true;
         }
 
         if (setDefaultParam)
-            product_category_groupselect.setLayoutParams(layoutParams);
+            product_groups_groupselect.setLayoutParams(layoutParams);
 
-        product_category_groupselect.getViewTreeObserver().addOnGlobalLayoutListener(
+        product_groups_groupselect.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
-                        product_category_groupselect.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        product_groups_groupselect.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
                         //Если позиция Y + высота выбора категории больше чем сам лайаут на которм все отображается, то подгоним
-                        int positionY=(int) product_category_groupselect.getY();
-                        if (positionY+product_category_groupselect.getHeight()>product_registration_frame.getHeight()){
-                            ViewGroup.LayoutParams layoutParams= product_category_groupselect.getLayoutParams();
+                        int positionY=(int) product_groups_groupselect.getY();
+                        if (positionY+ product_groups_groupselect.getHeight()>product_registration_frame.getHeight()){
+                            ViewGroup.LayoutParams layoutParams= product_groups_groupselect.getLayoutParams();
                             layoutParams.height=product_registration_frame.getHeight()-positionY;
-                            product_category_groupselect.setLayoutParams(layoutParams);
+                            product_groups_groupselect.setLayoutParams(layoutParams);
                         }
                     }
                 }
         );
     }
 
-    private class ProductCategoryOnItemClickListener implements AdapterView.OnItemClickListener{
+    private class ProductGroupOnItemClickListener implements AdapterView.OnItemClickListener{
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            ModelGroup productCategory=mCategoriesAdapter.getItem(position);
-            LinkedHashMap<ModelGroup,LinkedHashMap> productCategoryCategories=
-                    mProductCategoriesCurrent.get(productCategory);
-            if (productCategoryCategories==null){
-                product_category_view.setText(productCategory.toString());
-                mProductCategoriesSelected=mProductCategoriesCurrent;
-                removeProductCategorySelectedView();
+            ModelGroup productGroup = mProductGroupsAdapter.getItem(position);
+            LinkedHashMap<ModelGroup,LinkedHashMap> productGroupGroups =
+                    mProductGroupsCurrent.get(productGroup);
+            if (productGroupGroups ==null){
+                product_group_view.setText(productGroup.toString());
+                mProductGroupsSelected = mProductGroupsCurrent;
+                removeProductGroupSelectedView();
 
             } else {
-                mProductCategoriesCurrent =productCategoryCategories;
-                mCategoriesAdapter.clear();
-                mCategoriesAdapter.addAll(Product.getCurrentProductCategories(
-                        mProductCategoriesCurrent,Product.CAT_NM_PRODUCT_ADD));
-                resizeProductCategorySelectedView();
+                mProductGroupsCurrent = productGroupGroups;
+                mProductGroupsAdapter.clear();
+                mProductGroupsAdapter.addAll(ModelGroup.getCurrentProductGroups(
+                        mProductGroupsCurrent, ModelGroup.GROUP_NM_PRODUCT_ADD));
+                resizeProductGroupSelectedView();
             }
 
         }

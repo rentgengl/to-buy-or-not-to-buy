@@ -4,6 +4,6 @@
     <string name="barcode_edit_hint">Штрихкод</string>
     <string name="comment_head">Отзыв:</string>
     <string name="price_head">Цена:</string>
-    <string name="product_category_head">Категория</string>
+    <string name="product_group_head">Группа</string>
     <string name="register_head">ОК</string>
 </resources>

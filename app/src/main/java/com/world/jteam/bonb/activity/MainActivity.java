@@ -35,7 +35,6 @@ import com.world.jteam.bonb.ldrawer.ActionBarDrawerToggle;
 import com.world.jteam.bonb.ldrawer.DrawerArrowDrawable;
 import com.world.jteam.bonb.Constants;
 import com.world.jteam.bonb.server.DataApi;
-import com.world.jteam.bonb.Product;
 import com.world.jteam.bonb.R;
 import com.world.jteam.bonb.server.SingletonRetrofit;
 import com.world.jteam.bonb.model.ModelGroup;
@@ -63,9 +62,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ActionBarDrawerToggle mDrawerToggle;
 
     //Категории
-    private Product.CategoriesAdapter mCategoriesAdapter;
-    private LinkedHashMap<ModelGroup, LinkedHashMap> mProductCategoriesCurrent; //В момент выбора
-    private LinkedHashMap<ModelGroup, LinkedHashMap> mProductCategoriesSelected; //Выбранный
+    private ModelGroup.ProductGroupsAdapter mProductGroupsAdapter;
+    private LinkedHashMap<ModelGroup, LinkedHashMap> mProductGroupsCurrent; //В момент выбора
+    private LinkedHashMap<ModelGroup, LinkedHashMap> mProductGroupsSelected; //Выбранный
 
 
     //Идентификатор результата сканирования ШК
@@ -176,21 +175,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mDrawerLayout.closeDrawer(mDrawerList);
                 } else {
 
-                    if (mProductCategoriesSelected == null) {
-                        mProductCategoriesSelected = Product.getProductCategories();
+                    if (mProductGroupsSelected == null) {
+                        mProductGroupsSelected = AppInstance.getProductGroups();
                     }
-                    if (mProductCategoriesSelected != null) {
-                        ArrayList productCategoriesList =
-                                Product.getCurrentProductCategories(mProductCategoriesSelected, Product.CAT_NM_VIEW);
+                    if (mProductGroupsSelected != null) {
+                        ArrayList productGroupsList =
+                                ModelGroup.getCurrentProductGroups(mProductGroupsSelected, ModelGroup.GROUP_NM_VIEW);
 
-                        mCategoriesAdapter = new Product.CategoriesAdapter(mThis, productCategoriesList);
-                        mDrawerList.setAdapter(mCategoriesAdapter);
-                        mDrawerList.setOnItemClickListener(new ProductCategoryOnItemClickListener());
-                        mProductCategoriesCurrent = mProductCategoriesSelected;
+                        mProductGroupsAdapter = new ModelGroup.ProductGroupsAdapter(mThis, productGroupsList);
+                        mDrawerList.setAdapter(mProductGroupsAdapter);
+                        mDrawerList.setOnItemClickListener(new ProductGroupsOnItemClickListener());
+                        mProductGroupsCurrent = mProductGroupsSelected;
 
                         mDrawerLayout.openDrawer(mDrawerList);
                     } else {
-                        Toast.makeText(mThis, R.string.product_categories_not_init, Toast.LENGTH_LONG).show();
+                        Toast.makeText(mThis, R.string.product_groups_not_init, Toast.LENGTH_LONG).show();
                     }
                 }
                 break;
@@ -205,25 +204,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //Категории
-    private class ProductCategoryOnItemClickListener implements AdapterView.OnItemClickListener {
+    private class ProductGroupsOnItemClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            ModelGroup productCategory = mCategoriesAdapter.getItem(position);
-            LinkedHashMap<ModelGroup, LinkedHashMap> productCategoryCategories =
-                    mProductCategoriesCurrent.get(productCategory);
+            ModelGroup productGroup = mProductGroupsAdapter.getItem(position);
+            LinkedHashMap<ModelGroup, LinkedHashMap> productGroupGroups =
+                    mProductGroupsCurrent.get(productGroup);
 
-            searchByGroup(productCategory.id);
+            searchByGroup(productGroup.id);
             //Раскрытие группы
-            if (productCategoryCategories == null) {
-                mProductCategoriesSelected = mProductCategoriesCurrent;
+            if (productGroupGroups == null) {
+                mProductGroupsSelected = mProductGroupsCurrent;
                 mDrawerLayout.closeDrawer(mDrawerList);
                 //Возврат к родителю группы
             } else {
 
-                mProductCategoriesCurrent = productCategoryCategories;
-                mCategoriesAdapter.clear();
-                mCategoriesAdapter.addAll(Product.getCurrentProductCategories(
-                        mProductCategoriesCurrent, Product.CAT_NM_VIEW));
+                mProductGroupsCurrent = productGroupGroups;
+                mProductGroupsAdapter.clear();
+                mProductGroupsAdapter.addAll(ModelGroup.getCurrentProductGroups(
+                        mProductGroupsCurrent, ModelGroup.GROUP_NM_VIEW));
             }
 
         }
@@ -289,9 +288,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //(keyCode == KeyEvent.KEYCODE_ENTER)) {
                 // сохраняем текст, введенный до нажатия Enter в переменную
                 EditText editText = v.findViewById(R.id.search_panel_text);
-                String strCatName = editText.getText().toString();
-                if (!strCatName.equals(""))
-                    searchByName(strCatName);
+                String strName = editText.getText().toString();
+                if (!strName.equals(""))
+                    searchByName(strName);
 
                 return true;
             }

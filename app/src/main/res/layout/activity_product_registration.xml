@@ -86,7 +86,7 @@
             android:text="@string/comment_head"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/product_category" />
+            app:layout_constraintTop_toBottomOf="@+id/product_group" />
 
         <!--<TextView
             android:id="@+id/price_head"
@@ -108,7 +108,7 @@
             app:layout_constraintTop_toBottomOf="@+id/rating_product" />-->
 
         <Button
-            android:id="@+id/product_category"
+            android:id="@+id/product_group"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_marginStart="8dp"
@@ -121,7 +121,7 @@
             android:paddingTop="0dp"
             android:paddingRight="0dp"
             android:paddingBottom="0dp"
-            android:text="@string/product_category_head"
+            android:text="@string/product_group_head"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

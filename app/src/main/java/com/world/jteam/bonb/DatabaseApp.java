@@ -47,13 +47,13 @@ public class DatabaseApp {
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
         Call<Versions> versionsCall = mDataApi.getVersions();
         Versions servVersions = versionsCall.execute().body();
-        int categoryVersionServer = servVersions.groupVersion;
+        int groupsVersionServer = servVersions.groupVersion;
 
         //- Обновление данных по версии
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int categoryVersion = sharedPreferences.getInt("product_categories_version", 0);
+        int groupsVersion = sharedPreferences.getInt("product_groups_version", 0);
 
-        if (categoryVersion != categoryVersionServer) {
+        if (groupsVersion != groupsVersionServer) {
             //- Получение данных по категориям с сервера
             Call<List<ModelGroup>> serviceCall = mDataApi.getGroupList();
 
@@ -62,7 +62,7 @@ public class DatabaseApp {
 
             //- Сохранение версии
             SharedPreferences.Editor edit = sharedPreferences.edit();
-            edit.putInt("product_categories_version", categoryVersionServer);
+            edit.putInt("product_groups_version", groupsVersionServer);
             edit.commit();
 
         }
@@ -73,15 +73,15 @@ public class DatabaseApp {
 
 
     public static void initGroupList(List<ModelGroup> groupList) {
-        ArrayList<ModelGroup> productCategories = new ArrayList<>();
+        ArrayList<ModelGroup> productGroups = new ArrayList<>();
 
         for(ModelGroup group:groupList){
-            productCategories.add(new ModelGroup(group.id, group.name, group.parent_id, group.logo_link));
+            productGroups.add(new ModelGroup(group.id, group.name, group.parent_id, group.logo_link));
         }
 
         AppRoomDao appRoomDao = databaseApp.database.appRoomDao();
-        appRoomDao.deleteAllProductCategories();
-        appRoomDao.insertProductCategories(productCategories);
+        appRoomDao.deleteAllProductGroups();
+        appRoomDao.insertProductGroups(productGroups);
 
     }
 
@@ -93,13 +93,13 @@ public class DatabaseApp {
     public interface AppRoomDao {
 
         @Query("SELECT * FROM ModelGroup ORDER BY name ASC")
-        ModelGroup[] getAllProductCategories();
+        ModelGroup[] getAllProductGroups();
 
         @Query("DELETE FROM ModelGroup")
-        void deleteAllProductCategories();
+        void deleteAllProductGroups();
 
         @Insert
-        void insertProductCategories(List<ModelGroup> ModelGroup);
+        void insertProductGroups(List<ModelGroup> ModelGroup);
     }
 
     @Database(entities = {ModelGroup.class}, version = 1)
