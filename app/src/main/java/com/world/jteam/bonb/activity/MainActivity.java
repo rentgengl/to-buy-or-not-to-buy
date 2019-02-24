@@ -205,7 +205,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //Категории
-
     private class ProductCategoryOnItemClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -394,6 +393,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Поиск товаров по группе
     private void searchByGroup(int groupId) {
         this.searchMethod = new ModelSearchProductMethod(groupId);
+        //Почищу группы результата поиска
+        FlowLayoutView resultGroup = findViewById(R.id.search_result_group);
+        resultGroup.removeAllViews();
+
         pagingStart();
     }
 
