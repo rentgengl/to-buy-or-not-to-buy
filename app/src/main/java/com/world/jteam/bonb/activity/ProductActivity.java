@@ -231,6 +231,8 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         view_lowPrice.setText("от " + product.price_min + " до " + product.price_max + "\u20BD");
         view_textRaiting.setText(product.raiting + " из 5");
         view_productRaiting.setRating(product.raiting);
+        if (product.user_leave_comment==1)
+            view_productRaiting.setIsIndicator(true);
 
         //Вывод списков
         if (product.prices != null && product.prices.size()>0) {
@@ -261,14 +263,6 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
 
             view_comment_list_lite.setAdapter(new CommentListAdapter(this, productCommentsLite,false));
 
-            //Если уже есть комментарий пользователя, то блокируем рейтинг
-            ModelUser currentUser = AppInstance.getUser();
-            for (int i = 0; i<product.comments.size(); i++){
-                if (product.comments.get(i).user.id==currentUser.id){
-                    view_productRaiting.setIsIndicator(true);
-                    break;
-                }
-            }
         } else {
             findViewById(R.id.show_comment).setVisibility(View.GONE);
         }
@@ -279,6 +273,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
         Call<ModelProductFull> serviceCall = mDataApi.getProductFullById(
                 thisProductFull.id,
+                AppInstance.getUser().id,
                 AppInstance.getRadiusArea(),
                 AppInstance.getGeoPosition().latitude,
                 AppInstance.getGeoPosition().longitude);

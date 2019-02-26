@@ -30,6 +30,7 @@ public interface DataApi {
 
     @GET("GetProductFullById.php")
     Call<ModelProductFull> getProductFullById(@Query("id") int id,
+                                              @Query("user_id") int user_id,
                                               @Query("radius") int radius,
                                               @Query("lat") double lat,
                                               @Query("lng") double lng);

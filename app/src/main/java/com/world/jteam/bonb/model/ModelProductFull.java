@@ -17,6 +17,7 @@ public class ModelProductFull extends ModelProduct implements Parcelable {
         this.price_min = product.price_min;
         this.price_max = product.price_max;
         this.raiting = product.raiting;
+        this.user_leave_comment = product.user_leave_comment;
     }
 
     //Парселэйбл
@@ -32,6 +33,7 @@ public class ModelProductFull extends ModelProduct implements Parcelable {
         imageSmall_link = in.readString();
         newComment = in.readString();
         raiting = in.readFloat();
+        user_leave_comment = in.readByte();
         if (in.readByte() == 0x01) {
             prices = new ArrayList<ModelPrice>();
             in.readList(prices, ModelPrice.class.getClassLoader());
@@ -70,6 +72,7 @@ public class ModelProductFull extends ModelProduct implements Parcelable {
         dest.writeString(imageSmall_link);
         dest.writeString(newComment);
         dest.writeFloat(raiting);
+        dest.writeByte(user_leave_comment);
         if (prices == null) {
             dest.writeByte((byte) (0x00));
         } else {

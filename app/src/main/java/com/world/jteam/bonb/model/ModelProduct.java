@@ -21,6 +21,8 @@ public class ModelProduct {
 
     public float raiting = 0;
 
+    public byte user_leave_comment = 0;
+
     //Конструктор класса по данным из json
     public ModelProduct(String nID, String nName){
 
