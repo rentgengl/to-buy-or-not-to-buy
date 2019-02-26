@@ -107,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
                 invalidateOptionsMenu();
+
+                mProductGroupsSelected = mProductGroupsCurrent;
             }
 
             public void onDrawerOpened(View drawerView) {
