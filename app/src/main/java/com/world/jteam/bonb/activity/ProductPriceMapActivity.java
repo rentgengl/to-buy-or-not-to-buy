@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.ui.IconGenerator;
 
+import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.R; //Временно до объединения пакетов
 
 public class ProductPriceMapActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -68,9 +69,8 @@ public class ProductPriceMapActivity extends FragmentActivity implements OnMapRe
         }
 
 
-        // Отцентрую карту на краснодар
-        LatLng krd = new LatLng(45.04484, 38.97603);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(krd));
+        // Спозиционируем камеру
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(AppInstance.getGeoPosition()));
         mMap.setMinZoomPreference(11.0f);
     }
 }

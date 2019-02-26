@@ -56,7 +56,6 @@
                     android:gravity="right"
                     android:textAllCaps="false"
                     android:textAppearance="@style/ListLowPrice"
-                    android:textColor="@color/colorAccent"
                     android:textSize="8sp"
                     android:textStyle="bold"
                     tools:text="от 1331 до 3340 руб" />
