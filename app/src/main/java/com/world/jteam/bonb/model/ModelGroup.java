@@ -68,7 +68,7 @@ public class ModelGroup {
             text.setText(getItem(position).toString());
 
             ImageView icon = (ImageView) row.findViewById(R.id.product_group_list_icon);
-            icon.setImageResource(R.mipmap.ic_launcher);
+            icon.setImageResource(R.drawable.ic_product_group_default);
 
             return row;
         }

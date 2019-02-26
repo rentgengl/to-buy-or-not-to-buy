@@ -112,6 +112,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 invalidateOptionsMenu();
+
+                if (mProductGroupsSelected == null) {
+                    mProductGroupsSelected = AppInstance.getProductGroups();
+                }
+                if (mProductGroupsSelected != null) {
+                    ArrayList productGroupsList =
+                            ModelGroup.getCurrentProductGroups(mProductGroupsSelected, ModelGroup.GROUP_NM_VIEW);
+
+                    mProductGroupsAdapter = new ModelGroup.ProductGroupsAdapter(mThis, productGroupsList);
+                    mDrawerList.setAdapter(mProductGroupsAdapter);
+                    mDrawerList.setOnItemClickListener(new ProductGroupsOnItemClickListener());
+                    mProductGroupsCurrent = mProductGroupsSelected;
+
+                } else {
+                    Toast.makeText(mThis, R.string.product_groups_not_init, Toast.LENGTH_LONG).show();
+                }
+
             }
         };
 
@@ -174,23 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
                     mDrawerLayout.closeDrawer(mDrawerList);
                 } else {
-
-                    if (mProductGroupsSelected == null) {
-                        mProductGroupsSelected = AppInstance.getProductGroups();
-                    }
-                    if (mProductGroupsSelected != null) {
-                        ArrayList productGroupsList =
-                                ModelGroup.getCurrentProductGroups(mProductGroupsSelected, ModelGroup.GROUP_NM_VIEW);
-
-                        mProductGroupsAdapter = new ModelGroup.ProductGroupsAdapter(mThis, productGroupsList);
-                        mDrawerList.setAdapter(mProductGroupsAdapter);
-                        mDrawerList.setOnItemClickListener(new ProductGroupsOnItemClickListener());
-                        mProductGroupsCurrent = mProductGroupsSelected;
-
-                        mDrawerLayout.openDrawer(mDrawerList);
-                    } else {
-                        Toast.makeText(mThis, R.string.product_groups_not_init, Toast.LENGTH_LONG).show();
-                    }
+                    mDrawerLayout.openDrawer(mDrawerList);
                 }
                 break;
             //Геопозиция
