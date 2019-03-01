@@ -28,11 +28,12 @@ public class ProductDataSource extends PageKeyedDataSource<Integer, ModelProduct
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
 
         Call<ModelSearchResult> retrofitCall = null;
-        if(searchMethod.searchMethod == searchMethod.SEARCH_BY_GROUP){
-            retrofitCall = mDataApi.getProductListByGroup(searchMethod.searchGroup, page, params.requestedLoadSize);
-        }else{
-            retrofitCall = mDataApi.getProductGroupListByName(searchMethod.searchText, page, params.requestedLoadSize);
-        }
+
+        //if(searchMethod.searchMethod == searchMethod.SEARCH_BY_GROUP){
+            retrofitCall = mDataApi.getProductList(searchMethod.searchText,searchMethod.searchGroup, page, params.requestedLoadSize);
+        //}else{
+        //    retrofitCall = mDataApi.getProductGroupListByName(searchMethod.searchText, page, params.requestedLoadSize);
+        //}
 
         Callback<ModelSearchResult> requestCallback = new Callback<ModelSearchResult>() {
             @Override
@@ -84,11 +85,12 @@ public class ProductDataSource extends PageKeyedDataSource<Integer, ModelProduct
 
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
         Call<ModelSearchResult> retrofitCall = null;
-        if(searchMethod.searchMethod == searchMethod.SEARCH_BY_GROUP){
-            retrofitCall = mDataApi.getProductListByGroup(searchMethod.searchGroup, page, params.requestedLoadSize);
-        }else{
-            retrofitCall = mDataApi.getProductGroupListByName(searchMethod.searchText, page, params.requestedLoadSize);
-        }
+
+        //if(searchMethod.searchMethod == searchMethod.SEARCH_BY_GROUP){
+            retrofitCall = mDataApi.getProductList(searchMethod.searchText, searchMethod.searchGroup, page, params.requestedLoadSize);
+        //}else{
+        //    retrofitCall = mDataApi.getProductGroupListByName(searchMethod.searchText, page, params.requestedLoadSize);
+        //}
 
         Callback<ModelSearchResult> requestCallback = new Callback<ModelSearchResult>() {
             @Override

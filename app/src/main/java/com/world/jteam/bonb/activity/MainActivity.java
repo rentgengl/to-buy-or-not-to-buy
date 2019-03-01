@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         executor = new MainActivity.MainThreadExecutor();
 
         //По умолчанию отображаю товары первой группы
-        this.searchMethod = new ModelSearchProductMethod(1);
+        this.searchMethod = new ModelSearchProductMethod(0);
 
         //Формирование списка товаров
         pagingStart();
@@ -292,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // сохраняем текст, введенный до нажатия Enter в переменную
                 EditText editText = v.findViewById(R.id.search_panel_text);
                 String strName = editText.getText().toString();
-                if (!strName.equals(""))
+                //if (!strName.equals(""))
                     searchByName(strName);
 
                 return true;
@@ -369,32 +369,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Поиск товаров по имени
     private void searchByName(String name) {
 
-        searchMethod = new ModelSearchProductMethod(name);
+        if(searchMethod==null) {
+            searchMethod = new ModelSearchProductMethod(name, 0);
+        }else{
+            searchMethod.searchText = name;
+        }
         pagingStart();
 
         //Подгрузка списка групп
-        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-        Call<ModelSearchResult> serviceCall = mDataApi.getProductGroupListByName(name, 1, 100);
-        serviceCall.enqueue(new Callback<ModelSearchResult>() {
-            @Override
-            public void onResponse(Call<ModelSearchResult> call, Response<ModelSearchResult> response) {
-                ModelSearchResult ss = response.body();
-                showGroupList(ss.getGroups());
+        if(!name.equals("")) {
+            DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
+            Call<ModelSearchResult> serviceCall = mDataApi.getProductGroupListByName(name, 1, 100);
+            serviceCall.enqueue(new Callback<ModelSearchResult>() {
+                @Override
+                public void onResponse(Call<ModelSearchResult> call, Response<ModelSearchResult> response) {
+                    ModelSearchResult ss = response.body();
+                    showGroupList(ss.getGroups());
 
-            }
+                }
 
-            @Override
-            public void onFailure(Call<ModelSearchResult> call, Throwable t) {
-                showErrorSearch();
-            }
-        });
+                @Override
+                public void onFailure(Call<ModelSearchResult> call, Throwable t) {
+                    showErrorSearch();
+                }
+            });
+        }
 
 
     }
 
     //Поиск товаров по группе
     private void searchByGroup(int groupId) {
-        this.searchMethod = new ModelSearchProductMethod(groupId);
+        if(searchMethod==null) {
+            searchMethod = new ModelSearchProductMethod(groupId);
+        }else{
+            searchMethod.searchGroup = groupId;
+        }
         //Почищу группы результата поиска
         FlowLayoutView resultGroup = findViewById(R.id.search_result_group);
         resultGroup.removeAllViews();

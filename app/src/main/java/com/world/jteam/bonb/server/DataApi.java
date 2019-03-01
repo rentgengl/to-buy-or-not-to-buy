@@ -28,6 +28,12 @@ public interface DataApi {
                                                       @Query("page") long page,
                                                       @Query("pageSize") int pageSize);
 
+    @GET("getProductList.php")
+    Call<ModelSearchResult> getProductList(@Query("name") String name,
+                                           @Query("id") int groupId,
+                                                      @Query("page") long page,
+                                                      @Query("pageSize") int pageSize);
+
     @GET("GetProductFullById.php")
     Call<ModelProductFull> getProductFullById(@Query("id") int id,
                                               @Query("user_id") int user_id,

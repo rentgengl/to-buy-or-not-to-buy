@@ -26,6 +26,7 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:textSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/product_group_list_icon"
         app:layout_constraintTop_toTopOf="parent" />
