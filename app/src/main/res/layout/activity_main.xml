@@ -25,15 +25,20 @@
                 android:layout_height="wrap_content" />
 
 
-            <com.world.jteam.bonb.activity.FlowLayoutView
-                android:id="@+id/search_result_group"
-                android:layout_width="match_parent"
+            <HorizontalScrollView
+                android:id="@+id/search_result_group11"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                app:paddingH="10"
-                app:paddingV="10" >
+                android:scrollbars="none"
+                android:fillViewport="false">
 
-            </com.world.jteam.bonb.activity.FlowLayoutView>
+                <LinearLayout
+                    android:id="@+id/search_result_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"></LinearLayout>
 
+            </HorizontalScrollView>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/productRW"

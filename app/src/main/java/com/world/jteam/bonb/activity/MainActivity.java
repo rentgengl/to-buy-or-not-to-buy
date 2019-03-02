@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -341,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void showGroupList(List<ModelGroup> groupList) {
-        FlowLayoutView resultGroup = findViewById(R.id.search_result_group);
+        LinearLayout resultGroup = findViewById(R.id.search_result_group);
         //Подчищу старые теги групп
         resultGroup.removeAllViews();
         for (ModelGroup strGr : groupList) {
@@ -410,7 +411,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editText.setText("");
         }
         //Почищу группы результата поиска
-        FlowLayoutView resultGroup = findViewById(R.id.search_result_group);
+        LinearLayout resultGroup = findViewById(R.id.search_result_group);
         resultGroup.removeAllViews();
 
         pagingStart();
