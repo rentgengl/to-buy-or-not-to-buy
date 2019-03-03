@@ -18,13 +18,17 @@ import retrofit2.http.Query;
 
 public interface DataApi {
 
-    @GET("GetProductListByGroup.php")
-    Call<ModelSearchResult> getProductListByGroup(@Query("id") int groupId,
-                                                  @Query("page") long page,
-                                                  @Query("pageSize") int pageSize);
+    @GET("getGroupListByName.php")
+    Call<List<ModelGroup>> getGroupListByName(@Query("name") String name);
 
     @GET("GetProductGroupListByName.php")
     Call<ModelSearchResult> getProductGroupListByName(@Query("name") String name,
+                                                      @Query("page") long page,
+                                                      @Query("pageSize") int pageSize);
+
+    @GET("getProductList.php")
+    Call<ModelSearchResult> getProductList(@Query("name") String name,
+                                           @Query("id") int groupId,
                                                       @Query("page") long page,
                                                       @Query("pageSize") int pageSize);
 

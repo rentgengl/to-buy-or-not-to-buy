@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -147,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         executor = new MainActivity.MainThreadExecutor();
 
         //По умолчанию отображаю товары первой группы
-        this.searchMethod = new ModelSearchProductMethod(1);
+        this.searchMethod = new ModelSearchProductMethod(0);
 
         //Формирование списка товаров
         pagingStart();
@@ -214,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             LinkedHashMap<ModelGroup, LinkedHashMap> productGroupGroups =
                     mProductGroupsCurrent.get(productGroup);
 
-            searchByGroup(productGroup.id);
+            searchByGroup(productGroup.id,true);
             //Раскрытие группы
             if (productGroupGroups == null) {
                 mProductGroupsSelected = mProductGroupsCurrent;
@@ -278,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             //Клик по группе
             //Подгрузка списка товаров
-            searchByGroup((int) v.getTag());
+            searchByGroup((int) v.getTag(),false);
 
         }
 
@@ -288,12 +289,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private class OnKeyPress implements View.OnKeyListener {
         public boolean onKey(View v, int keyCode, KeyEvent event) {
             if (event.getAction() == KeyEvent.ACTION_DOWN & keyCode != KeyEvent.KEYCODE_DEL) {
-                //(keyCode == KeyEvent.KEYCODE_ENTER)) {
                 // сохраняем текст, введенный до нажатия Enter в переменную
                 EditText editText = v.findViewById(R.id.search_panel_text);
                 String strName = editText.getText().toString();
-                if (!strName.equals(""))
-                    searchByName(strName);
+                searchByName(strName);
 
                 return true;
             }
@@ -343,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void showGroupList(List<ModelGroup> groupList) {
-        FlowLayoutView resultGroup = findViewById(R.id.search_result_group);
+        LinearLayout resultGroup = findViewById(R.id.search_result_group);
         //Подчищу старые теги групп
         resultGroup.removeAllViews();
         for (ModelGroup strGr : groupList) {
@@ -369,34 +368,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Поиск товаров по имени
     private void searchByName(String name) {
 
-        searchMethod = new ModelSearchProductMethod(name);
+        if(searchMethod==null) {
+            searchMethod = new ModelSearchProductMethod(name, 0);
+        }else{
+            searchMethod.searchText = name;
+        }
         pagingStart();
 
         //Подгрузка списка групп
-        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-        Call<ModelSearchResult> serviceCall = mDataApi.getProductGroupListByName(name, 1, 100);
-        serviceCall.enqueue(new Callback<ModelSearchResult>() {
-            @Override
-            public void onResponse(Call<ModelSearchResult> call, Response<ModelSearchResult> response) {
-                ModelSearchResult ss = response.body();
-                showGroupList(ss.getGroups());
+        if(!name.equals("")) {
+            DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
+            Call<List<ModelGroup>> serviceCall = mDataApi.getGroupListByName(name);
+            serviceCall.enqueue(new Callback<List<ModelGroup>>() {
+                @Override
+                public void onResponse(Call<List<ModelGroup>> call, Response<List<ModelGroup>> response) {
+                    List<ModelGroup> ss = response.body();
+                    showGroupList(ss);
 
-            }
+                }
 
-            @Override
-            public void onFailure(Call<ModelSearchResult> call, Throwable t) {
-                showErrorSearch();
-            }
-        });
+                @Override
+                public void onFailure(Call<List<ModelGroup>> call, Throwable t) {
+                    showErrorSearch();
+                }
+            });
+        }
 
 
     }
 
     //Поиск товаров по группе
-    private void searchByGroup(int groupId) {
-        this.searchMethod = new ModelSearchProductMethod(groupId);
+    private void searchByGroup(int groupId, boolean removeSearchText) {
+        if(searchMethod==null) {
+            searchMethod = new ModelSearchProductMethod(groupId);
+        }else{
+            searchMethod.searchGroup = groupId;
+        }
+
+        if(removeSearchText) {
+            searchMethod.searchText = "";
+            EditText editText = this.findViewById(R.id.search_panel_text);
+            editText.setText("");
+        }
         //Почищу группы результата поиска
-        FlowLayoutView resultGroup = findViewById(R.id.search_result_group);
+        LinearLayout resultGroup = findViewById(R.id.search_result_group);
         resultGroup.removeAllViews();
 
         pagingStart();
