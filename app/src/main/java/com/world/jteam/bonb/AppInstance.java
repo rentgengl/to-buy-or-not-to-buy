@@ -50,6 +50,9 @@ public class AppInstance extends Application {
                 edit.commit();
             }
 
+            //Пользователь
+            AuthManager.setStartUser();
+
             //Геолокация
             sAutoGeoPosition = GeoManager.getAutoGeoPositionFromSettings(sAutoGeoPosition);
             sRadiusArea = GeoManager.getRadiusAreaFromSettings(sRadiusArea);

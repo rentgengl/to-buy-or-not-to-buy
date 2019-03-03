@@ -18,6 +18,7 @@ import retrofit2.Response;
 
 public class ProductDataSource extends PageKeyedDataSource<Integer, ModelProduct> {
     public ModelSearchProductMethod searchMethod;
+    private int mProductsCount = 0;
     //Начальная инициализация списка
     @Override
     public void loadInitial(@NonNull final LoadInitialParams<Integer> params, @NonNull final LoadInitialCallback<Integer, ModelProduct> callback) {
@@ -45,16 +46,16 @@ public class ProductDataSource extends PageKeyedDataSource<Integer, ModelProduct
                     onFailure(call, new HttpException(response));
                     return;
                 }
-
+                mProductsCount = resultData.getCount();
                 Integer nextPage = null;
-                if (resultData.getCount() > Constants.DEFAULT_PER_PAGE)
+                if (mProductsCount > Constants.DEFAULT_PER_PAGE)
                     nextPage = page + 1;
 
                 // Result can be passed asynchronously
                 callback.onResult(
                         resultData.getProducts(), // List of data items
                         0, // Position of first item
-                        resultData.getCount(), // Total number of items that can be fetched from api
+                        mProductsCount, // Total number of items that can be fetched from api
                         null, // Previous page. `null` if there's no previous page
                         nextPage // Next Page (Used at the next request). Return `null` if this is the last page.
                 );
@@ -106,7 +107,7 @@ public class ProductDataSource extends PageKeyedDataSource<Integer, ModelProduct
                 }
 
                 Integer nextPage = null;
-                if (resultData.getCount() > Constants.DEFAULT_PER_PAGE * page)
+                if (mProductsCount > Constants.DEFAULT_PER_PAGE * page)
                     nextPage = page + 1;
 
                 // Result can be passed asynchronously

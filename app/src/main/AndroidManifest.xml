@@ -24,15 +24,15 @@
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"
             android:theme="@style/AppThemeNoActionBar">
+        </activity>
+        <activity android:name=".activity.MainActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".activity.MainActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden">
         </activity>
         <activity android:name=".activity.ProductRegistrationActivity"
             android:screenOrientation="portrait"

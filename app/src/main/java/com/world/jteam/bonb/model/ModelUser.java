@@ -3,7 +3,7 @@ package com.world.jteam.bonb.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class   ModelUser implements Parcelable {
+public class ModelUser implements Parcelable {
     public String name;
     public String google_id;
     public int id;
@@ -59,5 +59,7 @@ public class   ModelUser implements Parcelable {
         }
     };
 
-
+    public boolean isAuthUser(){
+        return id>=0;
+    }
 }
