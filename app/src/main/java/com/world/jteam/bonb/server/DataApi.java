@@ -29,8 +29,11 @@ public interface DataApi {
     @GET("getProductList.php")
     Call<ModelSearchResult> getProductList(@Query("name") String name,
                                            @Query("id") int groupId,
-                                                      @Query("page") long page,
-                                                      @Query("pageSize") int pageSize);
+                                           @Query("page") long page,
+                                           @Query("pageSize") int pageSize,
+                                           @Query("radius") int radius,
+                                           @Query("lat") double lat,
+                                           @Query("lng") double lng);
 
     @GET("GetProductFullById.php")
     Call<ModelProductFull> getProductFullById(@Query("id") int id,

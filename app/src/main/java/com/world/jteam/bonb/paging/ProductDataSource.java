@@ -3,6 +3,7 @@ package com.world.jteam.bonb.paging;
 import android.arch.paging.PageKeyedDataSource;
 import android.support.annotation.NonNull;
 
+import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.Constants;
 import com.world.jteam.bonb.server.DataApi;
 import com.world.jteam.bonb.server.SingletonRetrofit;
@@ -27,7 +28,14 @@ public class ProductDataSource extends PageKeyedDataSource<Integer, ModelProduct
 
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
 
-        Call<ModelSearchResult> retrofitCall = mDataApi.getProductList(searchMethod.searchText,searchMethod.searchGroup, page, params.requestedLoadSize);
+        Call<ModelSearchResult> retrofitCall = mDataApi.getProductList(
+                searchMethod.searchText,
+                searchMethod.searchGroup,
+                page,
+                params.requestedLoadSize,
+                AppInstance.getRadiusArea(),
+                AppInstance.getGeoPosition().latitude,
+                AppInstance.getGeoPosition().longitude);
         Callback<ModelSearchResult> requestCallback = new Callback<ModelSearchResult>() {
             @Override
             public void onResponse(@NonNull Call<ModelSearchResult> call, @NonNull Response<ModelSearchResult> response) {
@@ -78,7 +86,14 @@ public class ProductDataSource extends PageKeyedDataSource<Integer, ModelProduct
 
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
 
-        Call<ModelSearchResult> retrofitCall = mDataApi.getProductList(searchMethod.searchText, searchMethod.searchGroup, page, params.requestedLoadSize);
+        Call<ModelSearchResult> retrofitCall = mDataApi.getProductList(
+                searchMethod.searchText,
+                searchMethod.searchGroup,
+                page,
+                params.requestedLoadSize,
+                AppInstance.getRadiusArea(),
+                AppInstance.getGeoPosition().latitude,
+                AppInstance.getGeoPosition().longitude);
         Callback<ModelSearchResult> requestCallback = new Callback<ModelSearchResult>() {
             @Override
             public void onResponse(@NonNull Call<ModelSearchResult> call, @NonNull Response<ModelSearchResult> response) {

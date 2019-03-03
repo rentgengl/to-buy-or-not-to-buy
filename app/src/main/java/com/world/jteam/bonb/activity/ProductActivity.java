@@ -117,7 +117,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
                     switch (event.getAction()) {
                         case 0: //Нажали
                             productRaitingView.setRating(0);
-                            productRaitingView.setStepSize((float) 0.5);
+                            productRaitingView.setStepSize((float) 1);
                             break;
                         case 1: //Отжали
                             break;
