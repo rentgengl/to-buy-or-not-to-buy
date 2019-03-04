@@ -86,7 +86,7 @@
                                     <map>
                                       <entry key="backgroundColor" value="ffffff" />
                                       <entry key="backgroundImage" value="D:\AndroidStudioProjects\Ресурсы\Прозрачный.png" />
-                                      <entry key="foregroundImage" value="D:\AndroidStudioProjects\Ресурсы\bonb_logo_4.png" />
+                                      <entry key="foregroundImage" value="D:\AndroidStudioProjects\Ресурсы\Мясо.png" />
                                       <entry key="outputName" value="ic_logo" />
                                     </map>
                                   </option>
@@ -125,7 +125,7 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="D:\AndroidStudioProjects\Ресурсы\bonb_logo_4.png" />
+                                      <entry key="imageAsset" value="D:\AndroidStudioProjects\Ресурсы\Мясо.png" />
                                       <entry key="outputName" value="ic_logo" />
                                     </map>
                                   </option>
