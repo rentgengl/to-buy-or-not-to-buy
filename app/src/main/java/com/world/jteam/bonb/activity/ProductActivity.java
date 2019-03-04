@@ -439,6 +439,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
             ImageView view_imageLogo = view.findViewById(R.id.imageLogo);
             //Button view_addPrice = view.findViewById(R.id.addPrice);
 
+
             view_magazinName.setText(obj.market.name);
             view_magazinPrice.setText(obj.price + "\u20BD");
             /*view_addPrice.setTag(obj.market.id);
@@ -460,6 +461,11 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
             if (fullMode){
                 TextView view_magazinAdres = view.findViewById(R.id.magazinAdres);
                 view_magazinAdres.setText(obj.market.adress);
+
+                //Дата цены
+                TextView view_magazinDate = view.findViewById(R.id.magazinDate);
+                SimpleDateFormat simpleDate =  new SimpleDateFormat("dd.MM.yy");
+                view_magazinDate.setText(simpleDate.format(obj.date));
             }
 
             return view;
