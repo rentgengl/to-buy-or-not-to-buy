@@ -80,6 +80,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Геолокация
     private static final int GEO_REQUEST = 2;
 
+    //Нажатие назад
+    private static long back_pressed;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +174,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (back_pressed + 2000 > System.currentTimeMillis())
+            super.onBackPressed();
+        else
+            Toast.makeText(getBaseContext(), "Нажмите еще раз для выхода",
+                    Toast.LENGTH_SHORT).show();
+        back_pressed = System.currentTimeMillis();
     }
 
     @Override
@@ -288,14 +301,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Обработчик ввода текста в поле поиска
     private class OnKeyPress implements View.OnKeyListener {
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN & keyCode != KeyEvent.KEYCODE_DEL) {
-                // сохраняем текст, введенный до нажатия Enter в переменную
-                EditText editText = v.findViewById(R.id.search_panel_text);
-                String strName = editText.getText().toString();
-                searchByName(strName);
 
-                return true;
+            //Возврат если это не нажатие
+            if (event.getAction() != KeyEvent.ACTION_DOWN || (keyCode!=KeyEvent.KEYCODE_BACK &keyCode!=KeyEvent.KEYCODE_ENTER))
+                return false;
+
+            EditText editText = v.findViewById(R.id.search_panel_text);
+            String strName = editText.getText().toString();
+            switch (keyCode){
+                case (KeyEvent.KEYCODE_BACK):
+
+                    if(strName.isEmpty()){
+                        //Если поле поиска пустое, то зафиксирую начало выхода
+                        //onBackPressed();
+                    }else{
+                        //Если нажали бэк и есть текст, то очищу поле поиска
+                        editText.setText("");
+                        searchByName("");
+                        return true;
+                    }
+
+
+                    break;
+                case (KeyEvent.KEYCODE_ENTER):
+
+                    if(strName.length() >2) {
+                        searchByName(strName);
+                    }
+                    return true;
             }
+
             return false;
         }
     }
