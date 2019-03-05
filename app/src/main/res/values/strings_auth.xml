@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="default_user_name">Не авторизован</string>
+    <string name="auth_error">Ошибка авторизации!</string>
 </resources>
