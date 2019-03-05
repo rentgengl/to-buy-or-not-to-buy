@@ -35,18 +35,13 @@ public interface DataApi {
                                            @Query("lat") double lat,
                                            @Query("lng") double lng);
 
-    @GET("GetProductFullById.php")
-    Call<ModelProductFull> getProductFullById(@Query("id") int id,
+    @GET("GetProductFull.php")
+    Call<ModelProductFull> getProductFull(    @Query("id") int id,
+                                              @Query("EAN") String ean,
                                               @Query("user_id") int user_id,
                                               @Query("radius") int radius,
                                               @Query("lat") double lat,
                                               @Query("lng") double lng);
-
-    @GET("GetProductFullByEAN.php")
-    Call<ModelProductFull> getProductFullByEAN(@Query("EAN") String ean,
-                                               @Query("radius") int radius,
-                                               @Query("lat") double lat,
-                                               @Query("lng") double lng);
 
     @GET("GetGroupList.php")
     Call<List<ModelGroup>> getGroupList();

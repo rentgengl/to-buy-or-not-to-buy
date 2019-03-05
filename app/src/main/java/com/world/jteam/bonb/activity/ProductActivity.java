@@ -315,8 +315,9 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
 
     private void refreshData(final RefreshDataListener refreshDataListener){
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-        Call<ModelProductFull> serviceCall = mDataApi.getProductFullById(
+        Call<ModelProductFull> serviceCall = mDataApi.getProductFull(
                 thisProductFull.id,
+                "",
                 AppInstance.getUser().id,
                 AppInstance.getRadiusArea(),
                 AppInstance.getGeoPosition().latitude,

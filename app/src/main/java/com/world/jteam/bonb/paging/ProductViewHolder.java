@@ -50,8 +50,9 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
             public void onClick(final View v) {
 
                 DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-                Call<ModelProductFull> serviceCall = mDataApi.getProductFullById(
+                Call<ModelProductFull> serviceCall = mDataApi.getProductFull(
                         (int)v.getTag(),
+                        "",
                         AppInstance.getUser().id,
                         AppInstance.getRadiusArea(),
                         AppInstance.getGeoPosition().latitude,
