@@ -345,7 +345,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Запрос на сервер
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-        Call<ModelProductFull> serviceCall = mDataApi.getProductFullByEAN(EAN,
+        Call<ModelProductFull> serviceCall = mDataApi.getProductFull(
+                -1,
+                EAN,
+                AppInstance.getUser().id,
                 AppInstance.getRadiusArea(),
                 AppInstance.getGeoPosition().latitude,
                 AppInstance.getGeoPosition().longitude);

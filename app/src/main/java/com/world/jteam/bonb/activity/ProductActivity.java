@@ -28,6 +28,7 @@ import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.squareup.picasso.Picasso;
 import com.world.jteam.bonb.AppInstance;
+import com.world.jteam.bonb.AuthManager;
 import com.world.jteam.bonb.Constants;
 import com.world.jteam.bonb.model.ModelUser;
 import com.world.jteam.bonb.server.DataApi;
@@ -46,6 +47,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProductActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
+    private final AppCompatActivity mThis = this;
 
     public ModelProductFull thisProductFull;
     private SliderLayout mDemoSlider;
@@ -53,11 +55,17 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
     private boolean mFullCommentMode = false; //Определяет будет ли обображатся полный список комментариев или упрощенный режим
     private boolean mFullPriceMode = false; //Определяет будет ли обображатся полный список цен или упрощенный режим
 
+    RatingBar mProductRaitingView;
+
+    private static final int RC_SIGN_IN = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_product);
+
+        mProductRaitingView = findViewById(R.id.productRaiting);
 
         thisProductFull = (ModelProductFull) getIntent().getParcelableExtra("object");
         onGetData(thisProductFull);
@@ -109,15 +117,14 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         });
 
         //Обработчик рейтинга
-        final RatingBar productRaitingView = findViewById(R.id.productRaiting);
-        productRaitingView.setOnTouchListener(new View.OnTouchListener() {
+        mProductRaitingView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (!productRaitingView.isIndicator()) {
+                if (!mProductRaitingView.isIndicator()) {
                     switch (event.getAction()) {
                         case 0: //Нажали
-                            productRaitingView.setRating(0);
-                            productRaitingView.setStepSize((float) 1);
+                            mProductRaitingView.setRating(0);
+                            mProductRaitingView.setStepSize((float) 1);
                             break;
                         case 1: //Отжали
                             break;
@@ -127,16 +134,50 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
                 return false;
             }
         });
-        productRaitingView.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+        mProductRaitingView.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 if (fromUser) {
-                    startInputComment(rating);
-                    productRaitingView.setStepSize((float) 0.1);
+                    mProductRaitingView.setStepSize((float) 0.1);
+                    if (AppInstance.getUser().isAuthUser()) {
+                        startInputComment(rating);
+                    }
+                    else {
+                        mProductRaitingView.setIsIndicator(true);
+                        AuthManager.signIn(mThis, RC_SIGN_IN);
+                    }
                 }
             }
 
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            AuthManager.signInOnResult(resultCode, data, new AuthManager.OnLoginListener() {
+                @Override
+                public void onLogin() {
+                    final float rating = mProductRaitingView.getRating();
+                    refreshData(new RefreshDataListener() {
+                        @Override
+                        public void onAfterResponse() {
+                            if (thisProductFull.user_leave_comment==0)
+                                startInputComment(rating);
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailureLogin() {
+                    AuthManager.informLoginError();
+                    if (!AppInstance.getUser().isAuthUser())
+                        mProductRaitingView.setIsIndicator(false);
+                }
+            });
+        }
     }
 
     public void showPriceOnMap() {
@@ -214,7 +255,6 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         //TextView view_productName = this.findViewById(R.id.productName);//Наименование
         TextView view_lowPrice = this.findViewById(R.id.lowPrice);//Разброс цен
         TextView view_textRaiting = this.findViewById(R.id.textRaiting);//Рейтинг текстом
-        RatingBar view_productRaiting = this.findViewById(R.id.productRaiting);//Рейтинг
 
         ListView view_price_list = this.findViewById(R.id.price_list);
         ListView view_price_list_lite = this.findViewById(R.id.price_list_lite);
@@ -230,9 +270,9 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
 
         view_lowPrice.setText("от " + product.price_min + " до " + product.price_max + "\u20BD");
         view_textRaiting.setText(product.raiting + " из 5");
-        view_productRaiting.setRating(product.raiting);
+        mProductRaitingView.setRating(product.raiting);
         if (product.user_leave_comment==1)
-            view_productRaiting.setIsIndicator(true);
+            mProductRaitingView.setIsIndicator(true);
 
         //Вывод списков
         if (product.prices != null && product.prices.size()>0) {
@@ -269,10 +309,15 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
 
     }
 
-    private void refreshData(){
+    private interface RefreshDataListener{
+        void onAfterResponse();
+    }
+
+    private void refreshData(final RefreshDataListener refreshDataListener){
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-        Call<ModelProductFull> serviceCall = mDataApi.getProductFullById(
+        Call<ModelProductFull> serviceCall = mDataApi.getProductFull(
                 thisProductFull.id,
+                "",
                 AppInstance.getUser().id,
                 AppInstance.getRadiusArea(),
                 AppInstance.getGeoPosition().latitude,
@@ -281,6 +326,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
             @Override
             public void onResponse(Call<ModelProductFull> call, Response<ModelProductFull> response) {
                 onGetData(response.body());
+                refreshDataListener.onAfterResponse();
             }
 
             @Override
@@ -551,7 +597,6 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         // set prompts.xml to alertdialog builder
         alertDialogBuilder.setView(commentView);
 
-        final RatingBar productRaitingView = findViewById(R.id.productRaiting);
         final RatingBar productRaitingNewView = commentView.findViewById(R.id.productRaiting);
         final EditText productCommentNewView = commentView.findViewById(R.id.productComment);
 
@@ -564,13 +609,13 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 addNewComment(productRaitingNewView.getRating(), productCommentNewView.getText().toString());
-                                productRaitingView.setIsIndicator(true);
+                                mProductRaitingView.setIsIndicator(true);
                             }
                         })
                 .setNegativeButton(R.string.cancel,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                productRaitingView.setRating(thisProductFull.raiting);
+                                mProductRaitingView.setRating(thisProductFull.raiting);
                                 dialog.cancel();
                             }
                         });
@@ -598,7 +643,12 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         serviceCall.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                refreshData();
+                refreshData(new RefreshDataListener() {
+                    @Override
+                    public void onAfterResponse() {
+
+                    }
+                });
             }
 
             @Override
