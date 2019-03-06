@@ -4,6 +4,12 @@
     tools:context="com.world.jteam.bonb.activity.MainActivity">
 
     <item
+        android:id="@+id/choose_markets"
+        android:icon="@drawable/ic_markets"
+        android:title="markets"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/choose_geo"
         android:icon="@drawable/ic_geo"
         android:title="geo"

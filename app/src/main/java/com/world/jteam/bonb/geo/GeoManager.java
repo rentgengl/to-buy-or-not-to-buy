@@ -185,4 +185,19 @@ public class GeoManager {
             return getRadiusAreaItemByValue(Constants.DEFAULT_RADIUS_AREA);
     }
 
+    //Получение расстояния в км по координатам
+    public static double getDistance(double lat1, double long1, double lat2, double long2){
+        double _eQuatorialEarthRadius = 6378.1370D;
+        double _d2r = (Math.PI / 180D);
+
+        double dlong = (long2 - long1) * _d2r;
+        double dlat = (lat2 - lat1) * _d2r;
+        double a = Math.pow(Math.sin(dlat / 2D), 2D) + Math.cos(lat1 * _d2r) * Math.cos(lat2 * _d2r)
+                * Math.pow(Math.sin(dlong / 2D), 2D);
+        double c = 2D * Math.atan2(Math.sqrt(a), Math.sqrt(1D - a));
+        double d = _eQuatorialEarthRadius * c;
+
+        return d;
+    }
+
 }

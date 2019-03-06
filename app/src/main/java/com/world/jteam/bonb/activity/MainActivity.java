@@ -215,6 +215,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent geoIntent = new Intent(this, CoverageAreaActivity.class);
                 startActivity(geoIntent);
                 break;
+
+            case R.id.choose_markets:
+                Intent marketsIntent = new Intent(this, SearchMarketActivity.class);
+                startActivity(marketsIntent);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
