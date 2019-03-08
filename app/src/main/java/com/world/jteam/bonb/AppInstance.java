@@ -11,15 +11,22 @@ import com.world.jteam.bonb.geo.GeoManager;
 import com.world.jteam.bonb.media.BarcodeManager;
 import com.world.jteam.bonb.model.ModelGroup;
 import com.world.jteam.bonb.model.ModelUser;
+import com.world.jteam.bonb.model.Versions;
+import com.world.jteam.bonb.server.DataApi;
+import com.world.jteam.bonb.server.SingletonRetrofit;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.TreeMap;
 
+import retrofit2.Call;
+
 public class AppInstance extends Application {
     private static Context sContext;
     private static boolean sFirstStart;
     private static ModelUser sUser;
+    private static int sMinServerAppVersion;
+    private static int sProductGroupsVersion;
 
     private static LinkedHashMap<ModelGroup, LinkedHashMap> sProductGroups; //Дерево категорий
 
@@ -40,6 +47,33 @@ public class AppInstance extends Application {
     private class AppInitialisation implements Runnable {
         @Override
         public void run() {
+            //Версии
+            updateVersions(null);
+
+            Thread versionThread=new Thread(new Runnable(){
+                @Override
+                public void run() {
+                    try {
+                        Thread.currentThread().sleep(Constants.UPDATE_RATE_VERSION);
+                    } catch (InterruptedException e) {
+
+                    }
+
+                    DataApi dataApi = SingletonRetrofit.getInstance().getDataApi();
+
+                    while (true) {
+                        updateVersions(dataApi);
+
+                        try {
+                            Thread.currentThread().sleep(Constants.UPDATE_RATE_VERSION);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                    }
+                }
+            });
+            versionThread.start();
+
             //Первый запуск
             SharedPreferences sharedPreferences =
                     PreferenceManager.getDefaultSharedPreferences(sContext);
@@ -64,11 +98,7 @@ public class AppInstance extends Application {
             }
 
             //БД
-            try {
-                DatabaseApp.initDatabaseApp(sContext);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            DatabaseApp.initDatabaseApp(sContext);
 
             //Категории
             productGroupsInitialisation();
@@ -94,6 +124,29 @@ public class AppInstance extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+
+    //Версии
+    public static int getMinServerAppVersion() {
+        return sMinServerAppVersion;
+    }
+
+    public static int getProductGroupsVersion() {
+        return sProductGroupsVersion;
+    }
+
+    public static void updateVersions(DataApi dataApi) {
+        if (dataApi==null)
+            dataApi=SingletonRetrofit.getInstance().getDataApi();
+
+        Call<Versions> versionsCall = dataApi.getVersions();
+        try {
+            Versions servVersions = versionsCall.execute().body();
+            sMinServerAppVersion = servVersions.appVersion;
+            sProductGroupsVersion = servVersions.groupVersion;
+        } catch (Exception e) {
+
+        }
     }
 
     //Группы товаров

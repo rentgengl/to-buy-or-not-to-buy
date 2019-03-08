@@ -143,7 +143,7 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
                 AppInstance.getRadiusArea(),
                 AppInstance.getGeoPosition().latitude,
                 AppInstance.getGeoPosition().longitude);
-        serviceCall.enqueue(new Callback<List<ModelMarket>>() {
+        SingletonRetrofit.enqueue(serviceCall,new Callback<List<ModelMarket>>() {
             @Override
             public void onResponse(Call<List<ModelMarket>> call, Response<List<ModelMarket>> response) {
                 showMarketList(response.body());

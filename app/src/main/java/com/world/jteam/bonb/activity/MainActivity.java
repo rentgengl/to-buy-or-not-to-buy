@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 AppInstance.getGeoPosition().latitude,
                 AppInstance.getGeoPosition().longitude);
         //Обработчик ответа сервера
-        serviceCall.enqueue(new Callback<ModelProductFull>() {
+        SingletonRetrofit.enqueue(serviceCall,new Callback<ModelProductFull>() {
             @Override
             public void onResponse(Call<ModelProductFull> call, Response<ModelProductFull> response) {
                 ModelProductFull ss = response.body();
@@ -422,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(!name.equals("")) {
             DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
             Call<List<ModelGroup>> serviceCall = mDataApi.getGroupListByName(name);
-            serviceCall.enqueue(new Callback<List<ModelGroup>>() {
+            SingletonRetrofit.enqueue(serviceCall,new Callback<List<ModelGroup>>() {
                 @Override
                 public void onResponse(Call<List<ModelGroup>> call, Response<List<ModelGroup>> response) {
                     List<ModelGroup> ss = response.body();

@@ -8,4 +8,5 @@
     <string name="title_activity_maps">Map</string>
     <string name="cancel">Отмена</string>
     <string name="authentification_hello">Добро пожаловать</string>
+    <string name="need_update_app">Необходимо обновить приложение!</string>
 </resources>

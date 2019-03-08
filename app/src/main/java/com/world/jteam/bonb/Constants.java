@@ -39,4 +39,6 @@ public class Constants {
     public static final int DEFAULT_RADIUS_AREA=5; //км
     public static final int UPDATE_RATE_GEO_POSITION=1800000; //30мин в миллисекундах
 
+    public static final int UPDATE_RATE_VERSION = 18000000; //5ч в миллисекундах
+
 }

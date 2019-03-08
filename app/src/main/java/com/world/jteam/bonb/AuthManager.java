@@ -96,7 +96,7 @@ public class AuthManager {
     private static void loginServer(final ModelUser user, final boolean regIfNecessary,final OnLoginListener loginListener){
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
         Call<ModelUser> serviceCall = mDataApi.loginUser(user.google_id);
-        serviceCall.enqueue(new Callback<ModelUser>() {
+        SingletonRetrofit.enqueue(serviceCall,new Callback<ModelUser>() {
             @Override
             public void onResponse(Call<ModelUser> call, Response<ModelUser> response) {
                 ModelUser rUser = response.body();
@@ -128,7 +128,7 @@ public class AuthManager {
 
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
         Call<Void> serviceCall = mDataApi.registerUser(user);
-        serviceCall.enqueue(new Callback<Void>() {
+        SingletonRetrofit.enqueue(serviceCall,new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 loginServer(user,false,loginListener);

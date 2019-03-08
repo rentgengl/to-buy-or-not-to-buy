@@ -60,7 +60,7 @@ public class ProductDataSource extends ItemKeyedDataSource<ModelProduct, ModelPr
             }
         };
 
-        retrofitCall.enqueue(requestCallback);
+        SingletonRetrofit.enqueue(retrofitCall,requestCallback);
     }
 
 
@@ -105,7 +105,7 @@ public class ProductDataSource extends ItemKeyedDataSource<ModelProduct, ModelPr
             }
         };
 
-        retrofitCall.enqueue(requestCallback);
+        SingletonRetrofit.enqueue(retrofitCall,requestCallback);
     }
 
     @NonNull

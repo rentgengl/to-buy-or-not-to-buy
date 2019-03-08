@@ -322,7 +322,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
                 AppInstance.getRadiusArea(),
                 AppInstance.getGeoPosition().latitude,
                 AppInstance.getGeoPosition().longitude);
-        serviceCall.enqueue(new Callback<ModelProductFull>() {
+        SingletonRetrofit.enqueue(serviceCall,new Callback<ModelProductFull>() {
             @Override
             public void onResponse(Call<ModelProductFull> call, Response<ModelProductFull> response) {
                 onGetData(response.body());
@@ -572,7 +572,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         ModelPrice mprice = new ModelPrice(thisProductFull.id, price, market, AppInstance.getUser().id);
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
         Call<Void> serviceCall = mDataApi.addNewPrice(mprice);
-        serviceCall.enqueue(new Callback<Void>() {
+        SingletonRetrofit.enqueue(serviceCall,new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
 
@@ -640,7 +640,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         ModelComment mcomment = new ModelComment(thisProductFull.id, AppInstance.getUser(), comment, rating);
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
         Call<Void> serviceCall = mDataApi.addNewComment(mcomment);
-        serviceCall.enqueue(new Callback<Void>() {
+        SingletonRetrofit.enqueue(serviceCall,new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 refreshData(new RefreshDataListener() {
