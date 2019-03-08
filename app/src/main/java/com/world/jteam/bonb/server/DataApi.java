@@ -26,14 +26,16 @@ public interface DataApi {
                                                       @Query("page") long page,
                                                       @Query("pageSize") int pageSize);
 
-    @GET("getProductList.php")
-    Call<ModelSearchResult> getProductList(@Query("name") String name,
-                                           @Query("id") int groupId,
-                                           @Query("page") long page,
-                                           @Query("pageSize") int pageSize,
-                                           @Query("radius") int radius,
-                                           @Query("lat") double lat,
-                                           @Query("lng") double lng);
+    @GET("getProductList_v2.php")
+    Call<ModelSearchResult> getProductList( @Query("name") String name,
+                                            @Query("id") int groupId,
+                                            @Query("radius") int radius,
+                                            @Query("lat") double lat,
+                                            @Query("lng") double lng,
+                                            @Query("pageSize") int pageSize,
+                                            @Query("lastName") String lastName,
+                                            @Query("lastID") int lastID
+                                            );
 
     @GET("GetProductFull.php")
     Call<ModelProductFull> getProductFull(    @Query("id") int id,

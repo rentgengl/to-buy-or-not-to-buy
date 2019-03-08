@@ -23,7 +23,9 @@ public class Constants {
     public static final String SERVER_PATH_IMAGE = "img/";
     public static final String SERVICE_GET_IMAGE = HTTP_SERVER + SERVER_PATH_IMAGE;
 
-    public static Integer DEFAULT_PER_PAGE = 5;
+    public static Integer DEFAULT_PER_PAGE = 15; //Количество элементов считываемых с сервера
+    public static int MAX_PRODUCT_LIST_ITEMS = 1000; // Максимальное количество которое можно вывести в список
+    public static int MAX_PRODUCT_LIST_FLING_Y = 5000; //максимальная скорость броска списка
 
     public static final String SEARCH_METHOD_BY_ID = "SEARCH_METHOD_BY_ID";
     public static final String SEARCH_METHOD_BY_EAN = "SEARCH_METHOD_BY_EAN";

@@ -466,12 +466,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         adapter = new ProductListAdapter();
 
-        RecyclerView recyclerView = findViewById(R.id.productRW);
+        final RecyclerView recyclerView = findViewById(R.id.productRW);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
         recyclerView.setOnClickListener(this);
+        recyclerView.setOnFlingListener(new RecyclerView.OnFlingListener(){ //порог броска прогрутки
+            @Override
+            public boolean onFling(int velocityX, int velocityY) {
+                if (velocityY>Constants.MAX_PRODUCT_LIST_FLING_Y){
+                    recyclerView.fling(velocityX,Constants.MAX_PRODUCT_LIST_FLING_Y);
+                    return true;
+                }
+
+                return false;
+            }
+        });
     }
 
     //Инициализация источника данных
