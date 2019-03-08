@@ -2,6 +2,7 @@ package com.world.jteam.bonb.server;
 
 import com.world.jteam.bonb.model.ModelComment;
 import com.world.jteam.bonb.model.ModelGroup;
+import com.world.jteam.bonb.model.ModelMarket;
 import com.world.jteam.bonb.model.ModelPrice;
 import com.world.jteam.bonb.model.ModelProductFull;
 import com.world.jteam.bonb.model.ModelSearchResult;
@@ -17,6 +18,13 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface DataApi {
+
+
+    @GET("getMarketList.php")
+    Call<List<ModelMarket>> getMarketList(@Query("name") String name,
+                                    @Query("radius") int radius,
+                                    @Query("lat") double lat,
+                                    @Query("lng") double lng);
 
     @GET("getGroupListByName.php")
     Call<List<ModelGroup>> getGroupListByName(@Query("name") String name);

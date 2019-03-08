@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fadingEdgeLength="0dp"
+    android:fillViewport="true"
+    android:overScrollMode="never"
+    android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <include
+                layout="@layout/fragment_search_market_panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.world.jteam.bonb.activity.NonScrollListView
+                android:id="@+id/market_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                ></com.world.jteam.bonb.activity.NonScrollListView>
+
+        </LinearLayout>
+
+
+</ScrollView>
