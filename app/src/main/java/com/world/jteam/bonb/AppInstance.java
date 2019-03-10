@@ -205,7 +205,7 @@ public class AppInstance extends Application {
                 if (group.parent_id != 0) {
                     //возврат на предыдущий уровень
                     parentTree.put(new ModelGroup(
-                                    0, "...", group.parent_id, ModelGroup.GROUP_NM_PRODUCT_ADD),
+                                    0, "...", group.parent_id,null, ModelGroup.GROUP_NM_PRODUCT_ADD),
                             prodGroupsChildIdToParent.get(group.parent_id));
 
                     //возврат по иерархии вверх
@@ -223,6 +223,7 @@ public class AppInstance extends Application {
                                 group.parent_id,
                                 getAppContext().getString(R.string.default_product_group_name),
                                 group.parent_id,
+                                group.logo_link,
                                 ModelGroup.GROUP_NM_PRODUCT_ADD),
                         null);
 
@@ -265,6 +266,7 @@ public class AppInstance extends Application {
                         parentid,
                         "<" + productGroupParent.name,
                         productGroupParent.parent_id,
+                        productGroupParent.logo_link,
                         ModelGroup.GROUP_NM_VIEW),
                 prodGroupsChildIdToParent.get(parentid));
     }

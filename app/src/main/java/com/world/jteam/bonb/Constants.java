@@ -23,6 +23,10 @@ public class Constants {
     public static final String SERVER_PATH_IMAGE = "img/";
     public static final String SERVICE_GET_IMAGE = HTTP_SERVER + SERVER_PATH_IMAGE;
 
+    public static final String SERVER_PATH_GROUPS_LOGO = "groups_logo/";
+    public static final String SERVICE_GET_GROUPS_LOGO = HTTP_SERVER + SERVER_PATH_GROUPS_LOGO;
+
+
     public static Integer DEFAULT_PER_PAGE = 15; //Количество элементов считываемых с сервера
     public static int MAX_PRODUCT_LIST_ITEMS = 1000; // Максимальное количество которое можно вывести в список
     public static int MAX_PRODUCT_LIST_FLING_Y = 5000; //максимальная скорость броска списка
