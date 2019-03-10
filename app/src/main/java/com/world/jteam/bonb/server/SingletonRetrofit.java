@@ -54,6 +54,12 @@ public class SingletonRetrofit {
     public static void enqueue(Call serviceCall, Callback serviceCallback) {
         int minServerAppVersion = AppInstance.getMinServerAppVersion();
 
+        if (minServerAppVersion==0) {
+            synchronized (AppInstance.getServerVersion()){
+                minServerAppVersion = AppInstance.getMinServerAppVersion();
+            }
+        }
+
         if (minServerAppVersion==0)
             return;
 

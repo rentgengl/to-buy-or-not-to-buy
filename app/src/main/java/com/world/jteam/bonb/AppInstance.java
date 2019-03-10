@@ -11,11 +11,10 @@ import com.world.jteam.bonb.geo.GeoManager;
 import com.world.jteam.bonb.media.BarcodeManager;
 import com.world.jteam.bonb.model.ModelGroup;
 import com.world.jteam.bonb.model.ModelUser;
-import com.world.jteam.bonb.model.Versions;
+import com.world.jteam.bonb.model.ModelVersion;
 import com.world.jteam.bonb.server.DataApi;
 import com.world.jteam.bonb.server.SingletonRetrofit;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.TreeMap;
 
@@ -25,8 +24,7 @@ public class AppInstance extends Application {
     private static Context sContext;
     private static boolean sFirstStart;
     private static ModelUser sUser;
-    private static int sMinServerAppVersion;
-    private static int sProductGroupsVersion;
+    private static ModelVersion sServerVersion = new ModelVersion();
 
     private static LinkedHashMap<ModelGroup, LinkedHashMap> sProductGroups; //Дерево категорий
 
@@ -48,7 +46,9 @@ public class AppInstance extends Application {
         @Override
         public void run() {
             //Версии
-            updateVersions(null);
+            synchronized (sServerVersion){
+                updateVersions(null);
+            }
 
             Thread versionThread=new Thread(new Runnable(){
                 @Override
@@ -127,23 +127,27 @@ public class AppInstance extends Application {
     }
 
     //Версии
+    public static ModelVersion getServerVersion() {
+        return sServerVersion;
+    }
+
     public static int getMinServerAppVersion() {
-        return sMinServerAppVersion;
+        return sServerVersion.appVersion;
     }
 
     public static int getProductGroupsVersion() {
-        return sProductGroupsVersion;
+        return sServerVersion.groupVersion;
     }
 
     public static void updateVersions(DataApi dataApi) {
         if (dataApi==null)
             dataApi=SingletonRetrofit.getInstance().getDataApi();
 
-        Call<Versions> versionsCall = dataApi.getVersions();
+        Call<ModelVersion> versionsCall = dataApi.getVersions();
         try {
-            Versions servVersions = versionsCall.execute().body();
-            sMinServerAppVersion = servVersions.appVersion;
-            sProductGroupsVersion = servVersions.groupVersion;
+            ModelVersion servModelVersion = versionsCall.execute().body();
+            sServerVersion.appVersion = servModelVersion.appVersion;
+            sServerVersion.groupVersion = servModelVersion.groupVersion;
         } catch (Exception e) {
 
         }

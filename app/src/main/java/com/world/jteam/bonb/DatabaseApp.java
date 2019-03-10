@@ -11,11 +11,9 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.world.jteam.bonb.model.ModelGroup;
-import com.world.jteam.bonb.model.Versions;
 import com.world.jteam.bonb.server.DataApi;
 import com.world.jteam.bonb.server.SingletonRetrofit;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -7,7 +7,7 @@ import com.world.jteam.bonb.model.ModelPrice;
 import com.world.jteam.bonb.model.ModelProductFull;
 import com.world.jteam.bonb.model.ModelSearchResult;
 import com.world.jteam.bonb.model.ModelUser;
-import com.world.jteam.bonb.model.Versions;
+import com.world.jteam.bonb.model.ModelVersion;
 
 import java.util.List;
 
@@ -63,7 +63,7 @@ public interface DataApi {
     Call<ModelUser> loginUser(@Query("google_id") String google_id);
 
     @GET("getVersions.php")
-    Call<Versions> getVersions();
+    Call<ModelVersion> getVersions();
 
     @POST("addNewPrice.php")
     Call<Void> addNewPrice(@Body ModelPrice price);
