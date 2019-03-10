@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 public class ModelUser implements Parcelable {
     public String name;
+    public String displayName;
     public String google_id;
     public int id;
     public String mail;
@@ -15,6 +16,8 @@ public class ModelUser implements Parcelable {
         this.name = name;
         this.google_id = google_id;
         this.id = id;
+
+        generatedisplayName();
     }
 
     public ModelUser(String name, String google_id, String mail, int city){
@@ -22,6 +25,8 @@ public class ModelUser implements Parcelable {
         this.google_id = google_id;
         this.mail = mail;
         this.city_id = city;
+
+        generatedisplayName();
     }
 
     protected ModelUser(Parcel in) {
@@ -30,6 +35,8 @@ public class ModelUser implements Parcelable {
         id = in.readInt();
         mail = in.readString();
         city_id = in.readInt();
+
+        generatedisplayName();
     }
 
     @Override
@@ -61,5 +68,14 @@ public class ModelUser implements Parcelable {
 
     public boolean isAuthUser(){
         return id>=0;
+    }
+
+    private void generatedisplayName(){
+        int nameLenght = name.length();
+        if (nameLenght<=4){
+            displayName = name;
+        } else {
+            displayName = name.substring(0,2)+"***"+name.substring(nameLenght-2,nameLenght);
+        }
     }
 }

@@ -421,7 +421,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
                 TextView view_user_raiting_text = view.findViewById(R.id.user_raiting_text);
                 TextView view_user_raiting_date = view.findViewById(R.id.user_raiting_date);
                 if (obj.user != null)
-                    view_user_name.setText(obj.user.name);
+                    view_user_name.setText(obj.user.displayName);
                 view_user_raiting_text.setText(obj.raiting + " из 5");
                 view_user_raiting_date.setText(dateFormat.format(obj.date));
             }
