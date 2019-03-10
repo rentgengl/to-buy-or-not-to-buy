@@ -216,6 +216,7 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
 
             view_magazinAdres.setText(obj.adress);
             view_magazinName.setText(obj.name);
+            view_magazinName.setTag(obj.id);
             double distance = GeoManager.getDistance(obj.latitude, obj.longitude, AppInstance.getGeoPosition().latitude, AppInstance.getGeoPosition().longitude);
             view_magazinDistance.setText(String.format("%.1f", distance) + " км");
 
@@ -227,6 +228,18 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
                         .into(view_imageLogo);
             }
 
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    TextView view_magazinName = v.findViewById(R.id.magazinName);
+                    TextView view_magazinAdres = v.findViewById(R.id.magazinAdres);
+                    openMarket(0);
+
+                }
+            });
+
+
             return view;
         }
 
@@ -235,6 +248,18 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
         }
 
     }
+
+    public void openMarket(int id){
+
+        Intent intent = new Intent(this, MarketActivity.class);
+                    intent.putExtra("market_id", id);
+//                    intent.putExtra("market_name", (String) view_magazinName.getText());
+//                    intent.putExtra("market_adress", (String) view_magazinAdres.getText());
+        startActivity(intent);
+
+    }
+
+
 
 
 }

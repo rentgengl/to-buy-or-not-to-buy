@@ -8,6 +8,7 @@ public class ModelSearchProductMethod {
     public int searchMethod;
     public String searchText;
     public int searchGroup;
+    public int market_id;
 
     public ModelSearchProductMethod(String searchText){
         this.searchText = searchText;
@@ -22,6 +23,14 @@ public class ModelSearchProductMethod {
     public ModelSearchProductMethod(String searchText,int searchGroup){
         this.searchGroup = searchGroup;
         this.searchText = searchText;
+        this.searchMethod = SEARCH_BY_NAME_AND_GROUP;
+
+    }
+
+    public ModelSearchProductMethod(String searchText,int searchGroup, int market_id){
+        this.searchGroup = searchGroup;
+        this.searchText = searchText;
+        this.market_id = market_id;
         this.searchMethod = SEARCH_BY_NAME_AND_GROUP;
 
     }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/magazinName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textAppearance="@style/ListTextTitle1"
+            android:textSize="18sp"
+            android:text="Ашан Мега-Адыгея икея остановка магазин 456" />
+
+        <TextView
+            android:id="@+id/magazinAdres"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Тургеневское шоссе 156"
+            android:textSize="14sp"/>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
