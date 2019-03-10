@@ -322,7 +322,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
                 AppInstance.getRadiusArea(),
                 AppInstance.getGeoPosition().latitude,
                 AppInstance.getGeoPosition().longitude);
-        serviceCall.enqueue(new Callback<ModelProductFull>() {
+        SingletonRetrofit.enqueue(serviceCall,new Callback<ModelProductFull>() {
             @Override
             public void onResponse(Call<ModelProductFull> call, Response<ModelProductFull> response) {
                 onGetData(response.body());
@@ -421,7 +421,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
                 TextView view_user_raiting_text = view.findViewById(R.id.user_raiting_text);
                 TextView view_user_raiting_date = view.findViewById(R.id.user_raiting_date);
                 if (obj.user != null)
-                    view_user_name.setText(obj.user.name);
+                    view_user_name.setText(obj.user.displayName);
                 view_user_raiting_text.setText(obj.raiting + " из 5");
                 view_user_raiting_date.setText(dateFormat.format(obj.date));
             }
@@ -572,7 +572,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         ModelPrice mprice = new ModelPrice(thisProductFull.id, price, market, AppInstance.getUser().id);
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
         Call<Void> serviceCall = mDataApi.addNewPrice(mprice);
-        serviceCall.enqueue(new Callback<Void>() {
+        SingletonRetrofit.enqueue(serviceCall,new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
 
@@ -640,7 +640,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         ModelComment mcomment = new ModelComment(thisProductFull.id, AppInstance.getUser(), comment, rating);
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
         Call<Void> serviceCall = mDataApi.addNewComment(mcomment);
-        serviceCall.enqueue(new Callback<Void>() {
+        SingletonRetrofit.enqueue(serviceCall,new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 refreshData(new RefreshDataListener() {

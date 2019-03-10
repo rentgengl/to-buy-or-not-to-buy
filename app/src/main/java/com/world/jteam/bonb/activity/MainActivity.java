@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 AppInstance.getGeoPosition().latitude,
                 AppInstance.getGeoPosition().longitude);
         //Обработчик ответа сервера
-        serviceCall.enqueue(new Callback<ModelProductFull>() {
+        SingletonRetrofit.enqueue(serviceCall,new Callback<ModelProductFull>() {
             @Override
             public void onResponse(Call<ModelProductFull> call, Response<ModelProductFull> response) {
                 ModelProductFull ss = response.body();
@@ -422,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(!name.equals("")) {
             DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
             Call<List<ModelGroup>> serviceCall = mDataApi.getGroupListByName(name);
-            serviceCall.enqueue(new Callback<List<ModelGroup>>() {
+            SingletonRetrofit.enqueue(serviceCall,new Callback<List<ModelGroup>>() {
                 @Override
                 public void onResponse(Call<List<ModelGroup>> call, Response<List<ModelGroup>> response) {
                     List<ModelGroup> ss = response.body();
@@ -471,12 +471,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         adapter = new ProductListAdapter();
 
-        RecyclerView recyclerView = findViewById(R.id.productRW);
+        final RecyclerView recyclerView = findViewById(R.id.productRW);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
         recyclerView.setOnClickListener(this);
+        recyclerView.setOnFlingListener(new RecyclerView.OnFlingListener(){ //порог броска прогрутки
+            @Override
+            public boolean onFling(int velocityX, int velocityY) {
+                if (velocityY>Constants.MAX_PRODUCT_LIST_FLING_Y){
+                    recyclerView.fling(velocityX,Constants.MAX_PRODUCT_LIST_FLING_Y);
+                    return true;
+                }
+
+                return false;
+            }
+        });
     }
 
     //Инициализация источника данных

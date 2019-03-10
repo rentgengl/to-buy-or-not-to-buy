@@ -1,6 +1,6 @@
 package com.world.jteam.bonb.paging;
 
-import android.arch.paging.PageKeyedDataSource;
+import android.arch.paging.ItemKeyedDataSource;
 import android.support.annotation.NonNull;
 
 import com.world.jteam.bonb.AppInstance;
@@ -16,27 +16,24 @@ import retrofit2.Callback;
 import retrofit2.HttpException;
 import retrofit2.Response;
 
-public class ProductDataSource extends PageKeyedDataSource<Integer, ModelProduct> {
+public class ProductDataSource extends ItemKeyedDataSource<ModelProduct, ModelProduct> {
     public ModelSearchProductMethod searchMethod;
     private int mProductsCount = 0;
     //Начальная инициализация списка
     @Override
-    public void loadInitial(@NonNull final LoadInitialParams<Integer> params, @NonNull final LoadInitialCallback<Integer, ModelProduct> callback) {
-
-        // Initial page
-
-        final int page = 1;
+    public void loadInitial(@NonNull final LoadInitialParams<ModelProduct> params, @NonNull final LoadInitialCallback<ModelProduct> callback) {
 
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
 
         Call<ModelSearchResult> retrofitCall = mDataApi.getProductList(
                 searchMethod.searchText,
                 searchMethod.searchGroup,
-                page,
-                params.requestedLoadSize,
                 AppInstance.getRadiusArea(),
                 AppInstance.getGeoPosition().latitude,
-                AppInstance.getGeoPosition().longitude);
+                AppInstance.getGeoPosition().longitude,
+                params.requestedLoadSize,
+                "",
+                -1);
         Callback<ModelSearchResult> requestCallback = new Callback<ModelSearchResult>() {
             @Override
             public void onResponse(@NonNull Call<ModelSearchResult> call, @NonNull Response<ModelSearchResult> response) {
@@ -46,18 +43,14 @@ public class ProductDataSource extends PageKeyedDataSource<Integer, ModelProduct
                     onFailure(call, new HttpException(response));
                     return;
                 }
-                mProductsCount = resultData.getCount();
-                Integer nextPage = null;
-                if (mProductsCount > Constants.DEFAULT_PER_PAGE)
-                    nextPage = page + 1;
+
+                mProductsCount = Math.min(resultData.getCount(),Constants.MAX_PRODUCT_LIST_ITEMS);
 
                 // Result can be passed asynchronously
                 callback.onResult(
                         resultData.getProducts(), // List of data items
                         0, // Position of first item
-                        mProductsCount, // Total number of items that can be fetched from api
-                        null, // Previous page. `null` if there's no previous page
-                        nextPage // Next Page (Used at the next request). Return `null` if this is the last page.
+                        mProductsCount // Total number of items that can be fetched from api
                 );
             }
 
@@ -67,34 +60,30 @@ public class ProductDataSource extends PageKeyedDataSource<Integer, ModelProduct
             }
         };
 
-        retrofitCall.enqueue(requestCallback);
+        SingletonRetrofit.enqueue(retrofitCall,requestCallback);
     }
 
 
     @Override
-    public void loadBefore(LoadParams<Integer> params,
-                           LoadCallback<Integer, ModelProduct> callback) {
+    public void loadBefore(LoadParams<ModelProduct> params, LoadCallback< ModelProduct> callback) {
 
     }
-
 
     //Основная загрузка данных
     @Override
-    public void loadAfter(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, ModelProduct> callback) {
-
-        // Next page.
-        final int page = params.key;
+    public void loadAfter(@NonNull final LoadParams<ModelProduct> params, @NonNull final LoadCallback<ModelProduct> callback) {
 
         DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
 
         Call<ModelSearchResult> retrofitCall = mDataApi.getProductList(
                 searchMethod.searchText,
                 searchMethod.searchGroup,
-                page,
-                params.requestedLoadSize,
                 AppInstance.getRadiusArea(),
                 AppInstance.getGeoPosition().latitude,
-                AppInstance.getGeoPosition().longitude);
+                AppInstance.getGeoPosition().longitude,
+                params.requestedLoadSize,
+                params.key.name,
+                params.key.id);
         Callback<ModelSearchResult> requestCallback = new Callback<ModelSearchResult>() {
             @Override
             public void onResponse(@NonNull Call<ModelSearchResult> call, @NonNull Response<ModelSearchResult> response) {
@@ -106,16 +95,8 @@ public class ProductDataSource extends PageKeyedDataSource<Integer, ModelProduct
                     return;
                 }
 
-                Integer nextPage = null;
-                if (mProductsCount > Constants.DEFAULT_PER_PAGE * page)
-                    nextPage = page + 1;
-
                 // Result can be passed asynchronously
-                callback.onResult(
-                        resultData.getProducts(), // List of data items
-                        // Next Page key (Used at the next request). Return `null` if this is the last page.
-                        nextPage
-                );
+                callback.onResult(resultData.getProducts());
             }
 
             @Override
@@ -124,7 +105,13 @@ public class ProductDataSource extends PageKeyedDataSource<Integer, ModelProduct
             }
         };
 
-        retrofitCall.enqueue(requestCallback);
+        SingletonRetrofit.enqueue(retrofitCall,requestCallback);
+    }
+
+    @NonNull
+    @Override
+    public ModelProduct getKey(@NonNull ModelProduct item) {
+        return item;
     }
 }
 

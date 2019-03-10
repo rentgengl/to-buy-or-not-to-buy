@@ -11,6 +11,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+import com.world.jteam.bonb.AppInstance;
+import com.world.jteam.bonb.Constants;
 import com.world.jteam.bonb.R;
 
 import java.util.ArrayList;
@@ -39,10 +42,11 @@ public class ModelGroup {
         this.logo_link = logo_link;
     }
 
-    public ModelGroup(int id, String name, int parent_id, int navigation_method) {
+    public ModelGroup(int id, String name, int parent_id, String logo_link, int navigation_method) {
         this.id = id;
         this.name = name;
         this.parent_id = parent_id;
+        this.logo_link = logo_link;
         this.navigation_method = navigation_method;
     }
 
@@ -61,14 +65,24 @@ public class ModelGroup {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            ModelGroup group = getItem(position);
+
             LayoutInflater inflater = mActivity.getLayoutInflater();
             View row = inflater.inflate(R.layout.fragment_product_groups_listview_item, parent, false);
 
             TextView text = (TextView) row.findViewById(R.id.product_group_list_text);
-            text.setText(getItem(position).toString());
+            text.setText(group.toString());
 
             ImageView icon = (ImageView) row.findViewById(R.id.product_group_list_icon);
-            icon.setImageResource(R.drawable.ic_product_group_default);
+            if (group.logo_link==null) {
+                icon.setImageResource(R.drawable.ic_product_group_default);
+            } else {
+                Picasso.with(AppInstance.getAppContext())
+                        .load(Constants.SERVICE_GET_GROUPS_LOGO + group.logo_link)
+                        .placeholder(R.drawable.ic_product_group_default)
+                        .error(R.drawable.ic_product_group_default)
+                        .into(icon);
+            }
 
             return row;
         }

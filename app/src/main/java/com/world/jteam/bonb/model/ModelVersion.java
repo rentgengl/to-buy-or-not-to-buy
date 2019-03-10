@@ -1,6 +1,6 @@
 package com.world.jteam.bonb.model;
 
-public class Versions {
+public class ModelVersion {
     public int appVersion;
     public int groupVersion;
 }

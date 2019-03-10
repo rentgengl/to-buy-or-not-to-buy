@@ -7,7 +7,7 @@ import com.world.jteam.bonb.model.ModelPrice;
 import com.world.jteam.bonb.model.ModelProductFull;
 import com.world.jteam.bonb.model.ModelSearchResult;
 import com.world.jteam.bonb.model.ModelUser;
-import com.world.jteam.bonb.model.Versions;
+import com.world.jteam.bonb.model.ModelVersion;
 
 import java.util.List;
 
@@ -34,14 +34,16 @@ public interface DataApi {
                                                       @Query("page") long page,
                                                       @Query("pageSize") int pageSize);
 
-    @GET("getProductList.php")
-    Call<ModelSearchResult> getProductList(@Query("name") String name,
-                                           @Query("id") int groupId,
-                                           @Query("page") long page,
-                                           @Query("pageSize") int pageSize,
-                                           @Query("radius") int radius,
-                                           @Query("lat") double lat,
-                                           @Query("lng") double lng);
+    @GET("getProductList_v2.php")
+    Call<ModelSearchResult> getProductList( @Query("name") String name,
+                                            @Query("id") int groupId,
+                                            @Query("radius") int radius,
+                                            @Query("lat") double lat,
+                                            @Query("lng") double lng,
+                                            @Query("pageSize") int pageSize,
+                                            @Query("lastName") String lastName,
+                                            @Query("lastID") int lastID
+                                            );
 
     @GET("GetProductFull.php")
     Call<ModelProductFull> getProductFull(    @Query("id") int id,
@@ -61,7 +63,7 @@ public interface DataApi {
     Call<ModelUser> loginUser(@Query("google_id") String google_id);
 
     @GET("getVersions.php")
-    Call<Versions> getVersions();
+    Call<ModelVersion> getVersions();
 
     @POST("addNewPrice.php")
     Call<Void> addNewPrice(@Body ModelPrice price);

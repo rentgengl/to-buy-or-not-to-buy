@@ -11,15 +11,20 @@ import com.world.jteam.bonb.geo.GeoManager;
 import com.world.jteam.bonb.media.BarcodeManager;
 import com.world.jteam.bonb.model.ModelGroup;
 import com.world.jteam.bonb.model.ModelUser;
+import com.world.jteam.bonb.model.ModelVersion;
+import com.world.jteam.bonb.server.DataApi;
+import com.world.jteam.bonb.server.SingletonRetrofit;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.TreeMap;
+
+import retrofit2.Call;
 
 public class AppInstance extends Application {
     private static Context sContext;
     private static boolean sFirstStart;
     private static ModelUser sUser;
+    private static ModelVersion sServerVersion = new ModelVersion();
 
     private static LinkedHashMap<ModelGroup, LinkedHashMap> sProductGroups; //Дерево категорий
 
@@ -40,6 +45,35 @@ public class AppInstance extends Application {
     private class AppInitialisation implements Runnable {
         @Override
         public void run() {
+            //Версии
+            synchronized (sServerVersion){
+                updateVersions(null);
+            }
+
+            Thread versionThread=new Thread(new Runnable(){
+                @Override
+                public void run() {
+                    try {
+                        Thread.currentThread().sleep(Constants.UPDATE_RATE_VERSION);
+                    } catch (InterruptedException e) {
+
+                    }
+
+                    DataApi dataApi = SingletonRetrofit.getInstance().getDataApi();
+
+                    while (true) {
+                        updateVersions(dataApi);
+
+                        try {
+                            Thread.currentThread().sleep(Constants.UPDATE_RATE_VERSION);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                    }
+                }
+            });
+            versionThread.start();
+
             //Первый запуск
             SharedPreferences sharedPreferences =
                     PreferenceManager.getDefaultSharedPreferences(sContext);
@@ -64,11 +98,7 @@ public class AppInstance extends Application {
             }
 
             //БД
-            try {
-                DatabaseApp.initDatabaseApp(sContext);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            DatabaseApp.initDatabaseApp(sContext);
 
             //Категории
             productGroupsInitialisation();
@@ -94,6 +124,33 @@ public class AppInstance extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+
+    //Версии
+    public static ModelVersion getServerVersion() {
+        return sServerVersion;
+    }
+
+    public static int getMinServerAppVersion() {
+        return sServerVersion.appVersion;
+    }
+
+    public static int getProductGroupsVersion() {
+        return sServerVersion.groupVersion;
+    }
+
+    public static void updateVersions(DataApi dataApi) {
+        if (dataApi==null)
+            dataApi=SingletonRetrofit.getInstance().getDataApi();
+
+        Call<ModelVersion> versionsCall = dataApi.getVersions();
+        try {
+            ModelVersion servModelVersion = versionsCall.execute().body();
+            sServerVersion.appVersion = servModelVersion.appVersion;
+            sServerVersion.groupVersion = servModelVersion.groupVersion;
+        } catch (Exception e) {
+
+        }
     }
 
     //Группы товаров
@@ -152,7 +209,7 @@ public class AppInstance extends Application {
                 if (group.parent_id != 0) {
                     //возврат на предыдущий уровень
                     parentTree.put(new ModelGroup(
-                                    0, "...", group.parent_id, ModelGroup.GROUP_NM_PRODUCT_ADD),
+                                    0, "...", group.parent_id,null, ModelGroup.GROUP_NM_PRODUCT_ADD),
                             prodGroupsChildIdToParent.get(group.parent_id));
 
                     //возврат по иерархии вверх
@@ -170,6 +227,7 @@ public class AppInstance extends Application {
                                 group.parent_id,
                                 getAppContext().getString(R.string.default_product_group_name),
                                 group.parent_id,
+                                group.logo_link,
                                 ModelGroup.GROUP_NM_PRODUCT_ADD),
                         null);
 
@@ -212,6 +270,7 @@ public class AppInstance extends Application {
                         parentid,
                         "<" + productGroupParent.name,
                         productGroupParent.parent_id,
+                        productGroupParent.logo_link,
                         ModelGroup.GROUP_NM_VIEW),
                 prodGroupsChildIdToParent.get(parentid));
     }

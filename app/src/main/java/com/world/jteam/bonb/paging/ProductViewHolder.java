@@ -57,7 +57,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
                         AppInstance.getRadiusArea(),
                         AppInstance.getGeoPosition().latitude,
                         AppInstance.getGeoPosition().longitude);
-                serviceCall.enqueue(new Callback<ModelProductFull>() {
+                SingletonRetrofit.enqueue(serviceCall,new Callback<ModelProductFull>() {
                     @Override
                     public void onResponse(Call<ModelProductFull> call, Response<ModelProductFull> response) {
                         Context mContext = v.getContext();

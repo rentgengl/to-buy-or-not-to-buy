@@ -32,7 +32,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_weight="1"
+                android:ellipsize="end"
                 android:gravity="left|center_vertical"
+                android:maxLines="1"
                 android:textSize="18sp"
                 tools:text="Николай Иванов" />
 

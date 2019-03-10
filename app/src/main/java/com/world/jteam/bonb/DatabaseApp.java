@@ -11,11 +11,9 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.world.jteam.bonb.model.ModelGroup;
-import com.world.jteam.bonb.model.Versions;
 import com.world.jteam.bonb.server.DataApi;
 import com.world.jteam.bonb.server.SingletonRetrofit;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,12 +27,7 @@ public class DatabaseApp {
 
     }
 
-    //Получение версий данных на сервере
-
-    //Обновление данных с учетом версий
-
-
-    public static void initDatabaseApp(Context context) throws IOException {
+    public static void initDatabaseApp(Context context) {
         if (databaseApp != null)
             return;
 
@@ -43,34 +36,34 @@ public class DatabaseApp {
                 .build();
 
         //Категории
-        //- Получение версии категорий с сервера
-        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-        Call<Versions> versionsCall = mDataApi.getVersions();
-        Versions servVersions = versionsCall.execute().body();
-        int groupsVersionServer = servVersions.groupVersion;
+        int groupsVersionServer = AppInstance.getProductGroupsVersion();
 
         //- Обновление данных по версии
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         int groupsVersion = sharedPreferences.getInt("product_groups_version", 0);
 
-        if (groupsVersion != groupsVersionServer) {
+        if (groupsVersion != groupsVersionServer && groupsVersionServer>0) {
             //- Получение данных по категориям с сервера
+            DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
             Call<List<ModelGroup>> serviceCall = mDataApi.getGroupList();
 
-            List<ModelGroup> ss = serviceCall.execute().body();
-            initGroupList(ss);
+            List<ModelGroup> ss = null;
+            try {
+                ss = serviceCall.execute().body();
 
-            //- Сохранение версии
-            SharedPreferences.Editor edit = sharedPreferences.edit();
-            edit.putInt("product_groups_version", groupsVersionServer);
-            edit.commit();
+                initGroupList(ss);
+
+                //- Сохранение версии
+                SharedPreferences.Editor edit = sharedPreferences.edit();
+                edit.putInt("product_groups_version", groupsVersionServer);
+                edit.commit();
+
+            } catch (Exception e) {
+
+            }
 
         }
     }
-
-
-
-
 
     public static void initGroupList(List<ModelGroup> groupList) {
         ArrayList<ModelGroup> productGroups = new ArrayList<>();
