@@ -62,27 +62,28 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MarketActivity extends FragmentActivity {
+public class MarketActivity extends AppCompatActivity {
 
-    static final String TAG = "myLogs";
-    static final int PAGE_COUNT = 10;
+    static final int PAGE_COUNT = 2;
+
+    private final AppCompatActivity mThis = this;
+
 
     ViewPager pager;
     PagerAdapter pagerAdapter;
-
-
-    /*
-    public int market_id;
-
-    private final AppCompatActivity mThis = this;
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private ActionBarDrawerToggle mDrawerToggle;
 
     //Категории
     private ModelGroup.ProductGroupsAdapter mProductGroupsAdapter;
     private LinkedHashMap<ModelGroup, LinkedHashMap> mProductGroupsCurrent; //В момент выбора
     private LinkedHashMap<ModelGroup, LinkedHashMap> mProductGroupsSelected; //Выбранный
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private ActionBarDrawerToggle mDrawerToggle;
+
+    /*
+    public int market_id;
+
+
 
     //Режимы поиска по наименованию или группе
     public ModelSearchProductMethod searchMethod;
@@ -98,28 +99,15 @@ public class MarketActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_market);
-        pager = (ViewPager) findViewById(R.id.pager);
-        pagerAdapter = new MarketFragmentPagerAdapter(getSupportFragmentManager());
-        pager.setAdapter(pagerAdapter);
-        pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
-            @Override
-            public void onPageSelected(int position) {
+        //Инициализация списка групп товаров
+        initGroupMenu();
 
-            }
+        //Инициализация страниц
+        initPager();
 
-            @Override
-            public void onPageScrolled(int position, float positionOffset,
-                                       int positionOffsetPixels) {
 
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-
-        });
-/*
+        /*
         //Intent mIntent = getIntent();
         market_id = 0;//mIntent.getIntExtra("market_id", 0);
         //TextView view_magazinName = findViewById(R.id.magazinName);
@@ -133,51 +121,6 @@ public class MarketActivity extends FragmentActivity {
         ab.setHomeButtonEnabled(true);
 
         /*
-        //Кнопка вызова списка категорий
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.navdrawer);
-
-        DrawerArrowDrawable drawerArrow = new DrawerArrowDrawable(this) {
-            @Override
-            public boolean isLayoutRtl() {
-                return false;
-            }
-        };
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                drawerArrow, R.string.drawer_open, R.string.drawer_close) {
-
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                invalidateOptionsMenu();
-
-                mProductGroupsSelected = mProductGroupsCurrent;
-            }
-
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu();
-
-                if (mProductGroupsSelected == null) {
-                    mProductGroupsSelected = AppInstance.getProductGroups();
-                }
-                if (mProductGroupsSelected != null) {
-                    ArrayList productGroupsList =
-                            ModelGroup.getCurrentProductGroups(mProductGroupsSelected, ModelGroup.GROUP_NM_VIEW);
-
-                    mProductGroupsAdapter = new ModelGroup.ProductGroupsAdapter(mThis, productGroupsList);
-                    mDrawerList.setAdapter(mProductGroupsAdapter);
-                    mDrawerList.setOnItemClickListener(new ProductGroupsOnItemClickListener());
-                    mProductGroupsCurrent = mProductGroupsSelected;
-
-                } else {
-                    Toast.makeText(mThis, R.string.product_groups_not_init, Toast.LENGTH_LONG).show();
-                }
-
-            }
-        };
-
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
 
 
         //Обработчик ввода текста в строку поиска
@@ -520,5 +463,109 @@ public class MarketActivity extends FragmentActivity {
             return PAGE_COUNT;
         }
     }
+
+
+    private void initGroupMenu(){
+
+        //Кнопка вызова списка категорий
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.navdrawer);
+
+        DrawerArrowDrawable drawerArrow = new DrawerArrowDrawable(this) {
+            @Override
+            public boolean isLayoutRtl() {
+                return false;
+            }
+        };
+        mDrawerToggle = new ActionBarDrawerToggle( (AppCompatActivity) mThis, mDrawerLayout,
+                drawerArrow, R.string.drawer_open, R.string.drawer_close) {
+
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                invalidateOptionsMenu();
+
+                mProductGroupsSelected = mProductGroupsCurrent;
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu();
+
+                if (mProductGroupsSelected == null) {
+                    mProductGroupsSelected = AppInstance.getProductGroups();
+                }
+                if (mProductGroupsSelected != null) {
+                    ArrayList productGroupsList =
+                            ModelGroup.getCurrentProductGroups(mProductGroupsSelected, ModelGroup.GROUP_NM_VIEW);
+
+                    mProductGroupsAdapter = new ModelGroup.ProductGroupsAdapter(mThis, productGroupsList);
+                    mDrawerList.setAdapter(mProductGroupsAdapter);
+                    mDrawerList.setOnItemClickListener(new ProductGroupsOnItemClickListener());
+                    mProductGroupsCurrent = mProductGroupsSelected;
+
+                } else {
+                    Toast.makeText(mThis, R.string.product_groups_not_init, Toast.LENGTH_LONG).show();
+                }
+
+            }
+        };
+
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
+
+
+
+    }
+
+    //Группы
+    public class ProductGroupsOnItemClickListener implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            ModelGroup productGroup = mProductGroupsAdapter.getItem(position);
+            LinkedHashMap<ModelGroup, LinkedHashMap> productGroupGroups =
+                    mProductGroupsCurrent.get(productGroup);
+
+            //searchByGroup(productGroup.id, true);
+            //Раскрытие группы
+            if (productGroupGroups == null) {
+                mProductGroupsSelected = mProductGroupsCurrent;
+                mDrawerLayout.closeDrawer(mDrawerList);
+                //Возврат к родителю группы
+            } else {
+
+                mProductGroupsCurrent = productGroupGroups;
+                mProductGroupsAdapter.clear();
+                mProductGroupsAdapter.addAll(ModelGroup.getCurrentProductGroups(
+                        mProductGroupsCurrent, ModelGroup.GROUP_NM_VIEW));
+            }
+
+        }
+    }
+
+    public void initPager(){
+    pager = (ViewPager) findViewById(R.id.pager);
+    pagerAdapter = new MarketFragmentPagerAdapter(getSupportFragmentManager());
+    pager.setAdapter(pagerAdapter);
+    pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+        @Override
+        public void onPageSelected(int position) {
+
+        }
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset,
+                                   int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+        }
+
+    });
+
+
+}
 
 }

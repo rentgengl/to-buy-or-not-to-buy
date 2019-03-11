@@ -32,7 +32,7 @@ public class ActionBarDrawerToggle extends android.support.v7.app.ActionBarDrawe
         super(activity, drawerLayout, openDrawerContentDescRes, closeDrawerContentDescRes);
     }
 
-    public ActionBarDrawerToggle(AppCompatActivity activity, DrawerLayout drawerLayout, DrawerArrowDrawable drawerImage, int openDrawerContentDescRes, int closeDrawerContentDescRes) {
+        public ActionBarDrawerToggle(AppCompatActivity activity, DrawerLayout drawerLayout, DrawerArrowDrawable drawerImage, int openDrawerContentDescRes, int closeDrawerContentDescRes) {
         super(activity, drawerLayout, openDrawerContentDescRes, closeDrawerContentDescRes);
         mActivity = activity;
         mDrawerLayout = drawerLayout;
