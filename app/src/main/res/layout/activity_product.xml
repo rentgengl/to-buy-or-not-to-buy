@@ -1,158 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fadingEdgeLength="0dp"
-    android:fillViewport="true"
-    android:overScrollMode="never"
-    android:scrollbars="none" >
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:visibility="visible">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="visible">
+    <com.daimajia.slider.library.SliderLayout
+        android:id="@+id/slider"
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
 
-            <com.daimajia.slider.library.SliderLayout
-                android:id="@+id/slider"
-                android:layout_width="match_parent"
-                android:layout_height="200dp">
+    </com.daimajia.slider.library.SliderLayout>
 
-            </com.daimajia.slider.library.SliderLayout>
+    <com.daimajia.slider.library.Indicators.PagerIndicator
+        android:id="@+id/custom_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center" />
 
-            <com.daimajia.slider.library.Indicators.PagerIndicator
-                android:id="@+id/custom_indicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center" />
+    <android.support.design.widget.TabLayout
+        android:id="@+id/product_pager_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabMode="fixed"
+        />
 
+    <android.support.v4.view.ViewPager
+        android:id="@+id/product_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+    </android.support.v4.view.ViewPager>
 
-            <!--<TextView
-                android:id="@+id/productName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_weight="0"
-                android:textAppearance="@style/TextTitle1" />-->
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <RatingBar
-
-                    android:id="@+id/productRaiting"
-                    style="@style/Widget.AppCompat.RatingBar.Indicator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="8dp"
-                    android:gravity="center"
-                    android:isIndicator="false"
-                    android:numStars="5"
-                    android:rating="0"
-                    android:stepSize="0.1"
-                    android:theme="@style/ProductRaitigBar" />
-
-                <TextView
-                    android:id="@+id/textRaiting"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:text="3.0 из 5"
-                    android:textAppearance="@style/TextTitle1" />
-            </LinearLayout>
-
-            <com.world.jteam.bonb.activity.NonScrollListView
-                android:id="@+id/comment_list_lite"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:visibility="visible">
-            </com.world.jteam.bonb.activity.NonScrollListView>
-
-            <com.world.jteam.bonb.activity.NonScrollListView
-                android:id="@+id/comment_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:visibility="gone"></com.world.jteam.bonb.activity.NonScrollListView>
-
-            <Button
-                android:id="@+id/show_comment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/more_comment" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/midPrice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="9dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="153р"
-                    android:textAppearance="@style/CardMidPrice" />
-
-                <TextView
-                    android:id="@+id/lowPrice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="от 120 до 218р"
-                    android:textAppearance="@style/CardLowPrice" />
-
-                <Button
-                    android:id="@+id/show_price_on_map"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="8dp"
-                    android:layout_weight="0"
-                    android:background="@drawable/ic_map"
-                    android:gravity="center"
-                    android:textColor="#0040ff"
-                    android:visibility="visible" />
-            </LinearLayout>
-
-            <com.world.jteam.bonb.activity.NonScrollListView
-                android:id="@+id/price_list_lite"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:visibility="visible"></com.world.jteam.bonb.activity.NonScrollListView>
-
-            <com.world.jteam.bonb.activity.NonScrollListView
-                android:id="@+id/price_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:visibility="gone"></com.world.jteam.bonb.activity.NonScrollListView>
-
-            <Button
-                android:id="@+id/show_price"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/more_price" />
-
-
-        </LinearLayout>
-
-
-</ScrollView>
+</LinearLayout>

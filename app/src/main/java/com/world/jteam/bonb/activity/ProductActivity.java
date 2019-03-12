@@ -4,6 +4,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -48,12 +54,13 @@ import retrofit2.Response;
 
 public class ProductActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
     private final AppCompatActivity mThis = this;
+    private int PAGE_COUNT = 3; //количество страниц
+    View mPageInfo;
+    View mPagePrice;
+    View mPageComment;
 
     public ModelProductFull thisProductFull;
     private SliderLayout mDemoSlider;
-
-    private boolean mFullCommentMode = false; //Определяет будет ли обображатся полный список комментариев или упрощенный режим
-    private boolean mFullPriceMode = false; //Определяет будет ли обображатся полный список цен или упрощенный режим
 
     RatingBar mProductRaitingView;
 
@@ -65,56 +72,28 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
 
         setContentView(R.layout.activity_product);
 
-        mProductRaitingView = findViewById(R.id.productRaiting);
+        //Инициализируем страницы
+        ViewPager pager = (ViewPager) findViewById(R.id.product_pager);
+        PagerAdapter pagerAdapter =new PagerAdapter(getSupportFragmentManager());
+        pager.setAdapter(pagerAdapter);
+        TabLayout tabLayout = findViewById(R.id.product_pager_tabs);
+        tabLayout.setupWithViewPager(pager);
+        LayoutInflater inflater = LayoutInflater.from(mThis);
+        mPageInfo = inflater.inflate(R.layout.fragment_product_page_info, null);
+        mPagePrice = inflater.inflate(R.layout.fragment_product_page_price, null);
+        mPageComment = inflater.inflate(R.layout.fragment_product_page_comment, null);
+
+        mProductRaitingView = mPageComment.findViewById(R.id.productRaiting);
 
         thisProductFull = (ModelProductFull) getIntent().getParcelableExtra("object");
         onGetData(thisProductFull);
-        final Button button = findViewById(R.id.show_price_on_map);
+        final Button button = mPagePrice.findViewById(R.id.show_price_on_map);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 showPriceOnMap();
             }
         });
 
-        //Определим действия для показа цен
-        final NonScrollListView priceListView = findViewById(R.id.price_list);
-        final NonScrollListView priceListViewLite = findViewById(R.id.price_list_lite);
-        final Button showPriceView = findViewById(R.id.show_price);
-        showPriceView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mFullPriceMode = !mFullPriceMode;
-                if (mFullPriceMode) {
-                    priceListViewLite.setVisibility(View.GONE);
-                    priceListView.setVisibility(View.VISIBLE);
-                    showPriceView.setText(R.string.minimize_price);
-                } else {
-                    priceListView.setVisibility(View.GONE);
-                    priceListViewLite.setVisibility(View.VISIBLE);
-                    showPriceView.setText(R.string.more_price);
-                }
-            }
-        });
-
-        //Определим действия для показа комментариев
-        final NonScrollListView commentListView = findViewById(R.id.comment_list);
-        final NonScrollListView commentListViewLite = findViewById(R.id.comment_list_lite);
-        final Button showCommentView = findViewById(R.id.show_comment);
-        showCommentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mFullCommentMode = !mFullCommentMode;
-                if (mFullCommentMode) {
-                    commentListViewLite.setVisibility(View.GONE);
-                    commentListView.setVisibility(View.VISIBLE);
-                    showCommentView.setText(R.string.minimize_comment);
-                } else {
-                    commentListView.setVisibility(View.GONE);
-                    commentListViewLite.setVisibility(View.VISIBLE);
-                    showCommentView.setText(R.string.more_comment);
-                }
-            }
-        });
 
         //Обработчик рейтинга
         mProductRaitingView.setOnTouchListener(new View.OnTouchListener() {
@@ -251,20 +230,18 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
 
 
         //Накину данные продукта на форму
-        TextView view_midPrice = this.findViewById(R.id.midPrice);//Средняя цена
-        //TextView view_productName = this.findViewById(R.id.productName);//Наименование
-        TextView view_lowPrice = this.findViewById(R.id.lowPrice);//Разброс цен
-        TextView view_textRaiting = this.findViewById(R.id.textRaiting);//Рейтинг текстом
+        TextView view_midPrice = mPagePrice.findViewById(R.id.midPrice);//Средняя цена
+        TextView view_productName = mPageInfo.findViewById(R.id.product_name);//Наименование
+        TextView view_lowPrice = mPagePrice.findViewById(R.id.lowPrice);//Разброс цен
+        TextView view_textRaiting = mPageComment.findViewById(R.id.textRaiting);//Рейтинг текстом
 
-        ListView view_price_list = this.findViewById(R.id.price_list);
-        ListView view_price_list_lite = this.findViewById(R.id.price_list_lite);
-        ListView view_comment_list = this.findViewById(R.id.comment_list);
-        ListView view_comment_list_lite = this.findViewById(R.id.comment_list_lite);
+        ListView view_price_list = mPagePrice.findViewById(R.id.price_list);
+        ListView view_comment_list = mPageComment.findViewById(R.id.comment_list);
 
         // заполняем View в пункте списка данными из товаров: наименование, цена
         // и картинка
-//        view_productName.setText(product.name);
-//        view_productName.setTag(product.id);
+        view_productName.setText(product.name);
+        view_productName.setTag(product.id);
         setTitle(product.name);
         view_midPrice.setText(product.price + "\u20BD");
 
@@ -276,9 +253,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
 
         //Вывод списков
         if (product.prices != null && product.prices.size()>0) {
-            findViewById(R.id.show_price).setVisibility(View.VISIBLE);
-
-            view_price_list.setAdapter(new PriceListAdapter(this, product.prices,true));
+            view_price_list.setAdapter(new PriceListAdapter(this, product.prices, true));
 
             //Для лайт списка возьмем несколько значений
             int maxSizeLite = product.prices.size()>=3 ? 3 : product.prices.size();
@@ -286,14 +261,11 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
             for (int i=0;i<=maxSizeLite-1;i++)
                 productPriceLite.add(product.prices.get(i));
 
-            view_price_list_lite.setAdapter(new PriceListAdapter(this, productPriceLite,false));
         } else{
-            findViewById(R.id.show_price).setVisibility(View.GONE);
+
         }
         if (product.comments != null && product.comments.size()>0) {
-            findViewById(R.id.show_comment).setVisibility(View.VISIBLE);
-
-            view_comment_list.setAdapter(new CommentListAdapter(this, product.comments,true));
+            view_comment_list.setAdapter(new CommentListAdapter(this, product.comments, true));
 
             //Для лайт списка возьмем несколько значений
             int maxSizeLite = product.comments.size()>=3 ? 3 : product.comments.size();
@@ -301,10 +273,8 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
             for (int i=0;i<=maxSizeLite-1;i++)
                 productCommentsLite.add(product.comments.get(i));
 
-            view_comment_list_lite.setAdapter(new CommentListAdapter(this, productCommentsLite,false));
-
         } else {
-            findViewById(R.id.show_comment).setVisibility(View.GONE);
+
         }
 
     }
@@ -336,6 +306,84 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         });
     }
 
+    //Страницы
+    public static class PageFragment extends Fragment {
+        int pageNumber;
+        View pageView;
+
+        static PageFragment newInstance(int page,View pageView) {
+            PageFragment pageFragment = new PageFragment();
+            pageFragment.pageNumber = page;
+            pageFragment.pageView = pageView;
+
+            return pageFragment;
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+
+
+            return pageView;
+        }
+    }
+
+    private class PagerAdapter extends FragmentPagerAdapter {
+
+        public PagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            View pageView=null;
+
+            switch (position){
+                case 0:
+                    pageView=mPageInfo;
+                    break;
+                case 1:
+                    pageView=mPagePrice;
+                    break;
+                case 2:
+                    pageView=mPageComment;
+                    break;
+            }
+
+            return PageFragment.newInstance(position,pageView);
+        }
+
+        @Override
+        public int getCount() {
+            return PAGE_COUNT;
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            CharSequence pageTitle="";
+
+            switch (position){
+                case 0:
+                    pageTitle=getString(R.string.product_page_title_info);
+                    break;
+                case 1:
+                    pageTitle=getString(R.string.product_page_title_price);
+                    break;
+                case 2:
+                    pageTitle=getString(R.string.product_page_title_comment);
+                    break;
+            }
+
+            return pageTitle;
+        }
+    }
+
     // Обработчики слайдера картинок
     @Override
     protected void onStop() {
@@ -346,7 +394,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
 
     @Override
     public void onSliderClick(BaseSliderView slider) {
-        Toast.makeText(this, slider.getBundle().get("extra") + "", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, slider.getBundle().get("extra") + "", Toast.LENGTH_SHORT).show();
     }
 
     @Override

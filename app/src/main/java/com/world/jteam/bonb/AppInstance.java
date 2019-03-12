@@ -37,6 +37,10 @@ public class AppInstance extends Application {
         super.onCreate();
         sContext = getApplicationContext();
 
+        //Геолокация
+        sRadiusArea = GeoManager.getRadiusAreaFromSettings(sRadiusArea);
+        sGeoPosition = GeoManager.getGeoPositionFromSettings(sGeoPosition);
+
         Thread thread = new Thread(new AppInitialisation());
         thread.start();
     }
@@ -89,8 +93,6 @@ public class AppInstance extends Application {
 
             //Геолокация
             sAutoGeoPosition = GeoManager.getAutoGeoPositionFromSettings(sAutoGeoPosition);
-            sRadiusArea = GeoManager.getRadiusAreaFromSettings(sRadiusArea);
-            sGeoPosition = GeoManager.getGeoPositionFromSettings(sGeoPosition);
 
             //Штрихкодер
             if (sFirstStart) {

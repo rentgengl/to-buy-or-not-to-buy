@@ -146,7 +146,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:text="@string/product_name_head"
+            android:text="@string/product_reg_name_head"
             app:layout_constraintBaseline_toBaselineOf="@+id/product_name"
             app:layout_constraintStart_toStartOf="parent" />
 
