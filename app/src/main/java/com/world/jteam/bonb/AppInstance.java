@@ -49,6 +49,9 @@ public class AppInstance extends Application {
     private class AppInitialisation implements Runnable {
         @Override
         public void run() {
+            //Геолокация
+            sAutoGeoPosition = GeoManager.getAutoGeoPositionFromSettings(sAutoGeoPosition);
+
             //Версии
             synchronized (sServerVersion){
                 updateVersions(null);
@@ -90,9 +93,6 @@ public class AppInstance extends Application {
 
             //Пользователь
             AuthManager.setStartUser();
-
-            //Геолокация
-            sAutoGeoPosition = GeoManager.getAutoGeoPositionFromSettings(sAutoGeoPosition);
 
             //Штрихкодер
             if (sFirstStart) {
