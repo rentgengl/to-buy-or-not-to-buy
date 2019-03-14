@@ -16,8 +16,6 @@ public class ModelUser implements Parcelable {
         this.name = name;
         this.google_id = google_id;
         this.id = id;
-
-        generatedisplayName();
     }
 
     public ModelUser(String name, String google_id, String mail, int city){
@@ -25,18 +23,15 @@ public class ModelUser implements Parcelable {
         this.google_id = google_id;
         this.mail = mail;
         this.city_id = city;
-
-        generatedisplayName();
     }
 
     protected ModelUser(Parcel in) {
         name = in.readString();
+        displayName = in.readString();
         google_id = in.readString();
         id = in.readInt();
         mail = in.readString();
         city_id = in.readInt();
-
-        generatedisplayName();
     }
 
     @Override
@@ -47,6 +42,7 @@ public class ModelUser implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
+        dest.writeString(displayName);
         dest.writeString(google_id);
         dest.writeInt(id);
         dest.writeString(mail);
@@ -70,12 +66,12 @@ public class ModelUser implements Parcelable {
         return id>=0;
     }
 
-    private void generatedisplayName(){
+    /*private void generatedisplayName(){
         int nameLenght = name.length();
         if (nameLenght<=4){
             displayName = name;
         } else {
             displayName = name.substring(0,2)+"***"+name.substring(nameLenght-2,nameLenght);
         }
-    }
+    }*/
 }
