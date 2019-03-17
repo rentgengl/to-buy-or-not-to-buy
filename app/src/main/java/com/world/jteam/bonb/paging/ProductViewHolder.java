@@ -29,8 +29,8 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     TextView view_midPrice;//Средняя цена
     TextView view_productName;//Наименование
     TextView view_lowPrice;//Разброс цен
-    TextView view_textRaiting;//Количество отзывов
-    RatingBar view_productRaiting;//Рейтинг
+    TextView view_textRating;//Количество отзывов
+    RatingBar view_productRating;//Рейтинг
     ImageView picture;
 
 
@@ -40,8 +40,8 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
         view_midPrice = itemView.findViewById(R.id.midPrice);//Средняя цена
         view_productName = itemView.findViewById(R.id.productName);//Наименование
         view_lowPrice = itemView.findViewById(R.id.lowPrice);//Разброс цен
-        view_textRaiting = itemView.findViewById(R.id.textRaiting);//Количество отзывов
-        view_productRaiting = itemView.findViewById(R.id.productRaiting);//Рейтинг
+        view_textRating = itemView.findViewById(R.id.textRating);//Количество отзывов
+        view_productRating = itemView.findViewById(R.id.productRating);//Рейтинг
         picture = itemView.findViewById(R.id.imageView);
 
 
@@ -97,8 +97,8 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
             view_midPrice.setText(p.price + "\u20BD");
 
             view_lowPrice.setText("от " + p.price_min + " до " + p.price_max + "\u20BD");
-            view_textRaiting.setText(p.comment_count + " отзывов");
-            view_productRaiting.setRating(p.raiting);
+            view_textRating.setText(p.comment_count + " отзывов");
+            view_productRating.setRating(p.rating);
 
             if (p.imageSmall_link == null) {
                 picture.setImageResource(R.drawable.ic_action_noimage);

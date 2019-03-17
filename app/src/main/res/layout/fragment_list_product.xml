@@ -78,7 +78,7 @@
                 android:orientation="horizontal">
 
                 <RatingBar
-                    android:id="@+id/productRaiting"
+                    android:id="@+id/productRating"
                     style="@android:style/Widget.DeviceDefault.Light.RatingBar.Small"
                     android:layout_width="95dp"
                     android:layout_height="26dp"
@@ -91,7 +91,7 @@
                     android:theme="@style/ProductRaitigBar" />
 
                 <TextView
-                    android:id="@+id/textRaiting"
+                    android:id="@+id/textRating"
                     android:layout_width="match_parent"
                     android:layout_height="26dp"
                     android:layout_below="@+id/lowPrice"
@@ -99,8 +99,8 @@
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:layout_toEndOf="@+id/productRaiting"
-                    android:layout_toRightOf="@+id/productRaiting"
+                    android:layout_toEndOf="@+id/productRating"
+                    android:layout_toRightOf="@+id/productRating"
                     android:gravity="left|center_vertical"
                     tools:text="12 отзывов" />
             </LinearLayout>

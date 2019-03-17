@@ -14,7 +14,7 @@
         android:orientation="horizontal">
 
         <RatingBar
-            android:id="@+id/user_raiting"
+            android:id="@+id/user_rating"
             style="@style/Widget.AppCompat.RatingBar.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

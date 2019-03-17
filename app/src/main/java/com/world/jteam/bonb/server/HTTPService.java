@@ -72,7 +72,7 @@ public class HTTPService {
 
             //res.put("imageSmall", product.imageSmall);
 
-            res.put("raiting", product.raiting);
+            res.put("rating", product.rating);
             res.put("userID", product.userID);
             res.put("newComment", product.newComment);
         } catch (JSONException e) {

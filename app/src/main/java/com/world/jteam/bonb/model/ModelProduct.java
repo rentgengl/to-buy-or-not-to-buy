@@ -19,7 +19,7 @@ public class ModelProduct {
     public String imageSmall_link;//Ссылка на маленькую основную привьюху
     public String newComment;
 
-    public float raiting = 0;
+    public float rating = 0;
 
     public byte user_leave_comment = 0;
 

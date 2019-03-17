@@ -24,7 +24,7 @@ public class AuthManager {
     public static void setStartUser(){
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(AppInstance.getAppContext());
         if (account!=null) //Аккаунт уже был задействован
-            loginServer(new ModelUser(account.getDisplayName(), account.getId(), account.getEmail(), 1),
+            loginServer(new ModelUser(account.getDisplayName(), account.getId(), account.getEmail()),
                     true,
                     new OnLoginListener() {
                         @Override
@@ -77,7 +77,7 @@ public class AuthManager {
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
 
-                loginServer(new ModelUser(account.getDisplayName(), account.getId(),account.getEmail(),1),
+                loginServer(new ModelUser(account.getDisplayName(), account.getId(),account.getEmail()),
                         true,
                         loginListener);
 

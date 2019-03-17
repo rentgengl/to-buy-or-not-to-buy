@@ -29,10 +29,10 @@ public interface DataApi {
     @GET("getGroupListByName.php")
     Call<List<ModelGroup>> getGroupListByName(@Query("name") String name);
 
-    @GET("GetProductGroupListByName.php")
+    /*@GET("GetProductGroupListByName.php")
     Call<ModelSearchResult> getProductGroupListByName(@Query("name") String name,
                                                       @Query("page") long page,
-                                                      @Query("pageSize") int pageSize);
+                                                      @Query("pageSize") int pageSize);*/
 
     @GET("getProductList_v2.php")
     Call<ModelSearchResult> getProductList( @Query("name") String name,

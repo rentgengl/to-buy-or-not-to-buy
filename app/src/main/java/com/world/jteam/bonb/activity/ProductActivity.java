@@ -25,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
@@ -36,7 +35,6 @@ import com.squareup.picasso.Picasso;
 import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.AuthManager;
 import com.world.jteam.bonb.Constants;
-import com.world.jteam.bonb.model.ModelUser;
 import com.world.jteam.bonb.server.DataApi;
 import com.world.jteam.bonb.R;
 import com.world.jteam.bonb.server.SingletonRetrofit;
@@ -44,7 +42,6 @@ import com.world.jteam.bonb.model.ModelComment;
 import com.world.jteam.bonb.model.ModelPrice;
 import com.world.jteam.bonb.model.ModelProductFull;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -62,7 +59,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
     public ModelProductFull thisProductFull;
     private SliderLayout mDemoSlider;
 
-    RatingBar mProductRaitingView;
+    RatingBar mProductRatingView;
 
     private static final int RC_SIGN_IN = 1;
 
@@ -83,7 +80,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         mPagePrice = inflater.inflate(R.layout.fragment_product_page_price, null);
         mPageComment = inflater.inflate(R.layout.fragment_product_page_comment, null);
 
-        mProductRaitingView = mPageComment.findViewById(R.id.productRaiting);
+        mProductRatingView = mPageComment.findViewById(R.id.productRating);
 
         thisProductFull = (ModelProductFull) getIntent().getParcelableExtra("object");
         onGetData(thisProductFull);
@@ -96,14 +93,14 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
 
 
         //Обработчик рейтинга
-        mProductRaitingView.setOnTouchListener(new View.OnTouchListener() {
+        mProductRatingView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (!mProductRaitingView.isIndicator()) {
+                if (!mProductRatingView.isIndicator()) {
                     switch (event.getAction()) {
                         case 0: //Нажали
-                            mProductRaitingView.setRating(0);
-                            mProductRaitingView.setStepSize((float) 1);
+                            mProductRatingView.setRating(0);
+                            mProductRatingView.setStepSize((float) 1);
                             break;
                         case 1: //Отжали
                             break;
@@ -113,16 +110,16 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
                 return false;
             }
         });
-        mProductRaitingView.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+        mProductRatingView.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 if (fromUser) {
-                    mProductRaitingView.setStepSize((float) 0.1);
+                    mProductRatingView.setStepSize((float) 0.1);
                     if (AppInstance.getUser().isAuthUser()) {
                         startInputComment(rating);
                     }
                     else {
-                        mProductRaitingView.setIsIndicator(true);
+                        mProductRatingView.setIsIndicator(true);
                         AuthManager.signIn(mThis, RC_SIGN_IN);
                     }
                 }
@@ -139,7 +136,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
             AuthManager.signInOnResult(resultCode, data, new AuthManager.OnLoginListener() {
                 @Override
                 public void onLogin() {
-                    final float rating = mProductRaitingView.getRating();
+                    final float rating = mProductRatingView.getRating();
                     refreshData(new RefreshDataListener() {
                         @Override
                         public void onAfterResponse() {
@@ -153,7 +150,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
                 public void onFailureLogin() {
                     AuthManager.informLoginError();
                     if (!AppInstance.getUser().isAuthUser())
-                        mProductRaitingView.setIsIndicator(false);
+                        mProductRatingView.setIsIndicator(false);
                 }
             });
         }
@@ -233,7 +230,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         TextView view_midPrice = mPagePrice.findViewById(R.id.midPrice);//Средняя цена
         TextView view_productName = mPageInfo.findViewById(R.id.product_name);//Наименование
         TextView view_lowPrice = mPagePrice.findViewById(R.id.lowPrice);//Разброс цен
-        TextView view_textRaiting = mPageComment.findViewById(R.id.textRaiting);//Рейтинг текстом
+        TextView view_textRating = mPageComment.findViewById(R.id.textRating);//Рейтинг текстом
 
         ListView view_price_list = mPagePrice.findViewById(R.id.price_list);
         ListView view_comment_list = mPageComment.findViewById(R.id.comment_list);
@@ -246,10 +243,10 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         view_midPrice.setText(product.price + "\u20BD");
 
         view_lowPrice.setText("от " + product.price_min + " до " + product.price_max + "\u20BD");
-        view_textRaiting.setText(product.raiting + " из 5");
-        mProductRaitingView.setRating(product.raiting);
+        view_textRating.setText(product.rating + " из 5");
+        mProductRatingView.setRating(product.rating);
         if (product.user_leave_comment==1)
-            mProductRaitingView.setIsIndicator(true);
+            mProductRatingView.setIsIndicator(true);
 
         //Вывод списков
         if (product.prices != null && product.prices.size()>0) {
@@ -459,19 +456,19 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
             ModelComment obj = getObj(position);
 
             TextView view_user_comment = view.findViewById(R.id.user_comment);
-            RatingBar view_user_raiting = view.findViewById(R.id.user_raiting);
+            RatingBar view_user_rating = view.findViewById(R.id.user_rating);
 
             view_user_comment.setText(obj.comment);
-            view_user_raiting.setRating(obj.raiting);
+            view_user_rating.setRating(obj.rating);
 
             if (fullMode) {
                 TextView view_user_name = view.findViewById(R.id.user_name);
-                TextView view_user_raiting_text = view.findViewById(R.id.user_raiting_text);
-                TextView view_user_raiting_date = view.findViewById(R.id.user_raiting_date);
+                TextView view_user_rating_text = view.findViewById(R.id.user_rating_text);
+                TextView view_user_rating_date = view.findViewById(R.id.user_rating_date);
                 if (obj.user != null)
                     view_user_name.setText(obj.user.displayName);
-                view_user_raiting_text.setText(obj.raiting + " из 5");
-                view_user_raiting_date.setText(dateFormat.format(obj.date));
+                view_user_rating_text.setText(obj.rating + " из 5");
+                view_user_rating_date.setText(dateFormat.format(obj.date));
             }
 
             return view;
@@ -645,10 +642,10 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         // set prompts.xml to alertdialog builder
         alertDialogBuilder.setView(commentView);
 
-        final RatingBar productRaitingNewView = commentView.findViewById(R.id.productRaiting);
+        final RatingBar productRatingNewView = commentView.findViewById(R.id.productRating);
         final EditText productCommentNewView = commentView.findViewById(R.id.productComment);
 
-        productRaitingNewView.setRating(rating);
+        productRatingNewView.setRating(rating);
 
         // set dialog message
         alertDialogBuilder
@@ -656,14 +653,14 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                addNewComment(productRaitingNewView.getRating(), productCommentNewView.getText().toString());
-                                mProductRaitingView.setIsIndicator(true);
+                                addNewComment(productRatingNewView.getRating(), productCommentNewView.getText().toString());
+                                mProductRatingView.setIsIndicator(true);
                             }
                         })
                 .setNegativeButton(R.string.cancel,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                mProductRaitingView.setRating(thisProductFull.raiting);
+                                mProductRatingView.setRating(thisProductFull.rating);
                                 dialog.cancel();
                             }
                         });

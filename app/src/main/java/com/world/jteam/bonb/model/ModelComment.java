@@ -12,14 +12,14 @@ public class ModelComment implements Parcelable {
     public int product_id;
     public ModelUser user;
     public String comment;
-    public float raiting = 0;
+    public float rating = 0;
     public Date date;
 
-    public ModelComment(int product_id, ModelUser user, String comment, float raiting){
+    public ModelComment(int product_id, ModelUser user, String comment, float rating){
         this.product_id = product_id;
         this.user = user;
         this.comment = comment;
-        this.raiting = raiting;
+        this.rating = rating;
     }
 
     public ArrayList<ModelComment> getCommetListByProduct(ModelProduct product){
@@ -52,7 +52,7 @@ public class ModelComment implements Parcelable {
         product_id = in.readInt();
         user = (ModelUser) in.readParcelable(ModelUser.class.getClassLoader());
         comment = in.readString();
-        raiting = in.readFloat();
+        rating = in.readFloat();
         long tmpDate = in.readLong();
         date = tmpDate != -1 ? new Date(tmpDate) : null;
     }
@@ -67,7 +67,7 @@ public class ModelComment implements Parcelable {
         dest.writeInt(product_id);
         dest.writeParcelable(user,0);
         dest.writeString(comment);
-        dest.writeFloat(raiting);
+        dest.writeFloat(rating);
         dest.writeLong(date != null ? date.getTime() : -1L);
     }
 

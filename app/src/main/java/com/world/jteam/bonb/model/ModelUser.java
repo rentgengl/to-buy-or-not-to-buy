@@ -9,8 +9,6 @@ public class ModelUser implements Parcelable {
     public String google_id;
     public int id;
     public String mail;
-    public int city_id;
-
 
     public ModelUser(String name, String google_id, int id){
         this.name = name;
@@ -18,11 +16,10 @@ public class ModelUser implements Parcelable {
         this.id = id;
     }
 
-    public ModelUser(String name, String google_id, String mail, int city){
+    public ModelUser(String name, String google_id, String mail){
         this.name = name;
         this.google_id = google_id;
         this.mail = mail;
-        this.city_id = city;
     }
 
     protected ModelUser(Parcel in) {
@@ -31,7 +28,6 @@ public class ModelUser implements Parcelable {
         google_id = in.readString();
         id = in.readInt();
         mail = in.readString();
-        city_id = in.readInt();
     }
 
     @Override
@@ -46,7 +42,6 @@ public class ModelUser implements Parcelable {
         dest.writeString(google_id);
         dest.writeInt(id);
         dest.writeString(mail);
-        dest.writeInt(city_id);
     }
 
     @SuppressWarnings("unused")
