@@ -234,7 +234,7 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
 
                     TextView view_magazinName = v.findViewById(R.id.magazinName);
                     TextView view_magazinAdres = v.findViewById(R.id.magazinAdres);
-                    openMarket((int) view_magazinName.getTag());
+                    openMarket((int) view_magazinName.getTag(),view_magazinName.getText().toString());
 
                 }
             });
@@ -249,11 +249,11 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
 
     }
 
-    public void openMarket(int id){
+    public void openMarket(int id, String name){
 
         Intent intent = new Intent(this, MarketActivity.class);
                     intent.putExtra("market_id", id);
-//                    intent.putExtra("market_name", (String) view_magazinName.getText());
+                    intent.putExtra("market_name", name);
 //                    intent.putExtra("market_adress", (String) view_magazinAdres.getText());
         startActivity(intent);
 

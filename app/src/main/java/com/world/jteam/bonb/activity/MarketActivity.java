@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -64,7 +65,7 @@ import retrofit2.Response;
 
 public class MarketActivity extends AppCompatActivity implements View.OnClickListener {
 
-    static final int PAGE_COUNT = 2;
+    static final int PAGE_COUNT = 1;
 
     private final AppCompatActivity mThis = this;
 
@@ -82,6 +83,7 @@ public class MarketActivity extends AppCompatActivity implements View.OnClickLis
 
 
     public int market_id;
+    public String market_name;
 
     public View page_products;
     public View page_contacts;
@@ -112,6 +114,8 @@ public class MarketActivity extends AppCompatActivity implements View.OnClickLis
 
         Intent mIntent = getIntent();
         market_id = mIntent.getIntExtra("market_id", 0);
+        market_name = mIntent.getStringExtra("market_name");
+        setTitle(market_name);
 
         //По умолчанию отображаю товары первой группы
         this.searchMethod = new ModelSearchProductMethod("", 0, market_id);
@@ -119,27 +123,14 @@ public class MarketActivity extends AppCompatActivity implements View.OnClickLis
         //Формирование списка товаров
         pagingStart();
 
-        /*
-
-
         //Подготовка навигации
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setHomeButtonEnabled(true);
-*/
-        /*
 
-
-        //Обработчик ввода текста в строку поиска
-        EditText searchText = this.findViewById(R.id.search_panel_text);
-        searchText.setOnKeyListener(new MarketActivity.OnKeyPress());
-
-
-
-*/
     }
 
-    /*
+
         @Override
         protected void onPostCreate(Bundle savedInstanceState) {
             super.onPostCreate(savedInstanceState);
@@ -193,31 +184,6 @@ public class MarketActivity extends AppCompatActivity implements View.OnClickLis
             }
 
             return super.onOptionsItemSelected(item);
-        }
-
-        //Категории
-        private class ProductGroupsOnItemClickListener implements AdapterView.OnItemClickListener {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ModelGroup productGroup = mProductGroupsAdapter.getItem(position);
-                LinkedHashMap<ModelGroup, LinkedHashMap> productGroupGroups =
-                        mProductGroupsCurrent.get(productGroup);
-
-                searchByGroup(productGroup.id, true);
-                //Раскрытие группы
-                if (productGroupGroups == null) {
-                    mProductGroupsSelected = mProductGroupsCurrent;
-                    mDrawerLayout.closeDrawer(mDrawerList);
-                    //Возврат к родителю группы
-                } else {
-
-                    mProductGroupsCurrent = productGroupGroups;
-                    mProductGroupsAdapter.clear();
-                    mProductGroupsAdapter.addAll(ModelGroup.getCurrentProductGroups(
-                            mProductGroupsCurrent, ModelGroup.GROUP_NM_VIEW));
-                }
-
-            }
         }
 
 
@@ -359,7 +325,7 @@ public class MarketActivity extends AppCompatActivity implements View.OnClickLis
 
 
         }
-*/
+
     //Поиск товаров по группе
     private void searchByGroup(int groupId, boolean removeSearchText) {
         if (searchMethod == null) {
@@ -537,7 +503,7 @@ public class MarketActivity extends AppCompatActivity implements View.OnClickLis
             LinkedHashMap<ModelGroup, LinkedHashMap> productGroupGroups =
                     mProductGroupsCurrent.get(productGroup);
 
-            //searchByGroup(productGroup.id, true);
+            searchByGroup(productGroup.id, true);
             //Раскрытие группы
             if (productGroupGroups == null) {
                 mProductGroupsSelected = mProductGroupsCurrent;
@@ -567,6 +533,9 @@ public class MarketActivity extends AppCompatActivity implements View.OnClickLis
         //view_magazinName.setText(mIntent.getStringExtra("market_name"));
         //view_magazinAdres.setText(mIntent.getStringExtra("market_adress"));
 
+        //Обработчик ввода текста в строку поиска
+        EditText searchText = page_products.findViewById(R.id.search_panel_text);
+        searchText.setOnKeyListener(new MarketActivity.OnKeyPress());
 
         pager = (ViewPager) findViewById(R.id.pager);
         pagerAdapter = new MarketFragmentPagerAdapter(getSupportFragmentManager());
@@ -574,24 +543,6 @@ public class MarketActivity extends AppCompatActivity implements View.OnClickLis
         ((MarketFragmentPagerAdapter) pagerAdapter).page2 = page_contacts;
 
         pager.setAdapter(pagerAdapter);
-        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrolled(int position, float positionOffset,
-                                       int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-
-        });
 
 
     }
