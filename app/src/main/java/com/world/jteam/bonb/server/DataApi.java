@@ -42,7 +42,8 @@ public interface DataApi {
                                             @Query("lng") double lng,
                                             @Query("pageSize") int pageSize,
                                             @Query("lastName") String lastName,
-                                            @Query("lastID") int lastID
+                                            @Query("lastID") int lastID,
+                                            @Query("marketID") int marketID
                                             );
 
     @GET("GetProductFull.php")

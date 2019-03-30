@@ -62,7 +62,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MarketActivity extends AppCompatActivity {
+public class MarketActivity extends AppCompatActivity implements View.OnClickListener {
 
     static final int PAGE_COUNT = 2;
 
@@ -80,26 +80,29 @@ public class MarketActivity extends AppCompatActivity {
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    /*
+
     public int market_id;
 
+    public View page_products;
+    public View page_contacts;
 
 
     //Режимы поиска по наименованию или группе
     public ModelSearchProductMethod searchMethod;
 
     //Переменные пагинации
-    private MarketActivity.MainThreadExecutor executor;
+    private MainThreadExecutor executor;
     private ProductListAdapter adapter;
 
     //Нажатие назад
     private static long back_pressed;
 
-*/
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_market);
 
+        executor = new MarketActivity.MainThreadExecutor();
         //Инициализация списка групп товаров
         initGroupMenu();
 
@@ -107,32 +110,32 @@ public class MarketActivity extends AppCompatActivity {
         initPager();
 
 
-        /*
-        //Intent mIntent = getIntent();
-        market_id = 0;//mIntent.getIntExtra("market_id", 0);
-        //TextView view_magazinName = findViewById(R.id.magazinName);
-        //TextView view_magazinAdres = findViewById(R.id.magazinAdres);
-        //view_magazinName.setText(mIntent.getStringExtra("market_name"));
-        //view_magazinAdres.setText(mIntent.getStringExtra("market_adress"));
-
-        //Подготовка навигации
-        ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setHomeButtonEnabled(true);
-
-        /*
-
-
-        //Обработчик ввода текста в строку поиска
-        EditText searchText = this.findViewById(R.id.search_panel_text);
-        searchText.setOnKeyListener(new MarketActivity.OnKeyPress());
-        executor = new MarketActivity.MainThreadExecutor();
+        Intent mIntent = getIntent();
+        market_id = mIntent.getIntExtra("market_id", 0);
 
         //По умолчанию отображаю товары первой группы
         this.searchMethod = new ModelSearchProductMethod("", 0, market_id);
 
         //Формирование списка товаров
         pagingStart();
+
+        /*
+
+
+        //Подготовка навигации
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setHomeButtonEnabled(true);
+*/
+        /*
+
+
+        //Обработчик ввода текста в строку поиска
+        EditText searchText = this.findViewById(R.id.search_panel_text);
+        searchText.setOnKeyListener(new MarketActivity.OnKeyPress());
+
+
+
 */
     }
 
@@ -218,11 +221,7 @@ public class MarketActivity extends AppCompatActivity {
         }
 
 
-        public void onClick(View v) {
 
-            searchByGroup((int) v.getTag(), false);
-
-        }
 
         //Обработчик ввода текста в поле поиска
         private class OnKeyPress implements View.OnKeyListener {
@@ -360,102 +359,116 @@ public class MarketActivity extends AppCompatActivity {
 
 
         }
-
-        //Поиск товаров по группе
-        private void searchByGroup(int groupId, boolean removeSearchText) {
-            if (searchMethod == null) {
-                searchMethod = new ModelSearchProductMethod("", groupId, market_id);
-            } else {
-                searchMethod.searchGroup = groupId;
-            }
-
-            if (removeSearchText) {
-                searchMethod.searchText = "";
-                EditText editText = this.findViewById(R.id.search_panel_text);
-                editText.setText("");
-            }
-            //Почищу группы результата поиска
-            LinearLayout resultGroup = findViewById(R.id.search_result_group);
-            resultGroup.removeAllViews();
-
-            pagingStart();
+*/
+    //Поиск товаров по группе
+    private void searchByGroup(int groupId, boolean removeSearchText) {
+        if (searchMethod == null) {
+            searchMethod = new ModelSearchProductMethod("", groupId, market_id);
+        } else {
+            searchMethod.searchGroup = groupId;
         }
 
-        //Основной обработчик заполнения списка товаров
-        private void pagingStart() {
-            setupRecyclerView();
-            setupDataSource(searchMethod);
+        if (removeSearchText) {
+            searchMethod.searchText = "";
+            EditText editText = this.findViewById(R.id.search_panel_text);
+            editText.setText("");
         }
+        //Почищу группы результата поиска
+        LinearLayout resultGroup = findViewById(R.id.search_result_group);
+        resultGroup.removeAllViews();
 
-        //Инициализация объекта
-        private void setupRecyclerView() {
+        pagingStart();
+    }
 
-            adapter = new ProductListAdapter();
 
-            RecyclerView recyclerView = findViewById(R.id.productRW);
-            recyclerView.setLayoutManager(new LinearLayoutManager(MarketActivity.this));
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setAdapter(adapter);
+    public void onClick(View v) {
 
-            recyclerView.setOnClickListener(this);
-        }
+        searchByGroup((int) v.getTag(), false);
 
-        //Инициализация источника данных
-        private void setupDataSource(ModelSearchProductMethod mSearchMethod) {
+    }
 
-            // Initialize Data Source
-            ProductDataSource dataSource = new ProductDataSource();//Добавить строку поиска по группе
-            dataSource.searchMethod = mSearchMethod;
-            // Configure paging
-            PagedList.Config config = new PagedList.Config.Builder()
-                    // Number of items to fetch at once. [Required]
-                    .setPageSize(Constants.DEFAULT_PER_PAGE)
-                    // Number of items to fetch on initial load. Should be greater than Page size. [Optional]
-                    .setInitialLoadSizeHint(Constants.DEFAULT_PER_PAGE * 2)
-                    .setEnablePlaceholders(true) // Show empty views until data is available
-                    .build();
 
-            // Build PagedList
-            PagedList<ModelProduct> list =
-                    new PagedList.Builder<>(dataSource, config) // Can pass `pageSize` directly instead of `config`
-                            // Do fetch operations on the main thread. We'll instead be using Retrofit's
-                            // built-in enqueue() method for background api calls.
-                            .setFetchExecutor(executor)
-                            // Send updates on the main thread
-                            .setNotifyExecutor(executor)
-                            .build();
+    //Основной обработчик заполнения списка товаров
+    private void pagingStart() {
+        setupRecyclerView();
+        setupDataSource(searchMethod);
+    }
 
-            // Ideally, the above code should be placed in a ViewModel class so that the list can be
-            // retained across configuration changes.
+    //Инициализация объекта
+    private void setupRecyclerView() {
 
-            // Required only once. Paging will handle fetching and updating the list.
-            adapter.submitList(list);
+        adapter = new ProductListAdapter();
 
-        }
+        RecyclerView recyclerView = page_products.findViewById(R.id.productRW);
+        recyclerView.setLayoutManager(new LinearLayoutManager(MarketActivity.this));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(adapter);
 
-        // Классы пагинации
-        class MainThreadExecutor implements Executor {
-            private final Handler mHandler = new Handler(Looper.getMainLooper());
+        recyclerView.setOnClickListener(this);
+    }
 
-            @Override
-            public void execute(Runnable command) {
-                mHandler.post(command);
-            }
-        }
+    //Инициализация источника данных
+    private void setupDataSource(ModelSearchProductMethod mSearchMethod) {
 
-        //Геолокация
+        // Initialize Data Source
+        ProductDataSource dataSource = new ProductDataSource();//Добавить строку поиска по группе
+        dataSource.searchMethod = mSearchMethod;
+        // Configure paging
+        PagedList.Config config = new PagedList.Config.Builder()
+                // Number of items to fetch at once. [Required]
+                .setPageSize(Constants.DEFAULT_PER_PAGE)
+                // Number of items to fetch on initial load. Should be greater than Page size. [Optional]
+                .setInitialLoadSizeHint(Constants.DEFAULT_PER_PAGE * 2)
+                .setEnablePlaceholders(true) // Show empty views until data is available
+                .build();
 
-    */
+        // Build PagedList
+        PagedList<ModelProduct> list =
+                new PagedList.Builder<>(dataSource, config) // Can pass `pageSize` directly instead of `config`
+                        // Do fetch operations on the main thread. We'll instead be using Retrofit's
+                        // built-in enqueue() method for background api calls.
+                        .setFetchExecutor(executor)
+                        // Send updates on the main thread
+                        .setNotifyExecutor(executor)
+                        .build();
+
+        // Ideally, the above code should be placed in a ViewModel class so that the list can be
+        // retained across configuration changes.
+
+        // Required only once. Paging will handle fetching and updating the list.
+        adapter.submitList(list);
+
+    }
+
+
+    //Адаптер страниц
     private class MarketFragmentPagerAdapter extends FragmentPagerAdapter {
 
+        public View page1;
+        public View page2;
         public MarketFragmentPagerAdapter(FragmentManager fm) {
 
             super(fm);
         }
 
+        //Заголовки страниц
+        @Override
+        public CharSequence getPageTitle(int position) {
+
+            switch (position) {
+                case 0:
+                    return "Товары";
+                case 1:
+                    return "Контактные данные";
+                default:
+                    return "Другое";
+            }
+
+        }
+
         @Override
         public Fragment getItem(int position) {
-            return MarketPageFragment.newInstance(position);
+            return MarketPageFragment.newInstance(position,page1,page2);
         }
 
         @Override
@@ -465,7 +478,7 @@ public class MarketActivity extends AppCompatActivity {
     }
 
 
-    private void initGroupMenu(){
+    private void initGroupMenu() {
 
         //Кнопка вызова списка категорий
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -477,7 +490,7 @@ public class MarketActivity extends AppCompatActivity {
                 return false;
             }
         };
-        mDrawerToggle = new ActionBarDrawerToggle( (AppCompatActivity) mThis, mDrawerLayout,
+        mDrawerToggle = new ActionBarDrawerToggle((AppCompatActivity) mThis, mDrawerLayout,
                 drawerArrow, R.string.drawer_open, R.string.drawer_close) {
 
             public void onDrawerClosed(View view) {
@@ -514,7 +527,6 @@ public class MarketActivity extends AppCompatActivity {
         mDrawerToggle.syncState();
 
 
-
     }
 
     //Группы
@@ -542,30 +554,56 @@ public class MarketActivity extends AppCompatActivity {
         }
     }
 
-    public void initPager(){
-    pager = (ViewPager) findViewById(R.id.pager);
-    pagerAdapter = new MarketFragmentPagerAdapter(getSupportFragmentManager());
-    pager.setAdapter(pagerAdapter);
-    pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+    public void initPager() {
+
+        //Инициализирую станицы и передам их в адаптер страниц
+
+
+        page_contacts = this.getLayoutInflater().inflate(R.layout.fragment_market_contacts, null);
+        page_products = this.getLayoutInflater().inflate(R.layout.fragment_market_product_list, null);
+
+        TextView view_magazinName = page_contacts.findViewById(R.id.magazinName);
+        TextView view_magazinAdres = page_contacts.findViewById(R.id.magazinAdres);
+        //view_magazinName.setText(mIntent.getStringExtra("market_name"));
+        //view_magazinAdres.setText(mIntent.getStringExtra("market_adress"));
+
+
+        pager = (ViewPager) findViewById(R.id.pager);
+        pagerAdapter = new MarketFragmentPagerAdapter(getSupportFragmentManager());
+        ((MarketFragmentPagerAdapter) pagerAdapter).page1 = page_products;
+        ((MarketFragmentPagerAdapter) pagerAdapter).page2 = page_contacts;
+
+        pager.setAdapter(pagerAdapter);
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset,
+                                       int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+
+        });
+
+
+    }
+
+    // Классы пагинации
+    class MainThreadExecutor implements Executor {
+        private final Handler mHandler = new Handler(Looper.getMainLooper());
 
         @Override
-        public void onPageSelected(int position) {
-
+        public void execute(Runnable command) {
+            mHandler.post(command);
         }
-
-        @Override
-        public void onPageScrolled(int position, float positionOffset,
-                                   int positionOffsetPixels) {
-
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int state) {
-        }
-
-    });
-
-
-}
+    }
 
 }

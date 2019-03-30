@@ -33,7 +33,8 @@ public class ProductDataSource extends ItemKeyedDataSource<ModelProduct, ModelPr
                 AppInstance.getGeoPosition().longitude,
                 params.requestedLoadSize,
                 "",
-                -1);
+                -1,
+                searchMethod.market_id);
         Callback<ModelSearchResult> requestCallback = new Callback<ModelSearchResult>() {
             @Override
             public void onResponse(@NonNull Call<ModelSearchResult> call, @NonNull Response<ModelSearchResult> response) {
@@ -83,7 +84,8 @@ public class ProductDataSource extends ItemKeyedDataSource<ModelProduct, ModelPr
                 AppInstance.getGeoPosition().longitude,
                 params.requestedLoadSize,
                 params.key.name,
-                params.key.id);
+                params.key.id,
+                searchMethod.market_id);
         Callback<ModelSearchResult> requestCallback = new Callback<ModelSearchResult>() {
             @Override
             public void onResponse(@NonNull Call<ModelSearchResult> call, @NonNull Response<ModelSearchResult> response) {

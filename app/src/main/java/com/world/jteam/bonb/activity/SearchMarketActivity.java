@@ -234,7 +234,7 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
 
                     TextView view_magazinName = v.findViewById(R.id.magazinName);
                     TextView view_magazinAdres = v.findViewById(R.id.magazinAdres);
-                    openMarket(0);
+                    openMarket((int) view_magazinName.getTag());
 
                 }
             });

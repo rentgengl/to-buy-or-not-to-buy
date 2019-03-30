@@ -18,13 +18,14 @@ public class ModelSearchProductMethod {
     public ModelSearchProductMethod(int searchGroup){
         this.searchGroup = searchGroup;
         this.searchMethod = SEARCH_BY_GROUP;
+        this.market_id = 0;
     }
 
     public ModelSearchProductMethod(String searchText,int searchGroup){
         this.searchGroup = searchGroup;
         this.searchText = searchText;
         this.searchMethod = SEARCH_BY_NAME_AND_GROUP;
-
+        this.market_id = 0;
     }
 
     public ModelSearchProductMethod(String searchText,int searchGroup, int market_id){
