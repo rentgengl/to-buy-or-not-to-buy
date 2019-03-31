@@ -391,10 +391,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (ModelGroup strGr : groupList) {
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
-                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, getResources().getDisplayMetrics()));
+                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics()));
+            layoutParams.leftMargin = 4;
+            layoutParams.rightMargin = 4;
 
             Button nButton = new Button(this, null, R.style.Widget_AppCompat_Button_Borderless);
-            nButton.setHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 28, getResources().getDisplayMetrics()));
+            nButton.setHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics()));
             nButton.setLayoutParams(layoutParams);
             nButton.setTextColor(getResources().getColor(R.color.colorTextGroupResultSearch));
             nButton.setGravity(Gravity.CENTER);
@@ -421,7 +423,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Подгрузка списка групп
         if(!name.equals("")) {
             DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-            Call<List<ModelGroup>> serviceCall = mDataApi.getGroupListByName(name);
+            Call<List<ModelGroup>> serviceCall = mDataApi.getGroupListByName(name,0);
             SingletonRetrofit.enqueue(serviceCall,new Callback<List<ModelGroup>>() {
                 @Override
                 public void onResponse(Call<List<ModelGroup>> call, Response<List<ModelGroup>> response) {

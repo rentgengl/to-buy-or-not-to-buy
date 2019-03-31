@@ -27,12 +27,8 @@ public interface DataApi {
                                     @Query("lng") double lng);
 
     @GET("getGroupListByName.php")
-    Call<List<ModelGroup>> getGroupListByName(@Query("name") String name);
-
-    /*@GET("GetProductGroupListByName.php")
-    Call<ModelSearchResult> getProductGroupListByName(@Query("name") String name,
-                                                      @Query("page") long page,
-                                                      @Query("pageSize") int pageSize);*/
+    Call<List<ModelGroup>> getGroupListByName(@Query("name") String name,
+                                              @Query("marketID") int marketID);
 
     @GET("getProductList_v2.php")
     Call<ModelSearchResult> getProductList( @Query("name") String name,
