@@ -79,7 +79,7 @@
 
                 <RatingBar
                     android:id="@+id/productRating"
-                    style="@android:style/Widget.DeviceDefault.Light.RatingBar.Small"
+                    style="@style/Widget.AppCompat.RatingBar.Small"
                     android:layout_width="95dp"
                     android:layout_height="26dp"
                     android:numStars="5"

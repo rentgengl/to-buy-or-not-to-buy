@@ -29,6 +29,8 @@
         android:gravity="top|left"
         android:hint="@string/product_comment_hint"
         android:inputType="textMultiLine"
+        android:maxLength="500"
+        android:maxLines="25"
         android:minLines="3" />
 
 

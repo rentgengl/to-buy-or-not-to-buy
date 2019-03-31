@@ -72,7 +72,7 @@ public class CoverageAreaActivity extends FragmentActivity implements OnMapReady
 
         if (useAutoGeoPos && useAutoGeoPos != useAutoGeoPosSave) {
             GeoManager.starGeoPositionTrace();
-        } else {
+        } else if (mCircleArea!=null){
             AppInstance.setGeoPosition(mCircleArea.getCenter());
         }
     }

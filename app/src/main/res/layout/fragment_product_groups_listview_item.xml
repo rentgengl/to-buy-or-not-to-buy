@@ -13,6 +13,8 @@
         android:id="@+id/product_group_list_icon"
         android:layout_width="30dip"
         android:layout_height="30dip"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
         app:layout_constraintBottom_toBottomOf="@+id/product_group_list_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/product_group_list_text" />

@@ -17,6 +17,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
             android:text="@string/product_name_head"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -25,13 +26,14 @@
             android:id="@+id/product_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_marginLeft="16dp"
             android:text="Очень хороший товар"
             android:textSize="16sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
             android:text="@string/product_description_head"
             android:textSize="18sp"
             android:textStyle="bold" />

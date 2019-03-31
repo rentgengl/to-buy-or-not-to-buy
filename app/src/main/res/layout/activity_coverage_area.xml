@@ -50,10 +50,14 @@
 
     <TextView
         android:id="@+id/radius_head"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:gravity="right|end"
         android:text="@string/radius"
         app:layout_constraintBaseline_toBaselineOf="@+id/radius_area"
-        app:layout_constraintEnd_toStartOf="@+id/radius_area" />
+        app:layout_constraintEnd_toStartOf="@+id/radius_area"
+        app:layout_constraintStart_toEndOf="@+id/use_auto_position" />
 
 </android.support.constraint.ConstraintLayout>
