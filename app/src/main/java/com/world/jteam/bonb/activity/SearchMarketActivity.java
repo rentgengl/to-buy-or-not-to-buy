@@ -66,6 +66,7 @@ import retrofit2.Response;
 public class SearchMarketActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final AppCompatActivity mThis = this;
+    private MarketListAdapter mMarketListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +75,7 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.activity_search_market);
 
         //Обработчик клика по кнопке выбоа на карте
-        ImageButton searchButton = this.findViewById(R.id.search_market_panel_button);
+        Button searchButton = this.findViewById(R.id.search_market_panel_button);
         searchButton.setOnClickListener(this);
 
         //Обработчик ввода текста в строку поиска
@@ -90,7 +91,28 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
         switch (v.getId()) {
 
             case (R.id.search_market_panel_button):
-                //Открыть карту с магазинами
+
+                String arrName[] = new String[mMarketListAdapter.objects.size()];
+                double arrLat[] = new double[mMarketListAdapter.objects.size()];
+                double arrLng[] = new double[mMarketListAdapter.objects.size()];
+                String arrLogo[] = new String[mMarketListAdapter.objects.size()];
+
+                int i = 0;
+                for (ModelMarket market : mMarketListAdapter.objects) {
+                    arrName[i] = market.name;
+                    arrLat[i] = market.latitude;
+                    arrLng[i] = market.longitude;
+                    arrLogo[i] = market.logo_link;
+                    i++;
+
+                }
+
+                Intent intent = new Intent(this, MarketMapActivity.class);
+                intent.putExtra("name", arrName);
+                intent.putExtra("lat", arrLat);
+                intent.putExtra("lng", arrLng);
+                intent.putExtra("logo", arrLogo);
+                startActivity(intent);
 
         }
 
@@ -163,7 +185,8 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
 
         if (markets != null && markets.size() > 0) {
             ListView view_market_list = this.findViewById(R.id.market_list);
-            view_market_list.setAdapter(new SearchMarketActivity.MarketListAdapter(this, markets));
+            mMarketListAdapter=new MarketListAdapter(this, markets);
+            view_market_list.setAdapter(mMarketListAdapter);
         }
     }
 
