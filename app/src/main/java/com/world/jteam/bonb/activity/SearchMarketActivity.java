@@ -185,7 +185,11 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
 
         if (markets != null && markets.size() > 0) {
             ListView view_market_list = this.findViewById(R.id.market_list);
-            mMarketListAdapter=new MarketListAdapter(this, markets);
+            mMarketListAdapter = new MarketListAdapter(this, markets);
+            view_market_list.setAdapter(mMarketListAdapter);
+        }else{
+            ListView view_market_list = this.findViewById(R.id.market_list);
+            mMarketListAdapter = new MarketListAdapter(this, markets);
             view_market_list.setAdapter(mMarketListAdapter);
         }
     }
@@ -274,9 +278,10 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
 
     public void openMarket(int id, String name){
 
-        Intent intent = new Intent(this, MarketActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
                     intent.putExtra("market_id", id);
                     intent.putExtra("market_name", name);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //                    intent.putExtra("market_adress", (String) view_magazinAdres.getText());
         startActivity(intent);
 

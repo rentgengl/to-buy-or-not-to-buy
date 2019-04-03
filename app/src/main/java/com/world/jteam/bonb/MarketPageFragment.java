@@ -1,18 +1,14 @@
 package com.world.jteam.bonb;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.Random;
-
 public class MarketPageFragment extends Fragment {
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     int pageNumber;
-    int backColor;
     public View page1_List = null;
     public View page2_Info = null;
 

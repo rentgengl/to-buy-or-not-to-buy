@@ -65,13 +65,17 @@ import retrofit2.Response;
 
 public class MarketActivity extends AppCompatActivity implements View.OnClickListener {
 
-    static final int PAGE_COUNT = 1;
 
     private final AppCompatActivity mThis = this;
 
-
+    //Страницы
+    static final int PAGE_COUNT = 1;
     ViewPager pager;
     PagerAdapter pagerAdapter;
+    public int market_id;
+    public String market_name;
+    public View page_products;
+    public View page_contacts;
 
     //Категории
     private ModelGroup.ProductGroupsAdapter mProductGroupsAdapter;
@@ -82,11 +86,6 @@ public class MarketActivity extends AppCompatActivity implements View.OnClickLis
     private ActionBarDrawerToggle mDrawerToggle;
 
 
-    public int market_id;
-    public String market_name;
-
-    public View page_products;
-    public View page_contacts;
 
 
     //Режимы поиска по наименованию или группе
