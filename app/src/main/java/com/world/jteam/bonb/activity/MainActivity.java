@@ -289,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void clearMarketId(){
         searchMethod.market_id = 0;
         market_id = 0;
-        setTitle("Брать или нет?");
+        setTitle(R.string.app_name);
         searchByName("");
     }
     //Показать карточку товара по ШК
