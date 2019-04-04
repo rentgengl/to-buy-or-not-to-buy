@@ -199,7 +199,7 @@ public class ProductRegistrationActivity extends AppCompatActivity {
                 //Настроим список
                 ListView product_groups_select =(ListView) findViewById(R.id.product_groups_select);
                 ArrayList productGroupsList =
-                        ModelGroup.getCurrentProductGroups(mProductGroupsSelected, ModelGroup.GROUP_NM_PRODUCT_ADD);
+                        ModelGroup.getCurrentProductGroups(mProductGroupsSelected, ModelGroup.GROUP_NM_PRODUCT_ADD,new int[0]);
 
                 mProductGroupsAdapter =new ModelGroup.ProductGroupsAdapter(mThis, productGroupsList);
                 product_groups_select.setAdapter(mProductGroupsAdapter);
@@ -274,7 +274,7 @@ public class ProductRegistrationActivity extends AppCompatActivity {
                 mProductGroupsCurrent = productGroupGroups;
                 mProductGroupsAdapter.clear();
                 mProductGroupsAdapter.addAll(ModelGroup.getCurrentProductGroups(
-                        mProductGroupsCurrent, ModelGroup.GROUP_NM_PRODUCT_ADD));
+                        mProductGroupsCurrent, ModelGroup.GROUP_NM_PRODUCT_ADD,new int[0]));
                 resizeProductGroupSelectedView();
             }
 

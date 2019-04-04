@@ -477,7 +477,7 @@ public class MarketActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 if (mProductGroupsSelected != null) {
                     ArrayList productGroupsList =
-                            ModelGroup.getCurrentProductGroups(mProductGroupsSelected, ModelGroup.GROUP_NM_VIEW);
+                            ModelGroup.getCurrentProductGroups(mProductGroupsSelected, ModelGroup.GROUP_NM_VIEW,new int[0]);
 
                     mProductGroupsAdapter = new ModelGroup.ProductGroupsAdapter(mThis, productGroupsList);
                     mDrawerList.setAdapter(mProductGroupsAdapter);
@@ -516,7 +516,7 @@ public class MarketActivity extends AppCompatActivity implements View.OnClickLis
                 mProductGroupsCurrent = productGroupGroups;
                 mProductGroupsAdapter.clear();
                 mProductGroupsAdapter.addAll(ModelGroup.getCurrentProductGroups(
-                        mProductGroupsCurrent, ModelGroup.GROUP_NM_VIEW));
+                        mProductGroupsCurrent, ModelGroup.GROUP_NM_VIEW,new int[0]));
             }
 
         }

@@ -15,10 +15,17 @@ import com.squareup.picasso.Picasso;
 import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.Constants;
 import com.world.jteam.bonb.R;
+import com.world.jteam.bonb.server.DataApi;
+import com.world.jteam.bonb.server.SingletonRetrofit;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 @Entity
 public class ModelGroup {
@@ -91,17 +98,43 @@ public class ModelGroup {
     //Получает массив категорий текущего списка с учетом метода навигации
     public static ArrayList<ModelGroup> getCurrentProductGroups(
             LinkedHashMap<ModelGroup, LinkedHashMap> currentProductGroups,
-            int navigation_method) {
+            int navigation_method,
+            int[] marketsProductsGroup) {
 
         ArrayList<ModelGroup> productGroups = new ArrayList<>();
 
         for (ModelGroup key : currentProductGroups.keySet()) {
             if (key.navigation_method != 0 && key.navigation_method != navigation_method)
                 continue;
+            if (marketsProductsGroup!=null && Arrays.binarySearch(marketsProductsGroup,key.id)<0)
+                continue;
 
             productGroups.add(key);
         }
 
         return productGroups;
+    }
+
+    public interface MarketsProductsGroupListener{
+        void onAfterResponse(int[] marketsProductsGroup);
+    }
+
+    public static void getMarketsProductsGroup(int marketGroupID,final MarketsProductsGroupListener listener){
+        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
+        Call<int[]> serviceCall = mDataApi.getMarketProductsGroup(marketGroupID);
+        //Обработчик ответа сервера
+        SingletonRetrofit.enqueue(serviceCall, new Callback<int[]>() {
+            @Override
+            public void onResponse(Call<int[]> call, Response<int[]> response) {
+                int[] marketsProductsGroup = response.body();
+                Arrays.sort(marketsProductsGroup);
+                listener.onAfterResponse(marketsProductsGroup);
+            }
+
+            @Override
+            public void onFailure(Call<int[]> call, Throwable t) {
+
+            }
+        });
     }
 }

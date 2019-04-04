@@ -26,6 +26,9 @@ public interface DataApi {
                                     @Query("lat") double lat,
                                     @Query("lng") double lng);
 
+    @GET("getMarketProductsGroup.php")
+    Call<int[]> getMarketProductsGroup(@Query("marketGroupID") int marketGroupID);
+
     @GET("getGroupListByName.php")
     Call<List<ModelGroup>> getGroupListByName(@Query("name") String name,
                                               @Query("marketID") int marketID);

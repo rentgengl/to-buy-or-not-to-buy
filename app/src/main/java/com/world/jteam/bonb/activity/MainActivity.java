@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     //Категории
+    private int[] mMarketsProductsGroup;
     private ModelGroup.ProductGroupsAdapter mProductGroupsAdapter;
     private LinkedHashMap<ModelGroup, LinkedHashMap> mProductGroupsCurrent; //В момент выбора
     private LinkedHashMap<ModelGroup, LinkedHashMap> mProductGroupsSelected; //Выбранный
@@ -109,8 +110,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent mIntent = getIntent();
         market_id = mIntent.getIntExtra("market_id", 0);
         market_name = mIntent.getStringExtra("market_name");
-        if (market_id != 0)
+        if (market_id != 0) {
             setTitle(market_name);
+            ModelGroup.getMarketsProductsGroup(market_id, new ModelGroup.MarketsProductsGroupListener() {
+                @Override
+                public void onAfterResponse(int[] marketsProductsGroup) {
+                    mMarketsProductsGroup=marketsProductsGroup;
+                }
+            });
+        }
 
         //По умолчанию отображаю товары первой группы
         this.searchMethod = new ModelSearchProductMethod("", 0, market_id);
@@ -157,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    //Категории
+    //Группы товаров
     private class ProductGroupsOnItemClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -176,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mProductGroupsCurrent = productGroupGroups;
                 mProductGroupsAdapter.clear();
                 mProductGroupsAdapter.addAll(ModelGroup.getCurrentProductGroups(
-                        mProductGroupsCurrent, ModelGroup.GROUP_NM_VIEW));
+                        mProductGroupsCurrent, ModelGroup.GROUP_NM_VIEW,mMarketsProductsGroup));
             }
 
         }
@@ -252,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (strName.isEmpty()) {
                         searchMethod.market_id = 0;
                         market_id = 0;
-                        setTitle("Брать или нет?");
+                        setTitle(R.string.app_name);
                         searchByName("");
                         //Если поле поиска пустое, то зафиксирую начало выхода
                         //onBackPressed();
@@ -491,8 +499,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mProductGroupsSelected = AppInstance.getProductGroups();
                 }
                 if (mProductGroupsSelected != null) {
-                    ArrayList productGroupsList =
-                            ModelGroup.getCurrentProductGroups(mProductGroupsSelected, ModelGroup.GROUP_NM_VIEW);
+                    ArrayList productGroupsList = ModelGroup.getCurrentProductGroups(
+                            mProductGroupsSelected, ModelGroup.GROUP_NM_VIEW,mMarketsProductsGroup);
 
                     mProductGroupsAdapter = new ModelGroup.ProductGroupsAdapter(mThis, productGroupsList);
                     mDrawerList.setAdapter(mProductGroupsAdapter);
