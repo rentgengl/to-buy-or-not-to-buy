@@ -258,10 +258,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
                     if (strName.isEmpty()) {
-                        searchMethod.market_id = 0;
-                        market_id = 0;
-                        setTitle(R.string.app_name);
-                        searchByName("");
+
+                        if(market_id!=0){
+                            clearMarketId();
+                            return true;
+                        }
                         //Если поле поиска пустое, то зафиксирую начало выхода
                         //onBackPressed();
                     } else {
@@ -285,6 +286,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void clearMarketId(){
+        searchMethod.market_id = 0;
+        market_id = 0;
+        setTitle("Брать или нет?");
+        searchByName("");
+    }
     //Показать карточку товара по ШК
     private void showProductDetailByEAN(String EAN) {
 
@@ -576,12 +583,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
-        if (back_pressed + 2000 > System.currentTimeMillis())
-            super.onBackPressed();
-        else
-            Toast.makeText(getBaseContext(), "Нажмите еще раз для выхода",
-                    Toast.LENGTH_SHORT).show();
-        back_pressed = System.currentTimeMillis();
+
+        if(market_id!=0){
+            clearMarketId();
+        }else {
+
+            if (back_pressed + 2000 > System.currentTimeMillis())
+                super.onBackPressed();
+            else
+                Toast.makeText(getBaseContext(), "Нажмите еще раз для выхода",
+                        Toast.LENGTH_SHORT).show();
+            back_pressed = System.currentTimeMillis();
+        }
     }
 
     @Override
