@@ -33,11 +33,6 @@
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden">
         </activity>
-        <activity android:name=".activity.MarketActivity"
-            android:label="Магазин"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden">
-        </activity>
 
         <activity android:name=".activity.SearchMarketActivity"
             android:label="Магазины"
