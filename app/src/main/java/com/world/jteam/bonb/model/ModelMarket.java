@@ -10,6 +10,7 @@ public class ModelMarket implements Parcelable {
     public String name;
     public String city;
     public int id;
+    public int market_group_id;
     public String adress;
     public double latitude;
     public double longitude;
@@ -56,6 +57,7 @@ public class ModelMarket implements Parcelable {
         name = in.readString();
         city = in.readString();
         id = in.readInt();
+        market_group_id = in.readInt();
         adress = in.readString();
         latitude = in.readDouble();
         longitude = in.readDouble();
@@ -72,6 +74,7 @@ public class ModelMarket implements Parcelable {
         dest.writeString(name);
         dest.writeString(city);
         dest.writeInt(id);
+        dest.writeInt(market_group_id);
         dest.writeString(adress);
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);

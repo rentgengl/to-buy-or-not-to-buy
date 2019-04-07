@@ -1,63 +1,32 @@
 package com.world.jteam.bonb.activity;
 
-import android.Manifest;
-import android.arch.paging.PagedList;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.Constants;
 import com.world.jteam.bonb.R;
 import com.world.jteam.bonb.geo.GeoManager;
-import com.world.jteam.bonb.ldrawer.ActionBarDrawerToggle;
-import com.world.jteam.bonb.ldrawer.DrawerArrowDrawable;
-import com.world.jteam.bonb.model.ModelGroup;
 import com.world.jteam.bonb.model.ModelMarket;
-import com.world.jteam.bonb.model.ModelPrice;
-import com.world.jteam.bonb.model.ModelProduct;
-import com.world.jteam.bonb.model.ModelProductFull;
-import com.world.jteam.bonb.model.ModelSearchProductMethod;
-import com.world.jteam.bonb.paging.ProductDataSource;
-import com.world.jteam.bonb.paging.ProductListAdapter;
 import com.world.jteam.bonb.server.DataApi;
 import com.world.jteam.bonb.server.SingletonRetrofit;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -92,26 +61,14 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
 
             case (R.id.search_market_panel_button):
 
-                String arrName[] = new String[mMarketListAdapter.objects.size()];
-                double arrLat[] = new double[mMarketListAdapter.objects.size()];
-                double arrLng[] = new double[mMarketListAdapter.objects.size()];
-                String arrLogo[] = new String[mMarketListAdapter.objects.size()];
+                ArrayList<ModelMarket> markets = new ArrayList<>();
 
-                int i = 0;
                 for (ModelMarket market : mMarketListAdapter.objects) {
-                    arrName[i] = market.name;
-                    arrLat[i] = market.latitude;
-                    arrLng[i] = market.longitude;
-                    arrLogo[i] = market.logo_link;
-                    i++;
-
+                    markets.add(market);
                 }
 
                 Intent intent = new Intent(this, MarketMapActivity.class);
-                intent.putExtra("name", arrName);
-                intent.putExtra("lat", arrLat);
-                intent.putExtra("lng", arrLng);
-                intent.putExtra("logo", arrLogo);
+                intent.putParcelableArrayListExtra("markets", markets);
                 startActivity(intent);
 
         }
@@ -180,18 +137,16 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
 
     }
 
-
     public void showMarketList(List<ModelMarket> markets) {
-
-        if (markets != null && markets.size() > 0) {
-            ListView view_market_list = this.findViewById(R.id.market_list);
-            mMarketListAdapter = new MarketListAdapter(this, markets);
-            view_market_list.setAdapter(mMarketListAdapter);
-        }else{
-            ListView view_market_list = this.findViewById(R.id.market_list);
-            mMarketListAdapter = new MarketListAdapter(this, markets);
-            view_market_list.setAdapter(mMarketListAdapter);
-        }
+        ListView view_market_list = this.findViewById(R.id.market_list);
+        mMarketListAdapter = new MarketListAdapter(this, markets);
+        view_market_list.setAdapter(mMarketListAdapter);
+        view_market_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                openMarket((ModelMarket) mMarketListAdapter.getItem(position));
+            }
+        });
     }
 
     private class MarketListAdapter extends BaseAdapter {
@@ -243,7 +198,6 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
 
             view_magazinAdres.setText(obj.adress);
             view_magazinName.setText(obj.name);
-            view_magazinName.setTag(obj.id);
             double distance = GeoManager.getDistance(obj.latitude, obj.longitude, AppInstance.getGeoPosition().latitude, AppInstance.getGeoPosition().longitude);
             view_magazinDistance.setText(String.format("%.1f", distance) + " км");
 
@@ -255,18 +209,6 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
                         .into(view_imageLogo);
             }
 
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    TextView view_magazinName = v.findViewById(R.id.magazinName);
-                    TextView view_magazinAdres = v.findViewById(R.id.magazinAdres);
-                    openMarket((int) view_magazinName.getTag(),view_magazinName.getText().toString());
-
-                }
-            });
-
-
             return view;
         }
 
@@ -276,13 +218,14 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
 
     }
 
-    public void openMarket(int id, String name){
+    private void openMarket(ModelMarket market){
 
         Intent intent = new Intent(this, MainActivity.class);
-                    intent.putExtra("market_id", id);
-                    intent.putExtra("market_name", name);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                    intent.putExtra("market_adress", (String) view_magazinAdres.getText());
+        intent.putExtra("market_id", market.id);
+        intent.putExtra("market_group_id", market.market_group_id);
+        intent.putExtra("market_name", market.name);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
         startActivity(intent);
 
     }

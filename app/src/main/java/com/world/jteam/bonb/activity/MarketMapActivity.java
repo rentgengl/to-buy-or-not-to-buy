@@ -14,15 +14,21 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.internal.zzp;
 import com.google.maps.android.ui.IconGenerator;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.Constants;
 import com.world.jteam.bonb.R;
+import com.world.jteam.bonb.model.ModelMarket;
+
+import java.util.ArrayList;
 
 public class MarketMapActivity extends FragmentActivity implements OnMapReadyCallback {
+    MarketMapActivity mThis = this;
     private GoogleMap mMap;
+    private ArrayList<ModelMarket> mMarkets;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,24 +45,22 @@ public class MarketMapActivity extends FragmentActivity implements OnMapReadyCal
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
-        Intent mIntent = getIntent();
-
-        String[] arrName = mIntent.getStringArrayExtra("name");
-        double[] arrLat = mIntent.getDoubleArrayExtra("lat");
-        double[] arrLng = mIntent.getDoubleArrayExtra("lng");
-        String arrLogo[] = mIntent.getStringArrayExtra("logo");
+        Intent intent = getIntent();
+        mMarkets = intent.getParcelableArrayListExtra("markets");
 
         Picasso picasso = Picasso.with(this);
 
-        for (int i = 0; i<arrName.length; i++ ) {
+        int i=0;
+        for (ModelMarket market : mMarkets) {
 
             //Добавлю маркер на карту
             final Marker marker = mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(arrLat[i], arrLng[i]))
-                    .title(arrName[i]));
+                    .position(new LatLng(market.latitude, market.longitude))
+                    .title(market.name));
+            marker.setTag(Integer.toString(i));
 
             //Подгрузим иконку
-            picasso.load(Constants.SERVICE_GET_IMAGE +arrLogo[i])
+            picasso.load(Constants.SERVICE_GET_IMAGE +market.logo_link)
                     .into(new Target() {
                             @Override
                             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -75,11 +79,26 @@ public class MarketMapActivity extends FragmentActivity implements OnMapReadyCal
                             }
                 });
 
+            i++;
         }
 
         // Спозиционируем камеру
         mMap.moveCamera(CameraUpdateFactory.newLatLng(AppInstance.getGeoPosition()));
         mMap.setMinZoomPreference(11.0f);
 
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                ModelMarket market = mMarkets.get(Integer.parseInt(marker.getTag().toString()));
+
+                Intent intent = new Intent(mThis, MainActivity.class);
+                intent.putExtra("market_id", market.id);
+                intent.putExtra("market_group_id", market.market_group_id);
+                intent.putExtra("market_name", market.name);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                startActivity(intent);
+            }
+        });
     }
 }

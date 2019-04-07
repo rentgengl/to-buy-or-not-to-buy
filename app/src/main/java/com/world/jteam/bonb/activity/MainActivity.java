@@ -109,10 +109,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Intent mIntent = getIntent();
         market_id = mIntent.getIntExtra("market_id", 0);
+        int market_group_id = mIntent.getIntExtra("market_group_id", 0);
         market_name = mIntent.getStringExtra("market_name");
         if (market_id != 0) {
             setTitle(market_name);
-            ModelGroup.getMarketsProductsGroup(market_id, new ModelGroup.MarketsProductsGroupListener() {
+            ModelGroup.getMarketsProductsGroup(market_group_id, new ModelGroup.MarketsProductsGroupListener() {
                 @Override
                 public void onAfterResponse(int[] marketsProductsGroup) {
                     mMarketsProductsGroup=marketsProductsGroup;
