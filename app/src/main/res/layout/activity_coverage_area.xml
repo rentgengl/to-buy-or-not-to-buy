@@ -13,6 +13,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:text="@string/auto_position"
+        android:textSize="16sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/radius_area"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -32,9 +33,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:ems="5"
+        android:ems="2"
         android:entries="@array/radius_items"
-        android:gravity="center_vertical|center_horizontal|center"
+        android:gravity="center|center_horizontal|center_vertical"
         app:layout_constraintEnd_toStartOf="@+id/radius_unit_head"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -45,6 +46,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text="@string/radius_km"
+        android:textSize="16sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/radius_area"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -56,6 +58,7 @@
         android:layout_marginLeft="8dp"
         android:gravity="right|end"
         android:text="@string/radius"
+        android:textSize="16sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/radius_area"
         app:layout_constraintEnd_toStartOf="@+id/radius_area"
         app:layout_constraintStart_toEndOf="@+id/use_auto_position" />

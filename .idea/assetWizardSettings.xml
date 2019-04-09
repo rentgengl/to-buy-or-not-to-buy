@@ -67,8 +67,9 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="imageAsset" value="D:\AndroidStudioProjects\Ресурсы\Буква М.png" />
-                                      <entry key="outputName" value="ic_clear" />
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="D:\AndroidStudioProjects\Ресурсы\Маркет 2 (белый).png" />
+                                      <entry key="outputName" value="ic_market" />
                                       <entry key="theme" value="CUSTOM" />
                                       <entry key="themeColor" value="ffffff" />
                                     </map>
