@@ -65,6 +65,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final AppCompatActivity mThis = this;
+    private Menu mMenu;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -290,7 +291,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void clearMarketId(){
         searchMethod.market_id = 0;
         market_id = 0;
+        mMarketsProductsGroup=null;
         setTitle(R.string.app_name);
+        mMenu.findItem(R.id.choose_markets).setIcon(R.drawable.ic_market);
         searchByName("");
     }
     //Показать карточку товара по ШК
@@ -607,7 +610,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Заполнение и обработка меню
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        mMenu = menu;
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        if(market_id!=0)
+            menu.findItem(R.id.choose_markets).setIcon(R.drawable.ic_clear);
         return true;
     }
 
@@ -629,8 +635,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.choose_markets:
-                Intent marketsIntent = new Intent(this, SearchMarketActivity.class);
-                startActivity(marketsIntent);
+                if(market_id!=0){
+                    clearMarketId();
+                } else {
+                    Intent marketsIntent = new Intent(this, SearchMarketActivity.class);
+                    startActivity(marketsIntent);
+                }
+
                 break;
         }
 
