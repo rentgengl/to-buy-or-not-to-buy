@@ -18,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,6 +36,7 @@ import com.squareup.picasso.Picasso;
 import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.AuthManager;
 import com.world.jteam.bonb.Constants;
+import com.world.jteam.bonb.model.ModelMarket;
 import com.world.jteam.bonb.server.DataApi;
 import com.world.jteam.bonb.R;
 import com.world.jteam.bonb.server.SingletonRetrofit;
@@ -250,7 +252,16 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
 
         //Вывод списков
         if (product.prices != null && product.prices.size()>0) {
-            view_price_list.setAdapter(new PriceListAdapter(this, product.prices, true));
+            final PriceListAdapter mPriceAdapter = new PriceListAdapter(this, product.prices, true);
+            view_price_list.setAdapter(mPriceAdapter);
+
+            view_price_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    ModelPrice mPrice = (ModelPrice) mPriceAdapter.getItem(position);
+                    openMarket(mPrice.market);
+                }
+            });
 
             //Для лайт списка возьмем несколько значений
             int maxSizeLite = product.prices.size()>=3 ? 3 : product.prices.size();
@@ -533,6 +544,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
 
             view_magazinName.setText(obj.market.name);
             view_magazinPrice.setText(obj.price + "\u20BD");
+
             /*view_addPrice.setTag(obj.market.id);
             view_addPrice.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -566,6 +578,17 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
             return ((ModelPrice) getItem(position));
         }
 
+    }
+
+    //Открывает магазин
+    public void openMarket(ModelMarket market){
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("market_id", market.id);
+        intent.putExtra("market_group_id", market.market_group_id);
+        intent.putExtra("market_name", market.name);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        startActivity(intent);
     }
 
     //Запускает диалог ввода новой цены
