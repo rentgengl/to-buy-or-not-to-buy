@@ -87,7 +87,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="99" />
+                                                <entry key="scalingPercent" value="102" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -98,9 +98,10 @@
                                   </option>
                                   <option name="values">
                                     <map>
+                                      <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="ffffff" />
                                       <entry key="backgroundImage" value="D:\AndroidStudioProjects\Ресурсы\Прозрачный.png" />
-                                      <entry key="foregroundImage" value="D:\AndroidStudioProjects\Ресурсы\Мясо.png" />
+                                      <entry key="foregroundImage" value="D:\AndroidStudioProjects\Ресурсы\Годно.png" />
                                       <entry key="outputName" value="ic_logo" />
                                     </map>
                                   </option>
@@ -178,11 +179,6 @@
                                 </PersistentState>
                               </value>
                             </entry>
-                          </map>
-                        </option>
-                        <option name="values">
-                          <map>
-                            <entry key="outputIconType" value="ACTIONBAR" />
                           </map>
                         </option>
                       </PersistentState>
