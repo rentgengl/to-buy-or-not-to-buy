@@ -70,7 +70,7 @@ public class AuthManager {
 
     public static void signInOnResult(int resultCode,Intent data,OnLoginListener loginListener){
         boolean error = false;
-
+        String error_details="";
         if (resultCode == -1) {
             //RESULT_OK
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -83,12 +83,15 @@ public class AuthManager {
 
             } catch (ApiException e) {
                 error = true;
+                error_details = "Исключение авторизации - " + e.toString();
             }
         }else{
             error = true;
+            error_details = "Код возврата содержит недопустимое значение - " + Integer.toString(resultCode);
         }
 
         if (error){
+            AppInstance.errorLog("Ошибка авторизации", error_details);
             loginListener.onFailureLogin();
         }
     }

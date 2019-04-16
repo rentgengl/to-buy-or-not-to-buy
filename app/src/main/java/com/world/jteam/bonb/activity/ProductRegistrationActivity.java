@@ -287,6 +287,7 @@ public class ProductRegistrationActivity extends AppCompatActivity {
         try {
             imageIntent=mImage.getCameraImageIntentToFile();
         } catch (IOException e) {
+            AppInstance.errorLog("Camera image", e.toString());
             e.printStackTrace();
             return;
         }
@@ -300,6 +301,7 @@ public class ProductRegistrationActivity extends AppCompatActivity {
             if (productImage!=null)
                 image_product_view.setImageBitmap(productImage);
         } catch (IOException e) {
+            AppInstance.errorLog("Product image", e.toString());
             Toast.makeText(mThis,e.toString(),Toast.LENGTH_LONG).show();
         }
     }

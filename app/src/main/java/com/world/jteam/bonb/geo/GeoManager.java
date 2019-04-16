@@ -113,6 +113,7 @@ public class GeoManager {
                     try {
                         Thread.currentThread().sleep(Constants.UPDATE_RATE_GEO_POSITION);
                     } catch (InterruptedException e) {
+                        AppInstance.errorLog("Sleep error", e.toString());
                         break;
                     }
                 }

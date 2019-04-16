@@ -57,7 +57,7 @@ public class ProductDataSource extends ItemKeyedDataSource<ModelProduct, ModelPr
 
             @Override
             public void onFailure(@NonNull Call<ModelSearchResult> call, @NonNull Throwable t) {
-
+                AppInstance.errorLog("HTTP getProductList", t.toString());
             }
         };
 
@@ -103,7 +103,7 @@ public class ProductDataSource extends ItemKeyedDataSource<ModelProduct, ModelPr
 
             @Override
             public void onFailure(@NonNull Call<ModelSearchResult> call, @NonNull Throwable t) {
-
+                AppInstance.errorLog("HTTP getProductList", t.toString());
             }
         };
 

@@ -71,4 +71,9 @@ public interface DataApi {
     @POST("addNewComment.php")
     Call<Void> addNewComment(@Body ModelComment comment);
 
+    @GET("addLogMobile.php")
+    Call<Void> addLogMobile(@Query("err_group") String err_group,
+                                              @Query("error") String error);
+
+
 }

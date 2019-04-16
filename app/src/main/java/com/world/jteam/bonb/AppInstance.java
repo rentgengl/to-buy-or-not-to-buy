@@ -19,6 +19,8 @@ import java.util.LinkedHashMap;
 import java.util.TreeMap;
 
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AppInstance extends Application {
     private static Context sContext;
@@ -63,7 +65,7 @@ public class AppInstance extends Application {
                     try {
                         Thread.currentThread().sleep(Constants.UPDATE_RATE_VERSION);
                     } catch (InterruptedException e) {
-
+                        AppInstance.errorLog("Sleep error", e.toString());
                     }
 
                     DataApi dataApi = SingletonRetrofit.getInstance().getDataApi();
@@ -74,6 +76,7 @@ public class AppInstance extends Application {
                         try {
                             Thread.currentThread().sleep(Constants.UPDATE_RATE_VERSION);
                         } catch (InterruptedException e) {
+                            AppInstance.errorLog("Sleep error", e.toString());
                             break;
                         }
                     }
@@ -151,7 +154,7 @@ public class AppInstance extends Application {
             sServerVersion.appVersion = servModelVersion.appVersion;
             sServerVersion.groupVersion = servModelVersion.groupVersion;
         } catch (Exception e) {
-
+            AppInstance.errorLog("HTTP getVersions", e.toString());
         }
     }
 
@@ -313,5 +316,23 @@ public class AppInstance extends Application {
 
         GeoManager.setGeoPositionInSettings(position);
         AppInstance.sGeoPosition = position;
+    }
+
+    public static void errorLog(String err_group, String error){
+
+        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
+        Call<Void> serviceCall = mDataApi.addLogMobile(err_group, error);
+        SingletonRetrofit.enqueue(serviceCall,new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
+
     }
 }

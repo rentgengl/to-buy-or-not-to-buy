@@ -23,31 +23,7 @@ public class ModelProduct {
 
     public byte user_leave_comment = 0;
 
-    //Конструктор класса по данным из json
-    public ModelProduct(String nID, String nName){
-
-        this.id = Integer.parseInt(nID);
-        this.name = nName;
-
-    }
-
     public ModelProduct() {
-    }
-
-    //Сохраняет продук на бэкенде
-    public void createOnServer(){
-        HTTPService ConnectHTTP = new HTTPService();
-        try {
-            ConnectHTTP.createNewProduct(this);
-        } catch (IOException e) {
-            // Ну что еще такое
-        }
-    }
-
-    public void setImageLink(String small){
-        if (small !=null & small!="null"){
-            imageSmall_link = small;
-        }
     }
 
     //Проверка на изменение позиции

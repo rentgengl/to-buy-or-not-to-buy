@@ -59,7 +59,7 @@ public class DatabaseApp {
                 edit.commit();
 
             } catch (Exception e) {
-
+                AppInstance.errorLog("HTTP getGroupList", e.toString());
             }
 
         }

@@ -29,25 +29,6 @@ public class ModelComment implements Parcelable {
 
     }
 
-    /*public static ArrayList<ModelComment> getTestData(){
-
-        ArrayList<ModelComment> res = new ArrayList<>();
-
-        res.add(new ModelComment(new ModelUser("Иван",null,0),
-                "Отличая штука всем советую!",4.3f));
-        res.add(new ModelComment(new ModelUser("Григорий Леонидович",null,0),
-                "Ерунда, не берите это дерьмо - полная хрень!",2.3f));
-
-        res.add(new ModelComment(new ModelUser("Григорий Леонидович",null,0),
-                "Ерунда, не берите это дерьмо - полная хрень!",2.3f));
-
-        res.add(new ModelComment(new ModelUser("Григорий Леонидович",null,0),
-                "Ерунда, не берите это дерьмо - полная хрень!",2.3f));
-        return res;
-
-    }*/
-
-
     protected ModelComment(Parcel in) {
         product_id = in.readInt();
         user = (ModelUser) in.readParcelable(ModelUser.class.getClassLoader());
