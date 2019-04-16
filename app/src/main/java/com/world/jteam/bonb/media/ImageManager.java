@@ -11,6 +11,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 
+import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.R;
 
 import java.io.File;
@@ -36,7 +37,8 @@ public class ImageManager {
         File imageFile = null;
         try {
             imageFile = createImageFile(mContext,Bitmap.CompressFormat.PNG);
-        } catch (IOException ex) {
+        } catch (IOException e) {
+            AppInstance.errorLog("Create image", e.toString());
             throw new IOException(mContext.getString(R.string.temp_file_ex));
         }
 
@@ -62,6 +64,7 @@ public class ImageManager {
             try {
                 imageBitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), mImageUri);
             } catch (IOException e) {
+                AppInstance.errorLog("Get bitmap", e.toString());
                 throw new IOException(mContext.getString(R.string.temp_file_ex));
             }
         }
@@ -163,8 +166,8 @@ public class ImageManager {
             FileOutputStream fos=new FileOutputStream(imageFile);
             imageBitmap.compress(format, 100, fos);
             fos.close();
-        } catch (Exception ex) {
-            //Log.e("SaveImage",ex.getMessage());
+        } catch (Exception e) {
+            AppInstance.errorLog("Save image", e.toString());
             throw new Exception(context.getString(R.string.save_image_ex));
         }
 

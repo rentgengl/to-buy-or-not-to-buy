@@ -65,7 +65,7 @@ public class AppInstance extends Application {
                     try {
                         Thread.currentThread().sleep(Constants.UPDATE_RATE_VERSION);
                     } catch (InterruptedException e) {
-
+                        AppInstance.errorLog("Sleep error", e.toString());
                     }
 
                     DataApi dataApi = SingletonRetrofit.getInstance().getDataApi();
@@ -76,6 +76,7 @@ public class AppInstance extends Application {
                         try {
                             Thread.currentThread().sleep(Constants.UPDATE_RATE_VERSION);
                         } catch (InterruptedException e) {
+                            AppInstance.errorLog("Sleep error", e.toString());
                             break;
                         }
                     }
@@ -153,7 +154,7 @@ public class AppInstance extends Application {
             sServerVersion.appVersion = servModelVersion.appVersion;
             sServerVersion.groupVersion = servModelVersion.groupVersion;
         } catch (Exception e) {
-
+            AppInstance.errorLog("HTTP getVersions", e.toString());
         }
     }
 

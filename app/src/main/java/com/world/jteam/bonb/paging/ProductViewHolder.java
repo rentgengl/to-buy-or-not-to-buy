@@ -71,7 +71,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
 
                     @Override
                     public void onFailure(Call<ModelProductFull> call, Throwable t) {
-
+                        AppInstance.errorLog("HTTP getProductFull", t.toString());
                     }
                 });
 

@@ -45,6 +45,7 @@ import com.world.jteam.bonb.model.ModelPrice;
 import com.world.jteam.bonb.model.ModelProductFull;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -309,7 +310,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
 
             @Override
             public void onFailure(Call<ModelProductFull> call, Throwable t) {
-
+                AppInstance.errorLog("HTTP getProductFull", t.toString());
             }
         });
     }
@@ -648,7 +649,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                //Что за дичь
+                AppInstance.errorLog("HTTP addNewPrice", t.toString());
             }
         });
     }
@@ -721,7 +722,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-
+                AppInstance.errorLog("HTTP addNewComment", t.toString());
             }
         });
     }

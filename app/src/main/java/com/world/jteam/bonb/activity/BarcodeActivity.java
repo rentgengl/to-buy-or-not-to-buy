@@ -16,6 +16,7 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
+import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.R;
 import com.world.jteam.bonb.media.BarcodeManager;
 import com.world.jteam.bonb.media.CameraManager;
@@ -172,6 +173,7 @@ public class BarcodeActivity extends AppCompatActivity {
         try {
             mCameraSource.start(cameraView.getHolder());
         } catch (IOException e) {
+            AppInstance.errorLog("Start camera", e.toString());
             finishWithResult(RESULT_CANCELED,getString(R.string.error_start_barcode_detector));
         }
     }
