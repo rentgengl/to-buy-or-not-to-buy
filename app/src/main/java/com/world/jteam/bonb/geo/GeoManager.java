@@ -140,6 +140,12 @@ public class GeoManager {
         if (currentProvider!=null) {
             locationManager.requestSingleUpdate(
                     currentProvider,locationListener, looper);
+        } else{
+            Location location = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+            if (location==null) //нет данных по сети проверим по GPS
+                location = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
+            if (location!=null) //нашли данные, зафиксируем
+                AppInstance.setGeoPosition(new LatLng(location.getLatitude(), location.getLongitude()));
         }
     }
 

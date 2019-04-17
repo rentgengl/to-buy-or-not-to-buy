@@ -28,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -251,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public boolean onKey(View v, int keyCode, KeyEvent event) {
 
             //Возврат если это не нажатие
-            if (event.getAction() != KeyEvent.ACTION_DOWN || (keyCode != KeyEvent.KEYCODE_BACK & keyCode != KeyEvent.KEYCODE_ENTER))
+            if (event.getAction() != KeyEvent.ACTION_UP || (keyCode != KeyEvent.KEYCODE_BACK & keyCode != KeyEvent.KEYCODE_ENTER))
                 return false;
 
             EditText editText = v.findViewById(R.id.search_panel_text);
@@ -279,8 +280,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case (KeyEvent.KEYCODE_ENTER):
 
-                    if (strName.length() > 2) {
+                    if (strName.length() > 2 || strName.length()==0) {
                         searchByName(strName);
+                        InputMethodManager imm = (InputMethodManager)getSystemService(mThis.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);
                     }
                     return true;
             }

@@ -15,12 +15,14 @@
             android:id="@+id/search_market_panel_text"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:paddingRight="8dp"
-            android:layout_weight="1"
-            android:gravity="right|center_vertical"
-            android:background="@drawable/search_text_style"
-            android:hint="@string/search_market_panel_text_hint"
             android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/search_text_style"
+            android:gravity="right|center_vertical"
+            android:hint="@string/search_market_panel_text_hint"
+            android:imeOptions="actionSearch"
+            android:paddingRight="8dp"
+            android:singleLine="true"
             android:textAppearance="@style/ListTextTitle1" />
 
         <Button

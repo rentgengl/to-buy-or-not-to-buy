@@ -8,6 +8,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -80,7 +81,7 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
         public boolean onKey(View v, int keyCode, KeyEvent event) {
 
             //Возврат если это не нажатие
-            if (event.getAction() != KeyEvent.ACTION_DOWN || (keyCode != KeyEvent.KEYCODE_BACK & keyCode != KeyEvent.KEYCODE_ENTER))
+            if (event.getAction() != KeyEvent.ACTION_UP || (keyCode != KeyEvent.KEYCODE_BACK & keyCode != KeyEvent.KEYCODE_ENTER))
                 return false;
 
             EditText editText = v.findViewById(R.id.search_market_panel_text);
@@ -102,8 +103,10 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
                     break;
                 case (KeyEvent.KEYCODE_ENTER):
 
-                    if (strName.length() > 2) {
+                    if (strName.length() > 2 || strName.length()==0) {
                         searchByName(strName);
+                        InputMethodManager imm = (InputMethodManager)getSystemService(mThis.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);
                     }
                     return true;
             }

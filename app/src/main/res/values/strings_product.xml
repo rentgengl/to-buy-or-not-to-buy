@@ -6,7 +6,7 @@
     <string name="product_comment_hint">Отзыв</string>
     <string name="product_name_head">Название:</string>
     <string name="product_description_head">Описание:</string>
-    <string name="product_page_title_info">Информация</string>
+    <string name="product_page_title_info">Инфо</string>
     <string name="product_page_title_price">Цены</string>
     <string name="product_page_title_comment">Отзывы</string>
 </resources>
