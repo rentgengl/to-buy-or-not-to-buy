@@ -31,7 +31,8 @@
         android:inputType="textMultiLine"
         android:maxLength="500"
         android:maxLines="25"
-        android:minLines="3" />
+        android:minLines="3"
+        android:textSize="18sp" />
 
 
 </LinearLayout>

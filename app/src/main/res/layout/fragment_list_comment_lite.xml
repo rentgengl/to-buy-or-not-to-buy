@@ -34,6 +34,7 @@
             android:maxLines="1"
             android:padding="8dp"
             android:textAppearance="@style/ListTextTitle1"
+            android:textSize="18sp"
             tools:text="Очень хороший товар, беру регулярно, всем советую" />
 
 

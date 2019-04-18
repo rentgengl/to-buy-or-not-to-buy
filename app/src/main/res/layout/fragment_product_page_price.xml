@@ -16,22 +16,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="9dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="153р"
-            android:textAppearance="@style/CardMidPrice" />
+            android:text="93153 Р"
+            android:textAppearance="@style/CardMidPrice"
+            android:textSize="30sp" />
 
         <TextView
             android:id="@+id/lowPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="5dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="от 120 до 218р"
-            android:textAppearance="@style/CardLowPrice" />
+            android:text="от 98120 до 99218р"
+            android:textAppearance="@style/CardLowPrice"
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/show_price_on_map"

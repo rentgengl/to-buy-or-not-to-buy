@@ -23,7 +23,8 @@
             android:imeOptions="actionSearch"
             android:paddingRight="8dp"
             android:singleLine="true"
-            android:textAppearance="@style/ListTextTitle1" />
+            android:textAppearance="@style/ListTextTitle1"
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/search_market_panel_button"

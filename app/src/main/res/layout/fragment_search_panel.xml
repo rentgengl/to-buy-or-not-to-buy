@@ -21,9 +21,10 @@
             android:gravity="end|center_vertical"
             android:hint="@string/search_panel_text_hint"
             android:imeOptions="actionSearch"
-            android:singleLine="true"
             android:paddingRight="8dp"
-            android:textAppearance="@style/ListTextTitle1" />
+            android:singleLine="true"
+            android:textAppearance="@style/ListTextTitle1"
+            android:textSize="18sp" />
 
         <ImageButton
             android:id="@+id/search_panel_button"
