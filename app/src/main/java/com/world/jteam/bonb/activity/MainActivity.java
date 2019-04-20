@@ -58,6 +58,7 @@ import com.world.jteam.bonb.paging.ProductListAdapter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.concurrent.Executor;
 
 import retrofit2.Call;
@@ -99,6 +100,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ProductListAdapter adapter;
 
     //Геолокация
+    private int mCurrentRadiusArea=0;
+    private double mCurrentLat;
+    private double mCurrentLng;
     private static final int GEO_REQUEST = 2;
 
     //Нажатие назад
@@ -166,6 +170,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else {
                 AppInstance.setAutoGeoPosition(false);
             }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        mCurrentRadiusArea=AppInstance.getRadiusArea();
+        mCurrentLat=AppInstance.getGeoPosition().latitude;
+        mCurrentLng=AppInstance.getGeoPosition().longitude;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //Обновление при изменении геолокации
+        if (        mCurrentRadiusArea!=0
+                &&
+                    (mCurrentRadiusArea!=AppInstance.getRadiusArea()
+                    || mCurrentLat!=AppInstance.getGeoPosition().latitude
+                    || mCurrentLng!=AppInstance.getGeoPosition().longitude
+                    )
+                ){
+            pagingStart();
         }
     }
 
@@ -241,7 +270,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             //Клик по группе
             //Подгрузка списка товаров
-            searchByGroup((int) v.getTag(), false);
+            int productGroupId = (int) v.getTag();
+
+            //Спозиционируем на выбранной группе
+            TreeMap<Integer, LinkedHashMap> productGroupsParent = AppInstance.getProductGroupsParent();
+            mProductGroupsCurrent = productGroupsParent.get(Integer.valueOf(productGroupId));
+            mProductGroupsSelected = mProductGroupsCurrent;
+
+            //Получим товар только по выбранной группе
+            searchByGroup(productGroupId, false);
 
         }
 
@@ -383,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Подгрузка списка групп
         if (!name.equals("")) {
             DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-            Call<List<ModelGroup>> serviceCall = mDataApi.getGroupListByName(name, 0);
+            Call<List<ModelGroup>> serviceCall = mDataApi.getGroupListByName(name, market_id);
             SingletonRetrofit.enqueue(serviceCall, new Callback<List<ModelGroup>>() {
                 @Override
                 public void onResponse(Call<List<ModelGroup>> call, Response<List<ModelGroup>> response) {
@@ -397,6 +434,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     showErrorSearch();
                 }
             });
+        } else {
+            LinearLayout resultGroup = findViewById(R.id.search_result_group);
+            resultGroup.removeAllViews();
         }
 
 

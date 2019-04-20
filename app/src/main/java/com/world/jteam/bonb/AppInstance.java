@@ -28,7 +28,8 @@ public class AppInstance extends Application {
     private static ModelUser sUser;
     private static ModelVersion sServerVersion = new ModelVersion();
 
-    private static LinkedHashMap<ModelGroup, LinkedHashMap> sProductGroups; //Дерево категорий
+    private static LinkedHashMap<ModelGroup, LinkedHashMap> sProductGroups; //Дерево групп
+    private static TreeMap<Integer, LinkedHashMap> sProductGroupsParent; //Дерево родителей групп
 
     private static boolean sAutoGeoPosition = true;
     private static int sRadiusArea = Constants.DEFAULT_RADIUS_AREA;
@@ -167,6 +168,14 @@ public class AppInstance extends Application {
         return sProductGroups;
     }
 
+    public static void setProductGroupsChildIdToParent(TreeMap productGroups) {
+        sProductGroupsParent = productGroups;
+    }
+
+    public static TreeMap getProductGroupsParent() {
+        return sProductGroupsParent;
+    }
+
     public static void productGroupsInitialisation() {
         ModelGroup[] productGroups = DatabaseApp.getAppRoomDao().getAllProductGroups();
         ModelGroup group;
@@ -247,6 +256,7 @@ public class AppInstance extends Application {
 
         // - запишем в статик
         setProductGroups(prodGroupsParent.get(0));
+        setProductGroupsChildIdToParent(prodGroupsChildIdToParent);
     }
 
     private static void fillProductGroupsNaigationBack(
