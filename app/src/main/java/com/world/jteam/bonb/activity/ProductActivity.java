@@ -3,6 +3,7 @@ package com.world.jteam.bonb.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -546,6 +547,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
             view_magazinName.setText(obj.market.name);
             view_magazinPrice.setText(obj.price + "\u20BD");
 
+
             /*view_addPrice.setTag(obj.market.id);
             view_addPrice.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -570,6 +572,12 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
                 TextView view_magazinDate = view.findViewById(R.id.magazinDate);
                 SimpleDateFormat simpleDate =  new SimpleDateFormat("dd.MM.yy");
                 view_magazinDate.setText(simpleDate.format(obj.date));
+
+                //Старая цена
+                TextView view_magazinOldPrice = view.findViewById(R.id.magazinOldPrice);
+                view_magazinOldPrice.setVisibility(obj.discount!=0 ? View.VISIBLE : View.GONE);
+                view_magazinOldPrice.setText(obj.price + obj.discount + "\u20BD");
+                view_magazinOldPrice.setPaintFlags(view_magazinOldPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
             }
 
             return view;

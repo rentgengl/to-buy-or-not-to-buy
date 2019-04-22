@@ -9,4 +9,5 @@
     <string name="product_page_title_info">Инфо</string>
     <string name="product_page_title_price">Цены</string>
     <string name="product_page_title_comment">Отзывы</string>
+    <string name="product_sale_group_name">Акции</string>
 </resources>

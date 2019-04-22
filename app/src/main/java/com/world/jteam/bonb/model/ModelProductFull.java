@@ -16,6 +16,7 @@ public class ModelProductFull extends ModelProduct implements Parcelable {
         this.price = product.price;
         this.price_min = product.price_min;
         this.price_max = product.price_max;
+        this.sale = product.sale;
         this.rating = product.rating;
         this.user_leave_comment = product.user_leave_comment;
     }
@@ -26,6 +27,7 @@ public class ModelProductFull extends ModelProduct implements Parcelable {
         price = in.readInt();
         price_min = in.readInt();
         price_max = in.readInt();
+        sale = in.readByte();
         comment_count = in.readInt();
         userID = in.readInt();
         name = in.readString();
@@ -65,6 +67,7 @@ public class ModelProductFull extends ModelProduct implements Parcelable {
         dest.writeInt(price);
         dest.writeInt(price_min);
         dest.writeInt(price_max);
+        dest.writeByte(sale);
         dest.writeInt(comment_count);
         dest.writeInt(userID);
         dest.writeString(name);

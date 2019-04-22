@@ -8,6 +8,7 @@ import java.util.Date;
 public class ModelPrice implements Parcelable {
 
     public int price;
+    public int discount;
     public int product_id;
     public ModelMarket market;
     public Date date;
@@ -25,6 +26,7 @@ public class ModelPrice implements Parcelable {
 
     protected ModelPrice(Parcel in) {
         price = in.readInt();
+        discount = in.readInt();
         market = (ModelMarket) in.readValue(ModelMarket.class.getClassLoader());
         long tmpDate = in.readLong();
         date = tmpDate != -1 ? new Date(tmpDate) : null;
@@ -40,6 +42,7 @@ public class ModelPrice implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(price);
+        dest.writeInt(discount);
         dest.writeValue(market);
         dest.writeLong(date != null ? date.getTime() : -1L);
         dest.writeByte((byte) (sale ? 0x01 : 0x00));

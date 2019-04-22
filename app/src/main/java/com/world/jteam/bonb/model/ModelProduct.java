@@ -8,9 +8,10 @@ import java.io.IOException;
 
 public class ModelProduct {
     public int id;
-    public int price = 250;
+    public int price = 0;
     public int price_min = 0;
     public int price_max = 0;
+    public byte sale;
     public int comment_count = 0;
     public int userID = 0;
 

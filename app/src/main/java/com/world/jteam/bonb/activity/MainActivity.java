@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         //По умолчанию отображаю товары первой группы
-        this.searchMethod = new ModelSearchProductMethod("", 0, market_id);
+        this.searchMethod = new ModelSearchProductMethod("", Constants.SALE_GROUP_ID, market_id);
 
         //Инициализирую станицы для адаптера страниц
         page_contacts = this.getLayoutInflater().inflate(R.layout.fragment_market_contacts, null);

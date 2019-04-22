@@ -21,7 +21,8 @@ public class Constants {
 
     public static final String SERVER_PATH_GROUPS_LOGO = "groups_logo/";
     public static final String SERVICE_GET_GROUPS_LOGO = "http://goodno.ru/" + SERVER_PATH_GROUPS_LOGO;
-
+    public static final String SALE_GROUP_LOGO_LINK = "sale.png";
+    public static final int SALE_GROUP_ID = -100;
 
     public static Integer DEFAULT_PER_PAGE = 15; //Количество элементов считываемых с сервера
     public static int MAX_PRODUCT_LIST_ITEMS = 1000; // Максимальное количество которое можно вывести в список

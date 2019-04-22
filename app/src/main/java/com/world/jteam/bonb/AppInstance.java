@@ -235,6 +235,16 @@ public class AppInstance extends Application {
                             parentTree
                     );
 
+                } else {
+                    //Акции
+                    parentTree.put(new ModelGroup(
+                                    Constants.SALE_GROUP_ID,
+                                    getAppContext().getString(R.string.product_sale_group_name),
+                                    group.parent_id,
+                                    Constants.SALE_GROUP_LOGO_LINK,
+                                    ModelGroup.GROUP_NM_VIEW),
+                            null);
+
                 }
                 //текущая группа категорий
                 parentTree.put(new ModelGroup(

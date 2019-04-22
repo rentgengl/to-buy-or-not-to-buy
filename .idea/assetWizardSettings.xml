@@ -68,10 +68,10 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="D:\AndroidStudioProjects\Ресурсы\Маркет 2 (белый).png" />
-                                      <entry key="outputName" value="ic_market" />
+                                      <entry key="imageAsset" value="D:\AndroidStudioProjects\Ресурсы\bonb\Комментарий 2.png" />
+                                      <entry key="outputName" value="ic_comment" />
                                       <entry key="theme" value="CUSTOM" />
-                                      <entry key="themeColor" value="ffffff" />
+                                      <entry key="themeColor" value="848484" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -101,7 +101,7 @@
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="ffffff" />
                                       <entry key="backgroundImage" value="D:\AndroidStudioProjects\Ресурсы\Прозрачный.png" />
-                                      <entry key="foregroundImage" value="D:\AndroidStudioProjects\Ресурсы\Годно.png" />
+                                      <entry key="foregroundImage" value="D:\AndroidStudioProjects\Ресурсы\bonb\bonb_logo_1.png" />
                                       <entry key="outputName" value="ic_logo" />
                                     </map>
                                   </option>
@@ -179,6 +179,11 @@
                                 </PersistentState>
                               </value>
                             </entry>
+                          </map>
+                        </option>
+                        <option name="values">
+                          <map>
+                            <entry key="outputIconType" value="ACTIONBAR" />
                           </map>
                         </option>
                       </PersistentState>
