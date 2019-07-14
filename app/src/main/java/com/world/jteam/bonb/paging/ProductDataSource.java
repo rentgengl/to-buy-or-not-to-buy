@@ -5,11 +5,14 @@ import android.support.annotation.NonNull;
 
 import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.Constants;
+import com.world.jteam.bonb.model.ModelGroup;
 import com.world.jteam.bonb.server.DataApi;
 import com.world.jteam.bonb.server.SingletonRetrofit;
 import com.world.jteam.bonb.model.ModelProduct;
 import com.world.jteam.bonb.model.ModelSearchProductMethod;
 import com.world.jteam.bonb.model.ModelSearchResult;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,7 +37,9 @@ public class ProductDataSource extends ItemKeyedDataSource<ModelProduct, ModelPr
                 params.requestedLoadSize,
                 "",
                 -1,
-                searchMethod.market_id);
+                searchMethod.market_id,
+                AppInstance.getUser().id
+        );
         Callback<ModelSearchResult> requestCallback = new Callback<ModelSearchResult>() {
             @Override
             public void onResponse(@NonNull Call<ModelSearchResult> call, @NonNull Response<ModelSearchResult> response) {
@@ -46,10 +51,21 @@ public class ProductDataSource extends ItemKeyedDataSource<ModelProduct, ModelPr
                 }
 
                 mProductsCount = Math.min(resultData.getCount(),Constants.MAX_PRODUCT_LIST_ITEMS);
+                List<ModelProduct> products = resultData.getProducts();
+
+                //Заполним количество у списка покупок
+                if (searchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID){
+                    ModelGroup slg = AppInstance.getShoppingListGroup();
+                    slg.count = 0;
+
+                    for (ModelProduct product : products){
+                        if (product.purchased==0) slg.count++;
+                    }
+                }
 
                 // Result can be passed asynchronously
                 callback.onResult(
-                        resultData.getProducts(), // List of data items
+                        products, // List of data items
                         0, // Position of first item
                         mProductsCount // Total number of items that can be fetched from api
                 );
@@ -85,7 +101,9 @@ public class ProductDataSource extends ItemKeyedDataSource<ModelProduct, ModelPr
                 params.requestedLoadSize,
                 params.key.name,
                 params.key.id,
-                searchMethod.market_id);
+                searchMethod.market_id,
+                AppInstance.getUser().id
+        );
         Callback<ModelSearchResult> requestCallback = new Callback<ModelSearchResult>() {
             @Override
             public void onResponse(@NonNull Call<ModelSearchResult> call, @NonNull Response<ModelSearchResult> response) {

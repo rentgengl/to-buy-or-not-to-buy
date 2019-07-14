@@ -33,7 +33,7 @@ public interface DataApi {
     Call<List<ModelGroup>> getGroupListByName(@Query("name") String name,
                                               @Query("marketID") int marketID);
 
-    @GET("getProductList_v2.php")
+    @GET("getProductList_v3.php")
     Call<ModelSearchResult> getProductList( @Query("name") String name,
                                             @Query("id") int groupId,
                                             @Query("radius") int radius,
@@ -42,7 +42,8 @@ public interface DataApi {
                                             @Query("pageSize") int pageSize,
                                             @Query("lastName") String lastName,
                                             @Query("lastID") int lastID,
-                                            @Query("marketID") int marketID
+                                            @Query("marketID") int marketID,
+                                            @Query("user_id") int user_id
                                             );
 
     @GET("GetProductFull.php")
@@ -74,6 +75,9 @@ public interface DataApi {
     @GET("addLogMobile.php")
     Call<Void> addLogMobile(@Query("err_group") String err_group,
                                               @Query("error") String error);
+
+    @GET("getShoppingListCount.php")
+    Call<Integer> getShoppingListCount(@Query("user_id") int user_id);
 
 
 }

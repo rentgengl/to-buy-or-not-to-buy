@@ -10,4 +10,5 @@
     <string name="product_page_title_price">Цены</string>
     <string name="product_page_title_comment">Отзывы</string>
     <string name="product_sale_group_name">Акции</string>
+    <string name="product_shoplist_group_name">Список покупок</string>
 </resources>

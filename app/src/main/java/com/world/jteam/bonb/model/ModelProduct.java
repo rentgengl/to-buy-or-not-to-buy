@@ -11,18 +11,17 @@ public class ModelProduct {
     public int price = 0;
     public int price_min = 0;
     public int price_max = 0;
-    public byte sale;
+    public byte sale; //Признак распродажи
     public int comment_count = 0;
     public int userID = 0;
-
     public String name;
     public String EAN;
     public String imageSmall_link;//Ссылка на маленькую основную привьюху
     public String newComment;
-
     public float rating = 0;
-
-    public byte user_leave_comment = 0;
+    public byte user_leave_comment = 0; //Признак что пользователь оставил отзыв
+    public int count; //Количество продукта
+    public byte purchased; //Признак купленного товара
 
     public ModelProduct() {
     }

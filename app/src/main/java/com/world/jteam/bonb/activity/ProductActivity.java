@@ -246,7 +246,8 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         setTitle(product.name);
         view_midPrice.setText(product.price + "\u20BD");
 
-        view_lowPrice.setText("от " + product.price_min + " до " + product.price_max + "\u20BD");
+        //view_lowPrice.setText("от " + product.price_min + " до " + product.price_max + "\u20BD");
+        view_lowPrice.setText("" + product.price_min + " - " + product.price_max);
         view_textRating.setText(product.rating + " из 5");
         mProductRatingView.setRating(product.rating);
         if (product.user_leave_comment==1)

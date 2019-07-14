@@ -41,6 +41,8 @@ public class ModelGroup {
     public String logo_link;
     @Ignore
     public int navigation_method;
+    @Ignore
+    public Integer count; //Количество в группе
 
     public ModelGroup(int id,String name,int parent_id, String logo_link){
         this.id = id;
@@ -79,6 +81,10 @@ public class ModelGroup {
 
             TextView text = (TextView) row.findViewById(R.id.product_group_list_text);
             text.setText(group.toString());
+
+            TextView textCount = (TextView) row.findViewById(R.id.product_group_list_count);
+            int groupCount=(group.count==null ? 0 : group.count.intValue());
+            textCount.setText(groupCount==0 && group.id!=Constants.SHOPPINGLIST_GROUP_ID ? "" : ""+groupCount);
 
             ImageView icon = (ImageView) row.findViewById(R.id.product_group_list_icon);
             if (group.logo_link==null) {

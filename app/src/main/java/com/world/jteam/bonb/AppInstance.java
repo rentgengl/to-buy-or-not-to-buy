@@ -30,6 +30,7 @@ public class AppInstance extends Application {
 
     private static LinkedHashMap<ModelGroup, LinkedHashMap> sProductGroups; //Дерево групп
     private static TreeMap<Integer, LinkedHashMap> sProductGroupsParent; //Дерево родителей групп
+    private static ModelGroup sShoppingListGroup; //Группа списка товаров
 
     private static boolean sAutoGeoPosition = true;
     private static int sRadiusArea = Constants.DEFAULT_RADIUS_AREA;
@@ -43,6 +44,7 @@ public class AppInstance extends Application {
         //Геолокация
         sRadiusArea = GeoManager.getRadiusAreaFromSettings(sRadiusArea);
         sGeoPosition = GeoManager.getGeoPositionFromSettings(sGeoPosition);
+        sUser = AuthManager.getDefaultUser();
 
         Thread thread = new Thread(new AppInitialisation());
         thread.start();
@@ -236,6 +238,16 @@ public class AppInstance extends Application {
                     );
 
                 } else {
+                    //Список покупок
+                    sShoppingListGroup=new ModelGroup(
+                            Constants.SHOPPINGLIST_GROUP_ID,
+                            getAppContext().getString(R.string.product_shoplist_group_name),
+                            group.parent_id,
+                            Constants.SHOPPINGLIST_GROUP_LOGO_LINK,
+                            ModelGroup.GROUP_NM_VIEW
+                    );
+                    parentTree.put(sShoppingListGroup,null);
+
                     //Акции
                     parentTree.put(new ModelGroup(
                                     Constants.SALE_GROUP_ID,
@@ -298,6 +310,10 @@ public class AppInstance extends Application {
                         productGroupParent.logo_link,
                         ModelGroup.GROUP_NM_VIEW),
                 prodGroupsChildIdToParent.get(parentid));
+    }
+
+    public static ModelGroup getShoppingListGroup(){
+        return sShoppingListGroup;
     }
 
     //Гео

@@ -29,7 +29,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="от 98120 до 99218р"
+            android:text="98120 - 99218"
             android:textAppearance="@style/CardLowPrice"
             android:textSize="18sp" />
 

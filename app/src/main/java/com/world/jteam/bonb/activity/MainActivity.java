@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -32,14 +33,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.world.jteam.bonb.AppInstance;
+import com.world.jteam.bonb.AuthManager;
 import com.world.jteam.bonb.geo.GeoManager;
 import com.world.jteam.bonb.ldrawer.ActionBarDrawerToggle;
 import com.world.jteam.bonb.ldrawer.DrawerArrowDrawable;
@@ -51,7 +51,6 @@ import com.world.jteam.bonb.model.ModelGroup;
 import com.world.jteam.bonb.model.ModelProduct;
 import com.world.jteam.bonb.model.ModelProductFull;
 import com.world.jteam.bonb.model.ModelSearchProductMethod;
-import com.world.jteam.bonb.model.ModelSearchResult;
 import com.world.jteam.bonb.paging.ProductDataSource;
 import com.world.jteam.bonb.paging.ProductListAdapter;
 
@@ -67,6 +66,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    //region Переменные
     private final AppCompatActivity mThis = this;
     private Menu mMenu;
     private DrawerLayout mDrawerLayout;
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ModelGroup.ProductGroupsAdapter mProductGroupsAdapter;
     private LinkedHashMap<ModelGroup, LinkedHashMap> mProductGroupsCurrent; //В момент выбора
     private LinkedHashMap<ModelGroup, LinkedHashMap> mProductGroupsSelected; //Выбранный
-
+    ModelGroup mProductGroupShopping;
 
     //Идентификатор результата сканирования ШК
     private static final int BARCODE_REQUEST = 1;
@@ -105,9 +105,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private double mCurrentLng;
     private static final int GEO_REQUEST = 2;
 
+    //Авторизация
+    private static final int SIGN_IN_SHOPPING_REQUEST = 3;
+
     //Нажатие назад
     private static long back_pressed;
 
+    //endregion
+
+    //region События активити
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -198,29 +204,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    //Группы товаров
-    private class ProductGroupsOnItemClickListener implements AdapterView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            ModelGroup productGroup = mProductGroupsAdapter.getItem(position);
-            LinkedHashMap<ModelGroup, LinkedHashMap> productGroupGroups =
-                    mProductGroupsCurrent.get(productGroup);
-
-            searchByGroup(productGroup.id, true);
-            //Раскрытие группы
-            if (productGroupGroups == null) {
-                mProductGroupsSelected = mProductGroupsCurrent;
-                mDrawerLayout.closeDrawer(mDrawerList);
-                //Возврат к родителю группы
-            } else {
-
-                mProductGroupsCurrent = productGroupGroups;
-                mProductGroupsAdapter.clear();
-                mProductGroupsAdapter.addAll(ModelGroup.getCurrentProductGroups(
-                        mProductGroupsCurrent, ModelGroup.GROUP_NM_VIEW,mMarketsProductsGroup));
-            }
-
-        }
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
     }
 
     @Override
@@ -240,6 +227,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
                 break;
+            case SIGN_IN_SHOPPING_REQUEST:
+                //Обработчик авторизации
+                AuthManager.signInOnResult(resultCode, data, new AuthManager.OnLoginListener() {
+                    @Override
+                    public void onLogin() {
+                        showProductGroup(mProductGroupShopping);
+                    }
+
+                    @Override
+                    public void onFailureLogin() {
+                    }
+                });
+
         }
     }
 
@@ -260,153 +260,160 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void onClick(View v) {
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+    //endregion
 
-        if (v.getId() == R.id.search_panel_button) {
-            //Получить ШК
-            Intent barcodeIntent = new Intent(this, BarcodeActivity.class);
-            startActivityForResult(barcodeIntent, BARCODE_REQUEST);
+    //region Заполнение и обработка меню
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        mMenu = menu;
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        if(market_id!=0)
+            menu.findItem(R.id.choose_markets).setIcon(R.drawable.ic_clear);
+        return true;
+    }
 
-        } else {
-            //Клик по группе
-            //Подгрузка списка товаров
-            int productGroupId = (int) v.getTag();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            //Категории
+            case android.R.id.home:
+                if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
+                    mDrawerLayout.closeDrawer(mDrawerList);
+                } else {
+                    mDrawerLayout.openDrawer(mDrawerList);
+                }
+                break;
+            //Геопозиция
+            case R.id.choose_geo:
+                Intent geoIntent = new Intent(this, CoverageAreaActivity.class);
+                startActivity(geoIntent);
+                break;
 
-            //Спозиционируем на выбранной группе
-            TreeMap<Integer, LinkedHashMap> productGroupsParent = AppInstance.getProductGroupsParent();
-            mProductGroupsCurrent = productGroupsParent.get(Integer.valueOf(productGroupId));
+            case R.id.choose_markets:
+                if(market_id!=0){
+                    clearMarketId();
+                } else {
+                    Intent marketsIntent = new Intent(this, SearchMarketActivity.class);
+                    startActivity(marketsIntent);
+                }
+
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+    //endregion
+
+    //region Группы товаров
+    private class ProductGroupsOnItemClickListener implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            ModelGroup productGroup = mProductGroupsAdapter.getItem(position);
+
+            //Список покупок и не пользователь не авторизован
+            if (productGroup.id==Constants.SHOPPINGLIST_GROUP_ID && !AppInstance.getUser().isAuthUser()){
+                mProductGroupShopping=productGroup;
+                AuthManager.signIn(mThis, SIGN_IN_SHOPPING_REQUEST);
+            } else {
+                showProductGroup(productGroup);
+            }
+        }
+    }
+
+    private void showProductGroup(ModelGroup productGroup){
+        LinkedHashMap<ModelGroup, LinkedHashMap> productGroupGroups =
+                mProductGroupsCurrent.get(productGroup);
+
+        searchByGroup(productGroup.id, true);
+        //Раскрытие группы
+        if (productGroupGroups == null) {
             mProductGroupsSelected = mProductGroupsCurrent;
+            mDrawerLayout.closeDrawer(mDrawerList);
+            //Возврат к родителю группы
+        } else {
 
-            //Получим товар только по выбранной группе
-            searchByGroup(productGroupId, false);
-
+            mProductGroupsCurrent = productGroupGroups;
+            mProductGroupsAdapter.clear();
+            mProductGroupsAdapter.addAll(ModelGroup.getCurrentProductGroups(
+                    mProductGroupsCurrent, ModelGroup.GROUP_NM_VIEW,mMarketsProductsGroup));
         }
-
     }
 
-    //Обработчик ввода текста в поле поиска
-    private class OnKeyPress implements View.OnKeyListener {
-        public boolean onKey(View v, int keyCode, KeyEvent event) {
+    private void initGroupMenu() {
+        //Кнопка вызова списка категорий
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.navdrawer);
 
-            //Возврат если это не нажатие
-            if (event.getAction() != KeyEvent.ACTION_UP || (keyCode != KeyEvent.KEYCODE_BACK & keyCode != KeyEvent.KEYCODE_ENTER))
+        DrawerArrowDrawable drawerArrow = new DrawerArrowDrawable(this) {
+            @Override
+            public boolean isLayoutRtl() {
                 return false;
+            }
+        };
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                drawerArrow, R.string.drawer_open, R.string.drawer_close) {
 
-            EditText editText = v.findViewById(R.id.search_panel_text);
-            String strName = editText.getText().toString();
-            switch (keyCode) {
-                case (KeyEvent.KEYCODE_BACK):
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                invalidateOptionsMenu();
 
+                mProductGroupsSelected = mProductGroupsCurrent;
+            }
 
-                    if (strName.isEmpty()) {
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu();
 
-                        if(market_id!=0){
-                            clearMarketId();
-                            return true;
-                        }
-                        //Если поле поиска пустое, то зафиксирую начало выхода
-                        //onBackPressed();
-                    } else {
-                        //Если нажали бэк и есть текст, то очищу поле поиска
-                        editText.setText("");
-                        searchByName("");
-                        return true;
+                if (mProductGroupsSelected == null) {
+                    mProductGroupsSelected = AppInstance.getProductGroups();
+                }
+                if (mProductGroupsSelected != null) {
+                    ArrayList productGroupsList = ModelGroup.getCurrentProductGroups(
+                            mProductGroupsSelected, ModelGroup.GROUP_NM_VIEW,mMarketsProductsGroup);
+
+                    mProductGroupsAdapter = new ModelGroup.ProductGroupsAdapter(mThis, productGroupsList);
+                    mDrawerList.setAdapter(mProductGroupsAdapter);
+                    mDrawerList.setOnItemClickListener(new ProductGroupsOnItemClickListener());
+                    mProductGroupsCurrent = mProductGroupsSelected;
+
+                    //Получим количество списка товаров
+                    final ModelGroup slg = AppInstance.getShoppingListGroup();
+                    if (slg.count==null && AppInstance.getUser().isAuthUser()) {
+                        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
+                        Call<Integer> serviceCall = mDataApi.getShoppingListCount(AppInstance.getUser().id);
+                        SingletonRetrofit.enqueue(serviceCall,new Callback<Integer>() {
+                            @Override
+                            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                                Integer resultData = response.body();
+                                slg.count=resultData.intValue();
+                                mProductGroupsAdapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onFailure(Call<Integer> call, Throwable t) {
+                                AppInstance.errorLog("HTTP getShoppingListCount", t.toString());
+                            }
+                        });
                     }
 
+                } else {
+                    Toast.makeText(mThis, R.string.product_groups_not_init, Toast.LENGTH_LONG).show();
+                }
 
-                    break;
-                case (KeyEvent.KEYCODE_ENTER):
-
-                    if (strName.length() > 2 || strName.length()==0) {
-                        searchByName(strName);
-                        InputMethodManager imm = (InputMethodManager)getSystemService(mThis.INPUT_METHOD_SERVICE);
-                        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);
-                    }
-                    return true;
             }
+        };
 
-            return false;
-        }
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
     }
+    //endregion
 
-    private void clearMarketId(){
-        searchMethod.market_id = 0;
-        market_id = 0;
-        mMarketsProductsGroup=null;
-        setTitle(R.string.app_name);
-        mMenu.findItem(R.id.choose_markets).setIcon(R.drawable.ic_market);
-        searchByName("");
-    }
-    //Показать карточку товара по ШК
-    private void showProductDetailByEAN(String EAN) {
-
-        //Запрос на сервер
-        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
-        Call<ModelProductFull> serviceCall = mDataApi.getProductFull(
-                -1,
-                EAN,
-                AppInstance.getUser().id,
-                AppInstance.getRadiusArea(),
-                AppInstance.getGeoPosition().latitude,
-                AppInstance.getGeoPosition().longitude);
-        //Обработчик ответа сервера
-        SingletonRetrofit.enqueue(serviceCall, new Callback<ModelProductFull>() {
-            @Override
-            public void onResponse(Call<ModelProductFull> call, Response<ModelProductFull> response) {
-                ModelProductFull ss = response.body();
-                showProductDetail(ss);
-            }
-
-            @Override
-            public void onFailure(Call<ModelProductFull> call, Throwable t) {
-                //Товар не найден, предложим ввести новый
-                showErrorSearch();
-                //Леонов
-            }
-        });
-
-    }
-
-    //Показать карточку товара по объекту
-    private void showProductDetail(ModelProductFull prod) {
-
-        Intent intent = new Intent(this, ProductActivity.class);
-        intent.putExtra("object", prod);
-        startActivity(intent);
-
-    }
-
-    public void showErrorSearch() {
-        Toast mt = Toast.makeText(this, "Ничего не найдено", Toast.LENGTH_LONG);
-        mt.show();
-    }
-
-    public void showGroupList(List<ModelGroup> groupList) {
-        LinearLayout resultGroup = findViewById(R.id.search_result_group);
-        //Подчищу старые теги групп
-        resultGroup.removeAllViews();
-        for (ModelGroup strGr : groupList) {
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics()));
-            layoutParams.leftMargin = 4;
-            layoutParams.rightMargin = 4;
-
-            Button nButton = new Button(this, null, R.style.Widget_AppCompat_Button_Borderless);
-            nButton.setHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics()));
-            nButton.setLayoutParams(layoutParams);
-            nButton.setTextColor(getResources().getColor(R.color.colorTextGroupResultSearch));
-            nButton.setGravity(Gravity.CENTER);
-            nButton.setAllCaps(false);
-            nButton.setBackgroundResource(R.drawable.search_result_group);
-            nButton.setText(strGr.name);
-            nButton.setOnClickListener(this);
-            nButton.setTag(strGr.id);
-            resultGroup.addView(nButton);
-        }
-    }
-
-    //Пагинация
+    //region Пагинация
     //Поиск товаров по имени
     private void searchByName(String name) {
 
@@ -491,18 +498,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return false;
             }
         });
+
+        //Свайпы
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(
+                0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+                public boolean onMove(RecyclerView recyclerView,
+                                      RecyclerView.ViewHolder viewHolder,
+                                      RecyclerView.ViewHolder target) {
+                    return false;
+                }
+
+                @Override
+                public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                    adapter.notifyItemChanged(viewHolder.getLayoutPosition());
+                }
+
+
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
     }
 
     //Инициализация источника данных
     private void setupDataSource(ModelSearchProductMethod mSearchMethod) {
+        int defaultPerPage=Constants.DEFAULT_PER_PAGE;
+
+        //Переопределение для списка покупок
+        if (mSearchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID){
+            defaultPerPage=5000; //Заоблачная цифра для считивания сразу
+        }
 
         // Подготовка источника данных
         ProductDataSource dataSource = new ProductDataSource();
         dataSource.searchMethod = mSearchMethod;
 
         PagedList.Config config = new PagedList.Config.Builder()
-                .setPageSize(Constants.DEFAULT_PER_PAGE)// Количество записей для порции данных
-                .setInitialLoadSizeHint(Constants.DEFAULT_PER_PAGE * 2)// Количество записей для первой порции
+                .setPageSize(defaultPerPage)// Количество записей для порции данных
+                .setInitialLoadSizeHint(defaultPerPage * 2)// Количество записей для первой порции
                 .setEnablePlaceholders(true) // Показ пустых блоков пока данные не подрузятся
                 .build();
 
@@ -525,54 +559,87 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void initGroupMenu() {
-        //Кнопка вызова списка категорий
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.navdrawer);
+    //Показать карточку товара по ШК
+    private void showProductDetailByEAN(String EAN) {
 
-        DrawerArrowDrawable drawerArrow = new DrawerArrowDrawable(this) {
+        //Запрос на сервер
+        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
+        Call<ModelProductFull> serviceCall = mDataApi.getProductFull(
+                -1,
+                EAN,
+                AppInstance.getUser().id,
+                AppInstance.getRadiusArea(),
+                AppInstance.getGeoPosition().latitude,
+                AppInstance.getGeoPosition().longitude);
+        //Обработчик ответа сервера
+        SingletonRetrofit.enqueue(serviceCall, new Callback<ModelProductFull>() {
             @Override
-            public boolean isLayoutRtl() {
-                return false;
-            }
-        };
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                drawerArrow, R.string.drawer_open, R.string.drawer_close) {
-
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                invalidateOptionsMenu();
-
-                mProductGroupsSelected = mProductGroupsCurrent;
+            public void onResponse(Call<ModelProductFull> call, Response<ModelProductFull> response) {
+                ModelProductFull ss = response.body();
+                showProductDetail(ss);
             }
 
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu();
-
-                if (mProductGroupsSelected == null) {
-                    mProductGroupsSelected = AppInstance.getProductGroups();
-                }
-                if (mProductGroupsSelected != null) {
-                    ArrayList productGroupsList = ModelGroup.getCurrentProductGroups(
-                            mProductGroupsSelected, ModelGroup.GROUP_NM_VIEW,mMarketsProductsGroup);
-
-                    mProductGroupsAdapter = new ModelGroup.ProductGroupsAdapter(mThis, productGroupsList);
-                    mDrawerList.setAdapter(mProductGroupsAdapter);
-                    mDrawerList.setOnItemClickListener(new ProductGroupsOnItemClickListener());
-                    mProductGroupsCurrent = mProductGroupsSelected;
-
-                } else {
-                    Toast.makeText(mThis, R.string.product_groups_not_init, Toast.LENGTH_LONG).show();
-                }
-
+            @Override
+            public void onFailure(Call<ModelProductFull> call, Throwable t) {
+                //Товар не найден, предложим ввести новый
+                showErrorSearch();
+                //Леонов
             }
-        };
+        });
 
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
     }
 
+    //Показать карточку товара по объекту
+    private void showProductDetail(ModelProductFull prod) {
+
+        Intent intent = new Intent(this, ProductActivity.class);
+        intent.putExtra("object", prod);
+        startActivity(intent);
+
+    }
+
+    public void showErrorSearch() {
+        Toast mt = Toast.makeText(this, "Ничего не найдено", Toast.LENGTH_LONG);
+        mt.show();
+    }
+
+    public void showGroupList(List<ModelGroup> groupList) {
+        LinearLayout resultGroup = findViewById(R.id.search_result_group);
+        //Подчищу старые теги групп
+        resultGroup.removeAllViews();
+        for (ModelGroup strGr : groupList) {
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics()));
+            layoutParams.leftMargin = 4;
+            layoutParams.rightMargin = 4;
+
+            Button nButton = new Button(this, null, R.style.Widget_AppCompat_Button_Borderless);
+            nButton.setHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics()));
+            nButton.setLayoutParams(layoutParams);
+            nButton.setTextColor(getResources().getColor(R.color.colorTextGroupResultSearch));
+            nButton.setGravity(Gravity.CENTER);
+            nButton.setAllCaps(false);
+            nButton.setBackgroundResource(R.drawable.search_result_group);
+            nButton.setText(strGr.name);
+            nButton.setOnClickListener(this);
+            nButton.setTag(strGr.id);
+            resultGroup.addView(nButton);
+        }
+    }
+
+    //Очистка отбора по маркету
+    private void clearMarketId(){
+        searchMethod.market_id = 0;
+        market_id = 0;
+        mMarketsProductsGroup=null;
+        setTitle(R.string.app_name);
+        mMenu.findItem(R.id.choose_markets).setIcon(R.drawable.ic_market);
+        searchByName("");
+    }
+    //endregion
+
+    //region Страницы
     public void initPager() {
 
         pager = (ViewPager) findViewById(R.id.pager);
@@ -585,7 +652,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    //Страницы
     public static class MarketPageFragment extends Fragment {
         static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
         int pageNumber;
@@ -670,14 +736,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return PAGE_COUNT;
         }
     }
+    //endregion
 
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
-    }
-
+    //region Общие события нажатий
     @Override
     public void onBackPressed() {
 
@@ -694,52 +755,73 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+    private class OnKeyPress implements View.OnKeyListener {
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+            //Возврат если это не нажатие
+            if (event.getAction() != KeyEvent.ACTION_UP || (keyCode != KeyEvent.KEYCODE_BACK & keyCode != KeyEvent.KEYCODE_ENTER))
+                return false;
+
+            EditText editText = v.findViewById(R.id.search_panel_text);
+            String strName = editText.getText().toString();
+            switch (keyCode) {
+                case (KeyEvent.KEYCODE_BACK):
+
+
+                    if (strName.isEmpty()) {
+
+                        if(market_id!=0){
+                            clearMarketId();
+                            return true;
+                        }
+                        //Если поле поиска пустое, то зафиксирую начало выхода
+                        //onBackPressed();
+                    } else {
+                        //Если нажали бэк и есть текст, то очищу поле поиска
+                        editText.setText("");
+                        searchByName("");
+                        return true;
+                    }
+
+
+                    break;
+                case (KeyEvent.KEYCODE_ENTER):
+
+                    if (strName.length() > 2 || strName.length()==0) {
+                        searchByName(strName);
+                        InputMethodManager imm = (InputMethodManager)getSystemService(mThis.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);
+                    }
+                    return true;
+            }
+
+            return false;
+        }
     }
 
-    //Заполнение и обработка меню
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        mMenu = menu;
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        if(market_id!=0)
-            menu.findItem(R.id.choose_markets).setIcon(R.drawable.ic_clear);
-        return true;
-    }
+    public void onClick(View v) {
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            //Категории
-            case android.R.id.home:
-                if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
-                    mDrawerLayout.closeDrawer(mDrawerList);
-                } else {
-                    mDrawerLayout.openDrawer(mDrawerList);
-                }
-                break;
-            //Геопозиция
-            case R.id.choose_geo:
-                Intent geoIntent = new Intent(this, CoverageAreaActivity.class);
-                startActivity(geoIntent);
-                break;
+        if (v.getId() == R.id.search_panel_button) {
+            //Получить ШК
+            Intent barcodeIntent = new Intent(this, BarcodeActivity.class);
+            startActivityForResult(barcodeIntent, BARCODE_REQUEST);
 
-            case R.id.choose_markets:
-                if(market_id!=0){
-                    clearMarketId();
-                } else {
-                    Intent marketsIntent = new Intent(this, SearchMarketActivity.class);
-                    startActivity(marketsIntent);
-                }
+        } else {
+            //Клик по группе
+            //Подгрузка списка товаров
+            int productGroupId = (int) v.getTag();
 
-                break;
+            //Спозиционируем на выбранной группе
+            TreeMap<Integer, LinkedHashMap> productGroupsParent = AppInstance.getProductGroupsParent();
+            mProductGroupsCurrent = productGroupsParent.get(Integer.valueOf(productGroupId));
+            mProductGroupsSelected = mProductGroupsCurrent;
+
+            //Получим товар только по выбранной группе
+            searchByGroup(productGroupId, false);
+
         }
 
-        return super.onOptionsItemSelected(item);
     }
-
+    //endregion
 
 }

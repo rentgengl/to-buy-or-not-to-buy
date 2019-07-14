@@ -33,6 +33,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     RatingBar view_productRating;//Рейтинг
     ImageView picture;
     ImageView view_saleImage;
+    TextView view_productCount;
 
 
     private ProductViewHolder(View itemView) {
@@ -45,6 +46,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
         view_productRating = itemView.findViewById(R.id.productRating);//Рейтинг
         picture = itemView.findViewById(R.id.productListImage);
         view_saleImage = itemView.findViewById(R.id.saleListImage);
+        view_productCount=itemView.findViewById(R.id.productCount);
 
         view_productName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,10 +98,12 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
             view_productName.setText(p.name);
             view_productName.setTag(p.id);
             view_midPrice.setText(p.price + "\u20BD");
-            view_lowPrice.setText("от " + p.price_min + " до " + p.price_max + "\u20BD");
+            //view_lowPrice.setText("от " + p.price_min + " до " + p.price_max + "\u20BD");
+            view_lowPrice.setText("" + p.price_min + " - " + p.price_max);
             view_saleImage.setVisibility(p.sale==1 ? View.VISIBLE : View.INVISIBLE);
             view_textRating.setText(""+p.comment_count);
             view_productRating.setRating(p.rating);
+            view_productCount.setText(p.count==0 ? "" : ""+p.count);
 
             if (p.imageSmall_link == null) {
                 picture.setImageResource(R.drawable.ic_action_noimage);

@@ -42,7 +42,7 @@ public class AuthManager {
 
     }
 
-    private static ModelUser getDefaultUser(){
+    public static ModelUser getDefaultUser(){
         return new ModelUser(AppInstance.getAppContext().getString(R.string.default_user_name), null, -1);
     }
 

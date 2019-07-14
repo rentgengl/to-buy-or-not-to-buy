@@ -52,13 +52,22 @@
                     android:layout_marginTop="2dp"
                     android:layout_toEndOf="@+id/midPrice"
                     android:layout_toRightOf="@+id/midPrice"
-                    android:gravity="right"
+                    android:layout_weight="1"
                     android:maxLines="1"
                     android:textAllCaps="false"
                     android:textAppearance="@style/ListLowPrice"
                     android:textSize="12sp"
                     android:textStyle="bold"
-                    tools:text="от 12331 до 36340 руб" />
+                    tools:text="12331 - 36340" />
+
+                <TextView
+                    android:id="@+id/productCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="6dp"
+                    android:text="3"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <TextView
@@ -106,7 +115,7 @@
                     android:layout_marginLeft="1dp"
                     android:layout_weight="1"
                     android:gravity="left|center_vertical"
-                    android:text="12 отзывов"
+                    android:text="12"
                     android:textSize="14sp" />
 
                 <ImageView
