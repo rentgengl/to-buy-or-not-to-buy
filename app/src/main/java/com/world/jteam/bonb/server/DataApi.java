@@ -13,6 +13,8 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
@@ -78,6 +80,28 @@ public interface DataApi {
 
     @GET("getShoppingListCount.php")
     Call<Integer> getShoppingListCount(@Query("user_id") int user_id);
+
+    @FormUrlEncoded
+    @POST("setShoppingListCount.php")
+    Call<Integer> setShoppingListCount(@Field("user_id") int user_id,
+                                    @Field("product_id") int product_id,
+                                    @Field("product_name") String product_name,
+                                    @Field("product_count") int product_count
+                                    );
+
+    @FormUrlEncoded
+    @POST("delShoppingListProduct.php")
+    Call<Integer> delShoppingListProduct(@Field("user_id") int user_id,
+                                       @Field("product_id") int product_id,
+                                       @Field("product_name") String product_name
+                                       );
+
+    @FormUrlEncoded
+    @POST("markShoppingListProduct.php")
+    Call<Integer> markShoppingListProduct(@Field("user_id") int user_id,
+                                         @Field("product_id") int product_id,
+                                         @Field("product_name") String product_name
+    );
 
 
 }

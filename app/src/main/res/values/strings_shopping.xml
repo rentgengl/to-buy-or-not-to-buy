@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_shoplist_group_name">Список покупок</string>
+    <string name="shopping_count_plus_error">Не удалось добавить количество!</string>
+    <string name="shopping_count_minus_error">Не удалось убавить количество!</string>
+    <string name="shopping_del_error">Не удалось удалить из списка!</string>
+    <string name="shopping_del">Удалено</string>
+    <string name="shopping_mark_error">Не удалось отметить!</string>
+</resources>

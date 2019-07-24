@@ -22,6 +22,7 @@ public class ModelProduct {
     public byte user_leave_comment = 0; //Признак что пользователь оставил отзыв
     public int count; //Количество продукта
     public byte purchased; //Признак купленного товара
+    public byte inShoppingList; //Признак налия в списке товаров
 
     public ModelProduct() {
     }

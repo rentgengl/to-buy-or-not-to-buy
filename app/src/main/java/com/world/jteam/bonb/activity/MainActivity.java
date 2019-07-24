@@ -20,7 +20,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -44,6 +43,8 @@ import com.world.jteam.bonb.geo.GeoManager;
 import com.world.jteam.bonb.ldrawer.ActionBarDrawerToggle;
 import com.world.jteam.bonb.ldrawer.DrawerArrowDrawable;
 import com.world.jteam.bonb.Constants;
+import com.world.jteam.bonb.model.ModelSearchResult;
+import com.world.jteam.bonb.paging.ProductListAdapterStatic;
 import com.world.jteam.bonb.server.DataApi;
 import com.world.jteam.bonb.R;
 import com.world.jteam.bonb.server.SingletonRetrofit;
@@ -93,11 +94,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Идентификатор результата сканирования ШК
     private static final int BARCODE_REQUEST = 1;
     //Режимы поиска по наименованию или группе
-    public ModelSearchProductMethod searchMethod;
+    public ModelSearchProductMethod mSearchMethod;
 
     //Переменные пагинации
     private MainActivity.MainThreadExecutor executor;
-    private ProductListAdapter adapter;
+    private ProductListAdapter mAdapter;
+    private ProductListAdapterStatic mAdapterStatic;
 
     //Геолокация
     private int mCurrentRadiusArea=0;
@@ -135,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         //По умолчанию отображаю товары первой группы
-        this.searchMethod = new ModelSearchProductMethod("", Constants.SALE_GROUP_ID, market_id);
+        this.mSearchMethod = new ModelSearchProductMethod("", Constants.SALE_GROUP_ID, market_id);
 
         //Инициализирую станицы для адаптера страниц
         page_contacts = this.getLayoutInflater().inflate(R.layout.fragment_market_contacts, null);
@@ -417,10 +419,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Поиск товаров по имени
     private void searchByName(String name) {
 
-        if (searchMethod == null) {
-            searchMethod = new ModelSearchProductMethod(name, 0, market_id);
+        if (mSearchMethod == null) {
+            mSearchMethod = new ModelSearchProductMethod(name, 0, market_id);
         } else {
-            searchMethod.searchText = name;
+            mSearchMethod.searchText = name;
         }
         pagingStart();
 
@@ -451,15 +453,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Поиск товаров по группе
     private void searchByGroup(int groupId, boolean removeSearchText) {
-        if (searchMethod == null) {
-            searchMethod = new ModelSearchProductMethod(groupId);
-            searchMethod.market_id = market_id;
+        if (mSearchMethod == null) {
+            mSearchMethod = new ModelSearchProductMethod(groupId);
+            mSearchMethod.market_id = market_id;
         } else {
-            searchMethod.searchGroup = groupId;
+            mSearchMethod.searchGroup = groupId;
         }
 
         if (removeSearchText) {
-            searchMethod.searchText = "";
+            mSearchMethod.searchText = "";
             EditText editText = this.findViewById(R.id.search_panel_text);
             editText.setText("");
         }
@@ -473,18 +475,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Основной обработчик заполнения списка товаров
     private void pagingStart() {
         setupRecyclerView();
-        setupDataSource(searchMethod);
+        setupDataSource();
     }
 
     //Инициализация объекта
     private void setupRecyclerView() {
-
-        adapter = new ProductListAdapter();
-
         final RecyclerView recyclerView = page_products.findViewById(R.id.productRW);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(adapter);
+
+        if (mSearchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID){
+            mAdapterStatic=new ProductListAdapterStatic(R.id.swipeLayout, mSearchMethod);
+            mAdapter=null;
+            recyclerView.setAdapter(mAdapterStatic);
+        } else {
+            mAdapter = new ProductListAdapter(R.id.swipeLayout, mSearchMethod);
+            mAdapterStatic=null;
+            recyclerView.setAdapter(mAdapter);
+        }
 
         recyclerView.setOnClickListener(this);
         recyclerView.setOnFlingListener(new RecyclerView.OnFlingListener() { //порог броска прогрутки
@@ -499,55 +507,64 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        //Свайпы
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(
-                0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-
-                public boolean onMove(RecyclerView recyclerView,
-                                      RecyclerView.ViewHolder viewHolder,
-                                      RecyclerView.ViewHolder target) {
-                    return false;
-                }
-
-                @Override
-                public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                    adapter.notifyItemChanged(viewHolder.getLayoutPosition());
-                }
-
-
-        };
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
-
     }
 
     //Инициализация источника данных
-    private void setupDataSource(ModelSearchProductMethod mSearchMethod) {
-        int defaultPerPage=Constants.DEFAULT_PER_PAGE;
-
-        //Переопределение для списка покупок
+    private void setupDataSource() {
         if (mSearchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID){
-            defaultPerPage=5000; //Заоблачная цифра для считивания сразу
+            DataApi dataApi = SingletonRetrofit.getInstance().getDataApi();
+            Call<ModelSearchResult> retrofitCall = dataApi.getProductList(
+                    mSearchMethod.searchText,
+                    mSearchMethod.searchGroup,
+                    AppInstance.getRadiusArea(),
+                    AppInstance.getGeoPosition().latitude,
+                    AppInstance.getGeoPosition().longitude,
+                    5000,
+                    "",
+                    -1,
+                    mSearchMethod.market_id,
+                    AppInstance.getUser().id
+            );
+            SingletonRetrofit.enqueue(retrofitCall,new Callback<ModelSearchResult>() {
+                @Override
+                public void onResponse(Call<ModelSearchResult> call, Response<ModelSearchResult> response) {
+                    ModelSearchResult resultData = response.body();
+                    List<ModelProduct> products = resultData.getProducts();
+                    mAdapterStatic.setProductsList(products);
+
+                    //Заполним количество у списка покупок
+                    ModelGroup slg = AppInstance.getShoppingListGroup();
+                    slg.count = 0;
+
+                    for (ModelProduct product : products) {
+                        if (product.purchased == 0) slg.count++;
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ModelSearchResult> call, Throwable t) {
+                    AppInstance.errorLog("HTTP getProductList", t.toString());
+                }
+            });
+        } else {
+            // Подготовка источника данных
+            ProductDataSource dataSource = new ProductDataSource();
+            dataSource.searchMethod = mSearchMethod;
+
+            PagedList.Config config = new PagedList.Config.Builder()
+                    .setPageSize(Constants.DEFAULT_PER_PAGE)// Количество записей для порции данных
+                    .setInitialLoadSizeHint(Constants.DEFAULT_PER_PAGE * 2)// Количество записей для первой порции
+                    .setEnablePlaceholders(true) // Показ пустых блоков пока данные не подрузятся
+                    .build();
+
+            PagedList<ModelProduct> list =
+                    new PagedList.Builder<>(dataSource, config)
+                            .setFetchExecutor(executor)
+                            .setNotifyExecutor(executor)
+                            .build();
+
+            mAdapter.submitList(list);
         }
-
-        // Подготовка источника данных
-        ProductDataSource dataSource = new ProductDataSource();
-        dataSource.searchMethod = mSearchMethod;
-
-        PagedList.Config config = new PagedList.Config.Builder()
-                .setPageSize(defaultPerPage)// Количество записей для порции данных
-                .setInitialLoadSizeHint(defaultPerPage * 2)// Количество записей для первой порции
-                .setEnablePlaceholders(true) // Показ пустых блоков пока данные не подрузятся
-                .build();
-
-        PagedList<ModelProduct> list =
-                new PagedList.Builder<>(dataSource, config)
-                        .setFetchExecutor(executor)
-                        .setNotifyExecutor(executor)
-                        .build();
-
-        adapter.submitList(list);
-
     }
 
     class MainThreadExecutor implements Executor {
@@ -630,7 +647,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Очистка отбора по маркету
     private void clearMarketId(){
-        searchMethod.market_id = 0;
+        mSearchMethod.market_id = 0;
         market_id = 0;
         mMarketsProductsGroup=null;
         setTitle(R.string.app_name);

@@ -53,16 +53,6 @@ public class ProductDataSource extends ItemKeyedDataSource<ModelProduct, ModelPr
                 mProductsCount = Math.min(resultData.getCount(),Constants.MAX_PRODUCT_LIST_ITEMS);
                 List<ModelProduct> products = resultData.getProducts();
 
-                //Заполним количество у списка покупок
-                if (searchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID){
-                    ModelGroup slg = AppInstance.getShoppingListGroup();
-                    slg.count = 0;
-
-                    for (ModelProduct product : products){
-                        if (product.purchased==0) slg.count++;
-                    }
-                }
-
                 // Result can be passed asynchronously
                 callback.onResult(
                         products, // List of data items
