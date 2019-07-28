@@ -17,6 +17,7 @@ public class ModelMarket implements Parcelable {
     public String logo_link;
 
 
+
     public ModelMarket(String name, String adress, String logo_link){
 
         this.name = name;

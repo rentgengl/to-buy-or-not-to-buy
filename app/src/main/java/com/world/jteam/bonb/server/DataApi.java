@@ -1,6 +1,7 @@
 package com.world.jteam.bonb.server;
 
 import com.world.jteam.bonb.model.ModelComment;
+import com.world.jteam.bonb.model.ModelContact;
 import com.world.jteam.bonb.model.ModelGroup;
 import com.world.jteam.bonb.model.ModelMarket;
 import com.world.jteam.bonb.model.ModelPrice;
@@ -20,6 +21,10 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface DataApi {
+
+    @GET("getMarketContacts.php")
+    Call<List<ModelContact>> getMarketContacts(@Query("market_id") int market_id);
+
 
 
     @GET("getMarketList.php")

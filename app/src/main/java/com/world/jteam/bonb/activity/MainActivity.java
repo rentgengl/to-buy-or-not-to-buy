@@ -2,6 +2,7 @@ package com.world.jteam.bonb.activity;
 
 import android.Manifest;
 import android.arch.paging.PagedList;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -30,19 +31,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
 import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.AuthManager;
 import com.world.jteam.bonb.geo.GeoManager;
 import com.world.jteam.bonb.ldrawer.ActionBarDrawerToggle;
 import com.world.jteam.bonb.ldrawer.DrawerArrowDrawable;
 import com.world.jteam.bonb.Constants;
+import com.world.jteam.bonb.model.ModelContact;
+import com.world.jteam.bonb.model.ModelMarket;
 import com.world.jteam.bonb.model.ModelSearchResult;
 import com.world.jteam.bonb.paging.ProductListAdapterStatic;
 import com.world.jteam.bonb.server.DataApi;
@@ -75,11 +82,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ActionBarDrawerToggle mDrawerToggle;
 
     //Страницы
-    static final int PAGE_COUNT = 1;
+    static final int PAGE_COUNT = 2;
     private ViewPager pager;
     private PagerAdapter pagerAdapter;
     public int market_id;
     public String market_name;
+    public String market_logo;
     public View page_products;
     public View page_contacts;
 
@@ -113,6 +121,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Нажатие назад
     private static long back_pressed;
 
+    //Контакты
+    private ContactsListAdapter mContactsListAdapter;
+
     //endregion
 
     //region События активити
@@ -126,15 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         market_id = mIntent.getIntExtra("market_id", 0);
         int market_group_id = mIntent.getIntExtra("market_group_id", 0);
         market_name = mIntent.getStringExtra("market_name");
-        if (market_id != 0) {
-            setTitle(market_name);
-            ModelGroup.getMarketsProductsGroup(market_group_id, new ModelGroup.MarketsProductsGroupListener() {
-                @Override
-                public void onAfterResponse(int[] marketsProductsGroup) {
-                    mMarketsProductsGroup=marketsProductsGroup;
-                }
-            });
-        }
+        market_logo = mIntent.getStringExtra("market_logo");
 
         //По умолчанию отображаю товары первой группы
         this.mSearchMethod = new ModelSearchProductMethod("", Constants.SALE_GROUP_ID, market_id);
@@ -156,6 +159,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Инициализация страниц
         initPager();
+
+        //Это карточка магазина
+        if (market_id != 0) {
+            setTitle(market_name);
+
+            //Отобразим группы только те, в которых есть товары выбранного магазина
+            ModelGroup.getMarketsProductsGroup(market_group_id, new ModelGroup.MarketsProductsGroupListener() {
+                @Override
+                public void onAfterResponse(int[] marketsProductsGroup) {
+                    mMarketsProductsGroup=marketsProductsGroup;
+                }
+            });
+
+            //Получим и отобразим список контактактных данных магазина
+            getContactsListByMarketId(market_id);
+            ImageView view_imageLogo = page_contacts.findViewById(R.id.imageLogo);
+
+
+            if (market_logo != null) {
+                Picasso.with(this)
+                        .load(Constants.SERVICE_GET_IMAGE + market_logo)
+                        .placeholder(R.drawable.ic_action_noimage)
+                        .error(R.drawable.ic_action_noimage)
+                        .into(view_imageLogo);
+            }
+
+        }
 
         //Подготовка навигации
         ActionBar ab = getSupportActionBar();
@@ -649,6 +679,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void clearMarketId(){
         mSearchMethod.market_id = 0;
         market_id = 0;
+        initPager();
         mMarketsProductsGroup=null;
         setTitle(R.string.app_name);
         mMenu.findItem(R.id.choose_markets).setIcon(R.drawable.ic_market);
@@ -745,12 +776,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public Fragment getItem(int position) {
+            if(market_id == 0){
+                return MarketPageFragment.newInstance(0, page1, page2);
+            }
             return MarketPageFragment.newInstance(position, page1, page2);
         }
 
         @Override
         public int getCount() {
-            return PAGE_COUNT;
+
+            if(market_id == 0) {
+                return 1;
+            }else {
+
+                return PAGE_COUNT;
+            }
         }
     }
     //endregion
@@ -841,4 +881,105 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     //endregion
 
+
+    //region Контактные данные магазина
+
+    //Получает список контактов магазина с сервера и выводит на форму
+    public void getContactsListByMarketId(int id){
+
+
+        DataApi mDataApi = SingletonRetrofit.getInstance().getDataApi();
+        Call<List<ModelContact>> serviceCall = mDataApi.getMarketContacts(id);
+        SingletonRetrofit.enqueue(serviceCall,new Callback<List<ModelContact>>() {
+            @Override
+            public void onResponse(Call<List<ModelContact>> call, Response<List<ModelContact>> response) {
+                showMarketContacts(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<ModelContact>> call, Throwable t) {
+
+            }
+        });
+
+
+    }
+
+    //Выводит список контактов на форму
+    public void showMarketContacts(List<ModelContact> contacts) {
+        ListView view_contacts_list = this.findViewById(R.id.contacts_list);
+        mContactsListAdapter = new MainActivity.ContactsListAdapter(this, contacts);
+        view_contacts_list.setAdapter(mContactsListAdapter);
+
+    }
+
+    private class ContactsListAdapter extends BaseAdapter {
+        Context ctx;
+        LayoutInflater lInflater;
+        List<ModelContact> objects;
+
+        ContactsListAdapter(Context context, List<ModelContact> listData) {
+            this.ctx = context;
+            this.objects = listData;
+            this.lInflater = (LayoutInflater) ctx
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        // кол-во элементов
+        @Override
+        public int getCount() {
+            return objects.size();
+        }
+
+        // элемент по позиции
+        @Override
+        public Object getItem(int position) {
+            return objects.get(position);
+        }
+
+        // id по позиции
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        // пункт списка
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // используем созданные, но не используемые view
+            View view = convertView;
+            if (view == null) {
+                view = lInflater.inflate(R.layout.fragment_list_contact, parent, false);
+            }
+
+            ModelContact obj = getObj(position);
+
+            TextView view_contactName = view.findViewById(R.id.contactName);
+            //TextView view_contactValue = view.findViewById(R.id.contactValue);
+            EditText view_editValue = view.findViewById(R.id.editValue);
+            ImageView view_imageLogo = view.findViewById(R.id.imageLogo);
+
+            //view_contactValue.setText(obj.value);
+            view_contactName.setText(obj.name);
+
+            view_editValue.setText(obj.value);
+
+            if (obj.logo_link != null) {
+                Picasso.with(ctx)
+                        .load(Constants.SERVICE_GET_IMAGE + obj.logo_link)
+                        .placeholder(R.drawable.ic_action_noimage)
+                        .error(R.drawable.ic_action_noimage)
+                        .into(view_imageLogo);
+            }
+
+            return view;
+        }
+
+        ModelContact getObj(int position) {
+            return ((ModelContact) getItem(position));
+        }
+
+    }
+
+    //endregion
 }

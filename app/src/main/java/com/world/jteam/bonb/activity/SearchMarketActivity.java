@@ -227,6 +227,7 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
         intent.putExtra("market_id", market.id);
         intent.putExtra("market_group_id", market.market_group_id);
         intent.putExtra("market_name", market.name);
+        intent.putExtra("market_logo", market.logo_link);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         startActivity(intent);
