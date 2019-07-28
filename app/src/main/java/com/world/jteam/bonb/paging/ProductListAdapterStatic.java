@@ -62,7 +62,7 @@ public class ProductListAdapterStatic extends RecyclerView.Adapter<ProductViewHo
         notifyItemRemoved(currentPos);
     }
 
-    public void moveToPurchased(ModelProduct currentProduct){
+    public void moveToPurchasedBorder(ModelProduct currentProduct){
         int currentPos=getPosition(currentProduct);
         int toPos=mProductsList.size(); //По умолчанию в конец
 
@@ -75,10 +75,10 @@ public class ProductListAdapterStatic extends RecyclerView.Adapter<ProductViewHo
         }
 
         if (toPos != currentPos) { //Это не таже самая позиция
-            mProductsList.add(toPos,mProductsList.get(currentPos));
-            mProductsList.remove(currentPos);
+            mProductsList.add(toPos,currentProduct);
+            mProductsList.remove(currentPos<toPos ? currentPos : currentPos+1);
 
-            notifyItemMoved(currentPos,toPos-1);
+            notifyItemMoved(currentPos,currentPos<toPos ? toPos-1 : toPos);
         }
     }
 

@@ -1,7 +1,6 @@
 package com.world.jteam.bonb.paging;
 
 import android.annotation.SuppressLint;
-import android.arch.paging.PagedList;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -9,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -19,6 +17,7 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.Constants;
+import com.world.jteam.bonb.model.ModelGroup;
 import com.world.jteam.bonb.model.ModelSearchProductMethod;
 import com.world.jteam.bonb.server.DataApi;
 import com.world.jteam.bonb.R;
@@ -39,6 +38,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
 
     TextView view_midPrice;//Средняя цена
     TextView view_productName;//Наименование
+    int mProductNameDefaultPaintFlags;
     TextView view_lowPrice;//Разброс цен
     TextView view_textRating;//Количество отзывов
     RatingBar view_productRating;//Рейтинг
@@ -60,6 +60,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
 
         view_midPrice = itemView.findViewById(R.id.midPrice);//Средняя цена
         view_productName = itemView.findViewById(R.id.productName);//Наименование
+        mProductNameDefaultPaintFlags=view_productName.getPaintFlags();
         view_lowPrice = itemView.findViewById(R.id.lowPrice);//Разброс цен
         view_textRating = itemView.findViewById(R.id.textRating);//Количество отзывов
         view_productRating = itemView.findViewById(R.id.productRating);//Рейтинг
@@ -128,7 +129,8 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
         view_minusSLButton.setVisibility(View.GONE);
         view_markSLButton.setVisibility(View.GONE);
         view_addSLButton.setVisibility(View.VISIBLE);
-        view_delSLButton.setVisibility(View.VISIBLE);
+        view_delSLButton.setClickable(mProduct.inShoppingList==1 ? true : false);
+        view_delSLButton.setImageResource(mProduct.inShoppingList==1 ? R.drawable.ic_del_sl : R.drawable.ic_del_sl_inactive);
 
         if (mSearchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID) {
             if (mProduct.purchased==0) {
@@ -136,10 +138,15 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
                 view_minusSLButton.setVisibility(View.VISIBLE);
                 view_markSLButton.setVisibility(View.VISIBLE);
                 view_addSLButton.setVisibility(View.GONE);
-                view_delSLButton.setVisibility(View.VISIBLE);
+
+                view_productName.setPaintFlags(mProductNameDefaultPaintFlags);
             } else {
-                view_productName.setPaintFlags(view_productName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG); //Перечеркивание
+                view_productName.setPaintFlags(mProductNameDefaultPaintFlags | Paint.STRIKE_THRU_TEXT_FLAG); //Перечеркивание
             }
+
+            view_productCount.setText(""+mProduct.shoppingListCount);
+        } else {
+            view_productCount.setText("");
         }
 
         view_productName.setText(mProduct.name);
@@ -150,7 +157,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
         view_saleImage.setVisibility(mProduct.sale==1 ? View.VISIBLE : View.INVISIBLE);
         view_textRating.setText(""+mProduct.comment_count);
         view_productRating.setRating(mProduct.rating);
-        view_productCount.setText(mProduct.count==0 ? "" : ""+mProduct.count);
+
     }
 
     @Override
@@ -159,31 +166,32 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
         Call<Integer> serviceCallInt;
         switch(v.getId()) {
             case R.id.productName: //Имя продукта
-                Call<ModelProductFull> serviceCallProduct = dataApi.getProductFull(
-                        (int)v.getTag(),
-                        "",
-                        AppInstance.getUser().id,
-                        AppInstance.getRadiusArea(),
-                        AppInstance.getGeoPosition().latitude,
-                        AppInstance.getGeoPosition().longitude);
-                SingletonRetrofit.enqueue(serviceCallProduct,new Callback<ModelProductFull>() {
-                    @Override
-                    public void onResponse(Call<ModelProductFull> call, Response<ModelProductFull> response) {
-                        Context mContext = v.getContext();
-                        ModelProductFull ss = response.body();
-                        //Context mContext = AppInstance.getAppContext();
-                        Intent intent = new Intent(mContext, ProductActivity.class);
-                        intent.putExtra("object", ss);
-                        mContext.startActivity(intent);
+                if (mProduct.id>=0) {
+                    Call<ModelProductFull> serviceCallProduct = dataApi.getProductFull(
+                            (int) v.getTag(),
+                            "",
+                            AppInstance.getUser().id,
+                            AppInstance.getRadiusArea(),
+                            AppInstance.getGeoPosition().latitude,
+                            AppInstance.getGeoPosition().longitude);
+                    SingletonRetrofit.enqueue(serviceCallProduct, new Callback<ModelProductFull>() {
+                        @Override
+                        public void onResponse(Call<ModelProductFull> call, Response<ModelProductFull> response) {
+                            Context mContext = v.getContext();
+                            ModelProductFull ss = response.body();
+                            //Context mContext = AppInstance.getAppContext();
+                            Intent intent = new Intent(mContext, ProductActivity.class);
+                            intent.putExtra("object", ss);
+                            mContext.startActivity(intent);
 
-                    }
+                        }
 
-                    @Override
-                    public void onFailure(Call<ModelProductFull> call, Throwable t) {
-                        AppInstance.errorLog("HTTP getProductFull", t.toString());
-                    }
-                });
-
+                        @Override
+                        public void onFailure(Call<ModelProductFull> call, Throwable t) {
+                            AppInstance.errorLog("HTTP getProductFull", t.toString());
+                        }
+                    });
+                }
                 break;
 
             case R.id.plusSLButton: //Кнопка Плюс
@@ -191,12 +199,12 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
                         AppInstance.getUser().id,
                         mProduct.id,
                         mProduct.name,
-                        mProduct.count+1
+                        mProduct.shoppingListCount+1
                         );
                 SingletonRetrofit.enqueue(serviceCallInt,new Callback<Integer>() {
                     @Override
                     public void onResponse(Call<Integer> call, Response<Integer> response) {
-                        mProduct.count=mProduct.count+1;
+                        mProduct.shoppingListCount=mProduct.shoppingListCount+1;
                         bindView();
 
                         Toast.makeText(v.getContext(), "+1 : "+mProduct.name,Toast.LENGTH_SHORT).show();
@@ -211,17 +219,17 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
                 break;
 
             case R.id.minusSLButton: //Кнопка Минус
-                if (mProduct.count>1) {
+                if (mProduct.shoppingListCount>1) {
                     serviceCallInt = dataApi.setShoppingListCount(
                             AppInstance.getUser().id,
                             mProduct.id,
                             mProduct.name,
-                            mProduct.count - 1
+                            mProduct.shoppingListCount - 1
                     );
                     SingletonRetrofit.enqueue(serviceCallInt, new Callback<Integer>() {
                         @Override
                         public void onResponse(Call<Integer> call, Response<Integer> response) {
-                            mProduct.count = mProduct.count - 1;
+                            mProduct.shoppingListCount = mProduct.shoppingListCount - 1;
                             bindView();
 
                             Toast.makeText(v.getContext(), "-1 : " + mProduct.name, Toast.LENGTH_SHORT).show();
@@ -236,6 +244,43 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
 
                 break;
 
+            case R.id.addSLButton: //Кнопка добавить
+                serviceCallInt = dataApi.addShoppingListProduct(
+                        AppInstance.getUser().id,
+                        mProduct.id,
+                        mProduct.name
+                );
+                SingletonRetrofit.enqueue(serviceCallInt, new Callback<Integer>() {
+                    @Override
+                    public void onResponse(Call<Integer> call, Response<Integer> response) {
+                        if (mSearchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID) {
+                            mAdapterStatic.moveToPurchasedBorder(mProduct);
+                        }
+
+                        mProduct.inShoppingList=1;
+                        if (mProduct.purchased==0) {
+                            mProduct.shoppingListCount = mProduct.shoppingListCount + 1;
+                        }
+                        mProduct.purchased=0;
+                        ModelGroup slg = AppInstance.getShoppingListGroup();
+                        if (slg.count!=null)
+                            slg.count = slg.count + 1;
+
+
+                        bindView();
+
+                        view_swipeLayout.close();
+
+                        Toast.makeText(v.getContext(), "+1 : "+mProduct.name,Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Integer> call, Throwable t) {
+                        Toast.makeText(v.getContext(), R.string.shopping_add_error, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                break;
+
             case R.id.delSLButton: //Кнопка удалить
                 if (mProduct.inShoppingList==1){
                     serviceCallInt = dataApi.delShoppingListProduct(
@@ -247,9 +292,15 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
                         @Override
                         public void onResponse(Call<Integer> call, Response<Integer> response) {
                             mProduct.inShoppingList=0;
-
+                            mProduct.shoppingListCount=0;
+                            ModelGroup slg = AppInstance.getShoppingListGroup();
+                            if (slg.count!=null)
+                                slg.count = slg.count - 1;
                             if (mSearchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID) {
                                 mAdapterStatic.removeItem(mProduct);
+                            } else {
+                                bindView();
+                                view_swipeLayout.close();
                             }
 
                             Context context = v.getContext();
@@ -274,8 +325,10 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
                 SingletonRetrofit.enqueue(serviceCallInt, new Callback<Integer>() {
                     @Override
                     public void onResponse(Call<Integer> call, Response<Integer> response) {
-                        mAdapterStatic.moveToPurchased(mProduct);
+                        mAdapterStatic.moveToPurchasedBorder(mProduct);
                         mProduct.purchased=1;
+                        ModelGroup slg = AppInstance.getShoppingListGroup();
+                        slg.count=slg.count-1;
                         bindView();
 
                         view_swipeLayout.close();
