@@ -22,25 +22,31 @@ import retrofit2.http.Query;
 
 public interface DataApi {
 
-    @GET("getMarketContacts.php")
+    //Не используется
+    @POST("addNewPrice.php")
+    Call<Void> addNewPrice(@Body ModelPrice price);
+
+
+    @GET("Contact_Get_List_By_MarketId.php")
     Call<List<ModelContact>> getMarketContacts(@Query("market_id") int market_id);
 
 
-
-    @GET("getMarketList.php")
+    @GET("Market_Get_List_By_Name_GEO.php")
     Call<List<ModelMarket>> getMarketList(@Query("name") String name,
                                     @Query("radius") int radius,
                                     @Query("lat") double lat,
                                     @Query("lng") double lng);
 
-    @GET("getMarketProductsGroup.php")
+    @GET("Group_Get_List_By_MarketGroupId.php")
     Call<int[]> getMarketProductsGroup(@Query("marketGroupID") int marketGroupID);
 
-    @GET("getGroupListByName.php")
+    @GET("Group_Get_List_By_Name_MarketGroupId.php")
     Call<List<ModelGroup>> getGroupListByName(@Query("name") String name,
                                               @Query("marketID") int marketID);
+    @GET("Group_Get_List.php")
+    Call<List<ModelGroup>> getGroupList();
 
-    @GET("getProductList_v3.php")
+    @GET("SearchResult_Get_Item.php")
     Call<ModelSearchResult> getProductList( @Query("name") String name,
                                             @Query("id") int groupId,
                                             @Query("radius") int radius,
@@ -53,7 +59,7 @@ public interface DataApi {
                                             @Query("user_id") int user_id
                                             );
 
-    @GET("GetProductFull.php")
+    @GET("ProductFull_Get_Item_By_Id_EAN_GEO.php")
     Call<ModelProductFull> getProductFull(    @Query("id") int id,
                                               @Query("EAN") String ean,
                                               @Query("user_id") int user_id,
@@ -61,33 +67,28 @@ public interface DataApi {
                                               @Query("lat") double lat,
                                               @Query("lng") double lng);
 
-    @GET("GetGroupList.php")
-    Call<List<ModelGroup>> getGroupList();
-
-    @POST("Registration.php")
+    @POST("User_Create_Item.php")
     Call<Void> registerUser(@Body ModelUser user);
 
-    @GET("LoginUser.php")
+    @GET("User_Get_Item_By_GoogleId.php")
     Call<ModelUser> loginUser(@Query("google_id") String google_id);
 
-    @GET("getVersions.php")
+    //Version_Get_Item.php
+    @GET("Version_Get_Item.php")
     Call<ModelVersion> getVersions();
 
-    @POST("addNewPrice.php")
-    Call<Void> addNewPrice(@Body ModelPrice price);
-
-    @POST("addNewComment.php")
+    @POST("Comment_Create_Item.php")
     Call<Void> addNewComment(@Body ModelComment comment);
 
-    @GET("addLogMobile.php")
+    @GET("LogMobile_Create_Item.php")
     Call<Void> addLogMobile(@Query("err_group") String err_group,
                                               @Query("error") String error);
 
-    @GET("getShoppingListCount.php")
+    @GET("ShoppingListCount_Get_Item_By_UserId.php")
     Call<Integer> getShoppingListCount(@Query("user_id") int user_id);
 
     @FormUrlEncoded
-    @POST("setShoppingListCount.php")
+    @POST("ShoppingListCount_Update_Item.php")
     Call<Integer> setShoppingListCount(@Field("user_id") int user_id,
                                     @Field("product_id") int product_id,
                                     @Field("product_name") String product_name,
@@ -95,14 +96,14 @@ public interface DataApi {
                                     );
 
     @FormUrlEncoded
-    @POST("delShoppingListProduct.php")
+    @POST("ShoppingList_Delete_Item.php")
     Call<Integer> delShoppingListProduct(@Field("user_id") int user_id,
                                        @Field("product_id") int product_id,
                                        @Field("product_name") String product_name
                                        );
 
     @FormUrlEncoded
-    @POST("markShoppingListProduct.php")
+    @POST("ShoppingList_Update_Item.php")
     Call<Integer> markShoppingListProduct(@Field("user_id") int user_id,
                                          @Field("product_id") int product_id,
                                          @Field("product_name") String product_name
