@@ -5,5 +5,6 @@
     <string name="shopping_count_minus_error">Не удалось убавить количество!</string>
     <string name="shopping_del_error">Не удалось удалить из списка!</string>
     <string name="shopping_del">Удалено</string>
+    <string name="shopping_add_error">Не удалось добавить!</string>
     <string name="shopping_mark_error">Не удалось отметить!</string>
 </resources>

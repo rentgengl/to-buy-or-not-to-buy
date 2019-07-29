@@ -103,6 +103,13 @@ public interface DataApi {
                                        );
 
     @FormUrlEncoded
+    @POST("ShoppingList_Create_Item.php")
+    Call<Integer> addShoppingListProduct(@Field("user_id") int user_id,
+                                         @Field("product_id") int product_id,
+                                         @Field("product_name") String product_name
+    );
+
+    @FormUrlEncoded
     @POST("ShoppingList_Update_Item.php")
     Call<Integer> markShoppingListProduct(@Field("user_id") int user_id,
                                          @Field("product_id") int product_id,
