@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class ModelProductFull extends ModelProduct implements Parcelable {
     public ArrayList<ModelPrice> prices;
     public ArrayList<ModelComment> comments;
+    public ArrayList<ModelProperty> properties;
     public ArrayList<String> images_links;
 
     public ModelProductFull(ModelProduct product) {
@@ -54,6 +55,14 @@ public class ModelProductFull extends ModelProduct implements Parcelable {
         } else {
             images_links = null;
         }
+        if (in.readByte() == 0x01) {
+            properties = new ArrayList<ModelProperty>();
+            in.readList(properties, ModelProperty.class.getClassLoader());
+        } else {
+            properties = null;
+        }
+
+
     }
 
     @Override
@@ -93,6 +102,13 @@ public class ModelProductFull extends ModelProduct implements Parcelable {
         } else {
             dest.writeByte((byte) (0x01));
             dest.writeList(images_links);
+        }
+
+        if (properties== null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(properties);
         }
     }
 

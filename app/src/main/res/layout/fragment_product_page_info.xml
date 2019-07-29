@@ -37,6 +37,11 @@
             android:text="@string/product_description_head"
             android:textSize="18sp"
             android:textStyle="bold" />
+        <com.world.jteam.bonb.activity.NonScrollListView
+            android:id="@+id/properties_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ></com.world.jteam.bonb.activity.NonScrollListView>
     </LinearLayout>
 
 </ScrollView>

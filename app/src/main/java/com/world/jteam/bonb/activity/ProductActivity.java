@@ -38,6 +38,7 @@ import com.world.jteam.bonb.AppInstance;
 import com.world.jteam.bonb.AuthManager;
 import com.world.jteam.bonb.Constants;
 import com.world.jteam.bonb.model.ModelMarket;
+import com.world.jteam.bonb.model.ModelProperty;
 import com.world.jteam.bonb.server.DataApi;
 import com.world.jteam.bonb.R;
 import com.world.jteam.bonb.server.SingletonRetrofit;
@@ -48,6 +49,7 @@ import com.world.jteam.bonb.model.ModelProductFull;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -61,6 +63,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
     View mPageComment;
 
     public ModelProductFull thisProductFull;
+    public PropertiesListAdapter mPropertiesListAdapter;
     private SliderLayout mDemoSlider;
 
     RatingBar mProductRatingView;
@@ -275,6 +278,10 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
         } else{
 
         }
+
+        if (product.properties != null && product.properties.size()>0)
+            showProperties(product.properties);
+
         if (product.comments != null && product.comments.size()>0) {
             view_comment_list.setAdapter(new CommentListAdapter(this, product.comments, true));
 
@@ -735,4 +742,82 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
             }
         });
     }
+
+
+    //Выводит список контактов на форму
+    public void showProperties(List<ModelProperty> properties) {
+        ListView view_contacts_list = mPageInfo.findViewById(R.id.properties_list);
+        mPropertiesListAdapter = new ProductActivity.PropertiesListAdapter(this, properties);
+        view_contacts_list.setAdapter(mPropertiesListAdapter);
+
+    }
+    private class PropertiesListAdapter extends BaseAdapter {
+        Context ctx;
+        LayoutInflater lInflater;
+        List<ModelProperty> objects;
+
+        PropertiesListAdapter(Context context, List<ModelProperty> listData) {
+            this.ctx = context;
+            this.objects = listData;
+            this.lInflater = (LayoutInflater) ctx
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        // кол-во элементов
+        @Override
+        public int getCount() {
+            return objects.size();
+        }
+
+        // элемент по позиции
+        @Override
+        public Object getItem(int position) {
+            return objects.get(position);
+        }
+
+        // id по позиции
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        // пункт списка
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // используем созданные, но не используемые view
+            View view = convertView;
+            if (view == null) {
+                view = lInflater.inflate(R.layout.fragment_list_contact, parent, false);
+            }
+
+            ModelProperty obj = getObj(position);
+
+            TextView view_contactName = view.findViewById(R.id.contactName);
+            //TextView view_contactValue = view.findViewById(R.id.contactValue);
+            EditText view_editValue = view.findViewById(R.id.editValue);
+            ImageView view_imageLogo = view.findViewById(R.id.imageLogo);
+
+            //view_contactValue.setText(obj.value);
+            view_contactName.setText(obj.name);
+
+            view_editValue.setText(obj.value);
+
+            if (obj.logo_link != null) {
+                Picasso.with(ctx)
+                        .load(Constants.SERVICE_GET_IMAGE + obj.logo_link)
+                        .placeholder(R.drawable.ic_action_noimage)
+                        .error(R.drawable.ic_action_noimage)
+                        .into(view_imageLogo);
+            }
+
+            return view;
+        }
+
+        ModelProperty getObj(int position) {
+            return ((ModelProperty) getItem(position));
+        }
+
+    }
+
+
 }
