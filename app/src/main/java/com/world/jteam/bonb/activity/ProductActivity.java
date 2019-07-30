@@ -744,7 +744,7 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
     }
 
 
-    //Выводит список контактов на форму
+    //Выводит список свойств на форму
     public void showProperties(List<ModelProperty> properties) {
         ListView view_contacts_list = mPageInfo.findViewById(R.id.properties_list);
         mPropertiesListAdapter = new ProductActivity.PropertiesListAdapter(this, properties);
@@ -787,20 +787,17 @@ public class ProductActivity extends AppCompatActivity implements BaseSliderView
             // используем созданные, но не используемые view
             View view = convertView;
             if (view == null) {
-                view = lInflater.inflate(R.layout.fragment_list_contact, parent, false);
+                view = lInflater.inflate(R.layout.fragment_list_property, parent, false);
             }
 
             ModelProperty obj = getObj(position);
 
-            TextView view_contactName = view.findViewById(R.id.contactName);
-            //TextView view_contactValue = view.findViewById(R.id.contactValue);
-            EditText view_editValue = view.findViewById(R.id.editValue);
+            TextView view_name = view.findViewById(R.id.propertyName);
+            TextView view_value = view.findViewById(R.id.propertyValue);
             ImageView view_imageLogo = view.findViewById(R.id.imageLogo);
 
-            //view_contactValue.setText(obj.value);
-            view_contactName.setText(obj.name);
-
-            view_editValue.setText(obj.value);
+            view_name.setText(obj.name);
+            view_value.setText(obj.value);
 
             if (obj.logo_link != null) {
                 Picasso.with(ctx)

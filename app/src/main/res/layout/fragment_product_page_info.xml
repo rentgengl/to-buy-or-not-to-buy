@@ -12,6 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
         android:visibility="visible">
 
         <TextView
@@ -37,11 +39,11 @@
             android:text="@string/product_description_head"
             android:textSize="18sp"
             android:textStyle="bold" />
+
         <com.world.jteam.bonb.activity.NonScrollListView
             android:id="@+id/properties_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            ></com.world.jteam.bonb.activity.NonScrollListView>
+            android:layout_height="wrap_content"></com.world.jteam.bonb.activity.NonScrollListView>
     </LinearLayout>
 
 </ScrollView>
