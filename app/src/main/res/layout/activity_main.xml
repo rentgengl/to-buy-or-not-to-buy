@@ -9,11 +9,14 @@
     tools:context="com.world.jteam.bonb.activity.MainActivity">
 
 
-
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></android.support.v4.view.ViewPager>
+        android:layout_height="match_parent">
+
+    </android.support.v4.view.ViewPager>
+
+
 
     <ListView
         android:id="@+id/navdrawer"
@@ -25,6 +28,5 @@
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
         android:drawSelectorOnTop="false"></ListView>
-
 
 </android.support.v4.widget.DrawerLayout>

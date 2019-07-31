@@ -697,7 +697,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         pager.setAdapter(pagerAdapter);
 
-
     }
 
     public static class MarketPageFragment extends Fragment {
@@ -767,7 +766,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case 0:
                     return "Товары";
                 case 1:
-                    return "Контактные данные";
+                    return "Контакты";
                 default:
                     return "Другое";
             }
