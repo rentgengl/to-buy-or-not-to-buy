@@ -14,6 +14,37 @@
         app:rightEdgeSwipeOffset="0dp">
 
         <LinearLayout
+            android:id="@+id/swipeLeft"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/darker_gray"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0"
+                android:padding="5dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_del_sl" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="@string/shopping_del_head"
+                android:textColor="#E71408"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/swipeRight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -38,14 +69,14 @@
                     android:orientation="horizontal">
 
                     <ImageButton
-                        android:id="@+id/markSLButton"
+                        android:id="@+id/loupeSLButton"
                         android:layout_width="55dp"
                         android:layout_height="55dp"
                         android:background="?android:selectableItemBackground"
                         android:padding="5dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_mark_sl"
-                        app:srcCompat="@drawable/ic_mark_sl"
+                        android:src="@drawable/ic_loupe"
+                        app:srcCompat="@drawable/ic_loupe"
                         tools:ignore="VectorDrawableCompat" />
 
                     <ImageButton
@@ -107,6 +138,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:background="@android:color/white"
             android:orientation="horizontal">
 
             <ImageView
