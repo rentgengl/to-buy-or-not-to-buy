@@ -25,6 +25,7 @@ import com.world.jteam.bonb.server.SingletonRetrofit;
 import com.world.jteam.bonb.activity.ProductActivity;
 import com.world.jteam.bonb.model.ModelProduct;
 import com.world.jteam.bonb.model.ModelProductFull;
+import com.world.jteam.bonb.swipe.SimpleSwipeListener;
 import com.world.jteam.bonb.swipe.SwipeLayout;
 
 import retrofit2.Call;
@@ -32,28 +33,32 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener{
-    ProductListAdapterStatic mAdapterStatic;
-    ModelSearchProductMethod mSearchMethod;
-    ModelProduct mProduct;
+    private Context mContext;
 
-    TextView view_midPrice;//Средняя цена
-    TextView view_productName;//Наименование
-    int mProductNameDefaultPaintFlags;
-    TextView view_lowPrice;//Разброс цен
-    TextView view_textRating;//Количество отзывов
-    RatingBar view_productRating;//Рейтинг
-    ImageView picture; // Картинка продукта
-    ImageView view_saleImage; //Картинка sale
-    TextView view_productCount; //Количество продукта
-    SwipeLayout view_swipeLayout; //Лайаут свайпа
-    ImageButton view_markSLButton; //Кнопка отметки товара в списке покупок
-    ImageButton view_addSLButton; //Кнопка добавления товара в список покупок
-    ImageButton view_delSLButton; //Кнопка удаления товара из списка покупок
-    ImageButton view_plusSLButton; //Кнопка добавления 1 количества в списке покупок
-    ImageButton view_minusSLButton; //Кнопка удаления 1 количества в списке покупок
+    private ProductListAdapterStatic mAdapterStatic;
+    private ModelSearchProductMethod mSearchMethod;
+    private ModelProduct mProduct;
+
+    private TextView view_midPrice;//Средняя цена
+    private TextView view_productName;//Наименование
+    private int mProductNameDefaultPaintFlags;
+    private TextView view_lowPrice;//Разброс цен
+    private TextView view_textRating;//Количество отзывов
+    private RatingBar view_productRating;//Рейтинг
+    private ImageView view_picture; // Картинка продукта
+    private ImageView view_saleImage; //Картинка sale
+    private TextView view_productCount; //Количество продукта
+    private SwipeLayout view_swipeLayout; //Лайаут свайпа
+    private ImageButton view_loupeSLButton; //Кнопка отметки товара в списке покупок
+    private ImageButton view_addSLButton; //Кнопка добавления товара в список покупок
+    private ImageButton view_delSLButton; //Кнопка удаления товара из списка покупок
+    private ImageButton view_plusSLButton; //Кнопка добавления 1 количества в списке покупок
+    private ImageButton view_minusSLButton; //Кнопка удаления 1 количества в списке покупок
 
     private ProductViewHolder(ProductListAdapterStatic adapter, View itemView,ModelSearchProductMethod searchMethod) {
         super(itemView);
+
+        mContext=itemView.getContext();
 
         mAdapterStatic=adapter;
         mSearchMethod=searchMethod;
@@ -64,11 +69,18 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
         view_lowPrice = itemView.findViewById(R.id.lowPrice);//Разброс цен
         view_textRating = itemView.findViewById(R.id.textRating);//Количество отзывов
         view_productRating = itemView.findViewById(R.id.productRating);//Рейтинг
-        picture = itemView.findViewById(R.id.productListImage);
+        view_picture = itemView.findViewById(R.id.productListImage);
         view_saleImage = itemView.findViewById(R.id.saleListImage);
         view_productCount=itemView.findViewById(R.id.productCount);
+
         view_swipeLayout=itemView.findViewById(R.id.swipeLayout);
-        view_markSLButton=itemView.findViewById(R.id.markSLButton);
+        view_swipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
+        view_swipeLayout.addDrag(SwipeLayout.DragEdge.Left, view_swipeLayout.findViewById(R.id.swipeLeft));
+        view_swipeLayout.addDrag(SwipeLayout.DragEdge.Right,view_swipeLayout.findViewById(R.id.swipeRight));
+        view_swipeLayout.setLeftSwipeEnabled(mSearchMethod.searchGroup == Constants.SHOPPINGLIST_GROUP_ID);
+        view_swipeLayout.setWillOpenPercentAfterClose(0.5f);
+
+        view_loupeSLButton=itemView.findViewById(R.id.loupeSLButton);
         view_addSLButton=itemView.findViewById(R.id.addSLButton);
         view_delSLButton=itemView.findViewById(R.id.delSLButton);
         view_plusSLButton=itemView.findViewById(R.id.plusSLButton);
@@ -76,11 +88,13 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
 
         //OnClickListener
         view_productName.setOnClickListener(this);
-        view_markSLButton.setOnClickListener(this);
+        view_picture.setOnClickListener(this);
+        view_loupeSLButton.setOnClickListener(this);
         view_addSLButton.setOnClickListener(this);
         view_delSLButton.setOnClickListener(this);
         view_plusSLButton.setOnClickListener(this);
         view_minusSLButton.setOnClickListener(this);
+        view_swipeLayout.addSwipeListener(new SwipeProductListener());
 
     }
 
@@ -104,19 +118,17 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
         if (p != null) {
             mProduct=p;
 
-            view_swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
-
             bindView();
 
             if (p.imageSmall_link == null) {
-                picture.setImageResource(R.drawable.ic_action_noimage);
+                view_picture.setImageResource(R.drawable.ic_action_noimage);
             } else {
 
-                Picasso.with(picture.getContext())
+                Picasso.with(view_picture.getContext())
                         .load(Constants.SERVICE_GET_IMAGE + p.imageSmall_link)
                         .placeholder(R.drawable.ic_action_noimage)
                         .error(R.drawable.ic_action_noimage)
-                        .into(picture);
+                        .into(view_picture);
 
             }
         } else {
@@ -125,19 +137,20 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
     }
 
     private void bindView(){
+        view_loupeSLButton.setVisibility(View.GONE);
         view_plusSLButton.setVisibility(View.GONE);
         view_minusSLButton.setVisibility(View.GONE);
-        view_markSLButton.setVisibility(View.GONE);
         view_addSLButton.setVisibility(View.VISIBLE);
         view_delSLButton.setClickable(mProduct.inShoppingList==1 ? true : false);
         view_delSLButton.setImageResource(mProduct.inShoppingList==1 ? R.drawable.ic_del_sl : R.drawable.ic_del_sl_inactive);
 
         if (mSearchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID) {
+            view_addSLButton.setVisibility(View.GONE);
+            view_loupeSLButton.setVisibility(View.VISIBLE);
+
             if (mProduct.purchased==0) {
                 view_plusSLButton.setVisibility(View.VISIBLE);
                 view_minusSLButton.setVisibility(View.VISIBLE);
-                view_markSLButton.setVisibility(View.VISIBLE);
-                view_addSLButton.setVisibility(View.GONE);
 
                 view_productName.setPaintFlags(mProductNameDefaultPaintFlags);
             } else {
@@ -162,187 +175,219 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
 
     @Override
     public void onClick(final View v) {
+        int vID=v.getId();
+
+        if (vID==R.id.productName || vID==R.id.productListImage) {
+            if (mSearchMethod.searchGroup == Constants.SHOPPINGLIST_GROUP_ID) { //Клик по позиции
+                if (mProduct.purchased == 0)
+                    markShoppingList();
+                else
+                    addShoppingList();
+            } else
+                openProduct();
+
+        } else if (vID==R.id.loupeSLButton) {
+            openProduct();
+
+        } else if (vID==R.id.plusSLButton) { //Кнопка Плюс
+            plusShoppingList();
+
+        } else if (vID==R.id.minusSLButton) { //Кнопка Минус
+            minusShoppingList();
+
+        } else if (vID==R.id.addSLButton) { //Кнопка добавить
+            addShoppingList();
+
+        } else if (vID==R.id.delSLButton) { //Кнопка удалить
+            delShoppingList();
+        }
+    }
+
+    private void openProduct(){
+        if (mProduct.id>=0) {
+            DataApi dataApi = SingletonRetrofit.getInstance().getDataApi();
+            Call<ModelProductFull> serviceCallProduct = dataApi.getProductFull(
+                    mProduct.id,
+                    "",
+                    AppInstance.getUser().id,
+                    AppInstance.getRadiusArea(),
+                    AppInstance.getGeoPosition().latitude,
+                    AppInstance.getGeoPosition().longitude);
+            SingletonRetrofit.enqueue(serviceCallProduct, new Callback<ModelProductFull>() {
+                @Override
+                public void onResponse(Call<ModelProductFull> call, Response<ModelProductFull> response) {
+                    ModelProductFull ss = response.body();
+                    //Context mContext = AppInstance.getAppContext();
+                    Intent intent = new Intent(mContext, ProductActivity.class);
+                    intent.putExtra("object", ss);
+                    mContext.startActivity(intent);
+
+                }
+
+                @Override
+                public void onFailure(Call<ModelProductFull> call, Throwable t) {
+                    AppInstance.errorLog("HTTP getProductFull", t.toString());
+                }
+            });
+        }
+    }
+
+    private void plusShoppingList(){
         DataApi dataApi = SingletonRetrofit.getInstance().getDataApi();
-        Call<Integer> serviceCallInt;
-        switch(v.getId()) {
-            case R.id.productName: //Имя продукта
-                if (mProduct.id>=0) {
-                    Call<ModelProductFull> serviceCallProduct = dataApi.getProductFull(
-                            (int) v.getTag(),
-                            "",
-                            AppInstance.getUser().id,
-                            AppInstance.getRadiusArea(),
-                            AppInstance.getGeoPosition().latitude,
-                            AppInstance.getGeoPosition().longitude);
-                    SingletonRetrofit.enqueue(serviceCallProduct, new Callback<ModelProductFull>() {
-                        @Override
-                        public void onResponse(Call<ModelProductFull> call, Response<ModelProductFull> response) {
-                            Context mContext = v.getContext();
-                            ModelProductFull ss = response.body();
-                            //Context mContext = AppInstance.getAppContext();
-                            Intent intent = new Intent(mContext, ProductActivity.class);
-                            intent.putExtra("object", ss);
-                            mContext.startActivity(intent);
+        Call<Integer> serviceCallInt = dataApi.setShoppingListCount(
+                AppInstance.getUser().id,
+                mProduct.id,
+                mProduct.name,
+                mProduct.shoppingListCount+1
+        );
+        SingletonRetrofit.enqueue(serviceCallInt,new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                mProduct.shoppingListCount=mProduct.shoppingListCount+1;
+                bindView();
 
-                        }
+                Toast.makeText(mContext, "+1 : "+mProduct.name,Toast.LENGTH_SHORT).show();
+            }
 
-                        @Override
-                        public void onFailure(Call<ModelProductFull> call, Throwable t) {
-                            AppInstance.errorLog("HTTP getProductFull", t.toString());
-                        }
-                    });
-                }
-                break;
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+                Toast.makeText(mContext, R.string.shopping_count_plus_error,Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
-            case R.id.plusSLButton: //Кнопка Плюс
-                serviceCallInt = dataApi.setShoppingListCount(
-                        AppInstance.getUser().id,
-                        mProduct.id,
-                        mProduct.name,
-                        mProduct.shoppingListCount+1
-                        );
-                SingletonRetrofit.enqueue(serviceCallInt,new Callback<Integer>() {
-                    @Override
-                    public void onResponse(Call<Integer> call, Response<Integer> response) {
-                        mProduct.shoppingListCount=mProduct.shoppingListCount+1;
-                        bindView();
+    private void minusShoppingList(){
+        if (mProduct.shoppingListCount>1) {
+            DataApi dataApi = SingletonRetrofit.getInstance().getDataApi();
+            Call<Integer> serviceCallInt = dataApi.setShoppingListCount(
+                    AppInstance.getUser().id,
+                    mProduct.id,
+                    mProduct.name,
+                    mProduct.shoppingListCount - 1
+            );
+            SingletonRetrofit.enqueue(serviceCallInt, new Callback<Integer>() {
+                @Override
+                public void onResponse(Call<Integer> call, Response<Integer> response) {
+                    mProduct.shoppingListCount = mProduct.shoppingListCount - 1;
+                    bindView();
 
-                        Toast.makeText(v.getContext(), "+1 : "+mProduct.name,Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onFailure(Call<Integer> call, Throwable t) {
-                        Toast.makeText(v.getContext(), R.string.shopping_count_plus_error,Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                break;
-
-            case R.id.minusSLButton: //Кнопка Минус
-                if (mProduct.shoppingListCount>1) {
-                    serviceCallInt = dataApi.setShoppingListCount(
-                            AppInstance.getUser().id,
-                            mProduct.id,
-                            mProduct.name,
-                            mProduct.shoppingListCount - 1
-                    );
-                    SingletonRetrofit.enqueue(serviceCallInt, new Callback<Integer>() {
-                        @Override
-                        public void onResponse(Call<Integer> call, Response<Integer> response) {
-                            mProduct.shoppingListCount = mProduct.shoppingListCount - 1;
-                            bindView();
-
-                            Toast.makeText(v.getContext(), "-1 : " + mProduct.name, Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onFailure(Call<Integer> call, Throwable t) {
-                            Toast.makeText(v.getContext(), R.string.shopping_count_minus_error, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    Toast.makeText(mContext, "-1 : " + mProduct.name, Toast.LENGTH_SHORT).show();
                 }
 
-                break;
+                @Override
+                public void onFailure(Call<Integer> call, Throwable t) {
+                    Toast.makeText(mContext, R.string.shopping_count_minus_error, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
 
-            case R.id.addSLButton: //Кнопка добавить
-                serviceCallInt = dataApi.addShoppingListProduct(
-                        AppInstance.getUser().id,
-                        mProduct.id,
-                        mProduct.name
-                );
-                SingletonRetrofit.enqueue(serviceCallInt, new Callback<Integer>() {
-                    @Override
-                    public void onResponse(Call<Integer> call, Response<Integer> response) {
-                        if (mSearchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID) {
-                            mAdapterStatic.moveToPurchasedBorder(mProduct);
-                        }
+    private void addShoppingList(){
+        DataApi dataApi = SingletonRetrofit.getInstance().getDataApi();
+        Call<Integer> serviceCallInt = dataApi.addShoppingListProduct(
+                AppInstance.getUser().id,
+                mProduct.id,
+                mProduct.name
+        );
+        SingletonRetrofit.enqueue(serviceCallInt, new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                if (mSearchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID) {
+                    mAdapterStatic.moveToPurchasedBorder(mProduct);
+                }
 
-                        mProduct.inShoppingList=1;
-                        if (mProduct.purchased==0) {
-                            mProduct.shoppingListCount = mProduct.shoppingListCount + 1;
-                        }
-                        mProduct.purchased=0;
-                        ModelGroup slg = AppInstance.getShoppingListGroup();
-                        if (slg.count!=null)
-                            slg.count = slg.count + 1;
+                mProduct.inShoppingList=1;
+                if (mProduct.purchased==0) {
+                    mProduct.shoppingListCount = mProduct.shoppingListCount + 1;
+                }
+                mProduct.purchased=0;
+                ModelGroup slg = AppInstance.getShoppingListGroup();
+                if (slg.count!=null)
+                    slg.count = slg.count + 1;
 
 
+                bindView();
+
+                view_swipeLayout.close();
+
+                Toast.makeText(mContext, "+1 : "+mProduct.name,Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+                Toast.makeText(mContext, R.string.shopping_add_error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void delShoppingList(){
+        DataApi dataApi = SingletonRetrofit.getInstance().getDataApi();
+        if (mProduct.inShoppingList==1){
+            Call<Integer> serviceCallInt = dataApi.delShoppingListProduct(
+                    AppInstance.getUser().id,
+                    mProduct.id,
+                    mProduct.name
+            );
+            SingletonRetrofit.enqueue(serviceCallInt, new Callback<Integer>() {
+                @Override
+                public void onResponse(Call<Integer> call, Response<Integer> response) {
+                    mProduct.inShoppingList=0;
+                    mProduct.shoppingListCount=0;
+                    ModelGroup slg = AppInstance.getShoppingListGroup();
+                    if (slg.count!=null)
+                        slg.count = slg.count - 1;
+                    if (mSearchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID) {
+                        mAdapterStatic.removeItem(mProduct);
+                    } else {
                         bindView();
-
                         view_swipeLayout.close();
-
-                        Toast.makeText(v.getContext(), "+1 : "+mProduct.name,Toast.LENGTH_SHORT).show();
                     }
 
-                    @Override
-                    public void onFailure(Call<Integer> call, Throwable t) {
-                        Toast.makeText(v.getContext(), R.string.shopping_add_error, Toast.LENGTH_SHORT).show();
-                    }
-                });
-                break;
-
-            case R.id.delSLButton: //Кнопка удалить
-                if (mProduct.inShoppingList==1){
-                    serviceCallInt = dataApi.delShoppingListProduct(
-                            AppInstance.getUser().id,
-                            mProduct.id,
-                            mProduct.name
-                    );
-                    SingletonRetrofit.enqueue(serviceCallInt, new Callback<Integer>() {
-                        @Override
-                        public void onResponse(Call<Integer> call, Response<Integer> response) {
-                            mProduct.inShoppingList=0;
-                            mProduct.shoppingListCount=0;
-                            ModelGroup slg = AppInstance.getShoppingListGroup();
-                            if (slg.count!=null)
-                                slg.count = slg.count - 1;
-                            if (mSearchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID) {
-                                mAdapterStatic.removeItem(mProduct);
-                            } else {
-                                bindView();
-                                view_swipeLayout.close();
-                            }
-
-                            Context context = v.getContext();
-                            Toast.makeText(context, context.getText(R.string.shopping_del) + " : " + mProduct.name, Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onFailure(Call<Integer> call, Throwable t) {
-                            Toast.makeText(v.getContext(), R.string.shopping_del_error, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    Toast.makeText(mContext, mContext.getText(R.string.shopping_del) + " : " + mProduct.name, Toast.LENGTH_SHORT).show();
                 }
 
-                break;
+                @Override
+                public void onFailure(Call<Integer> call, Throwable t) {
+                    Toast.makeText(mContext, R.string.shopping_del_error, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
 
-            case R.id.markSLButton: //Кнопка отметить
-                serviceCallInt = dataApi.markShoppingListProduct(
-                        AppInstance.getUser().id,
-                        mProduct.id,
-                        mProduct.name
-                );
-                SingletonRetrofit.enqueue(serviceCallInt, new Callback<Integer>() {
-                    @Override
-                    public void onResponse(Call<Integer> call, Response<Integer> response) {
-                        mAdapterStatic.moveToPurchasedBorder(mProduct);
-                        mProduct.purchased=1;
-                        ModelGroup slg = AppInstance.getShoppingListGroup();
-                        slg.count=slg.count-1;
-                        bindView();
+    private void markShoppingList(){
+        DataApi dataApi = SingletonRetrofit.getInstance().getDataApi();
+        Call<Integer> serviceCallInt = dataApi.markShoppingListProduct(
+                AppInstance.getUser().id,
+                mProduct.id,
+                mProduct.name
+        );
+        SingletonRetrofit.enqueue(serviceCallInt, new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                mAdapterStatic.moveToPurchasedBorder(mProduct);
+                mProduct.purchased=1;
+                ModelGroup slg = AppInstance.getShoppingListGroup();
+                slg.count=slg.count-1;
+                bindView();
 
-                        view_swipeLayout.close();
+                view_swipeLayout.close();
 
-                        Toast.makeText(v.getContext(), mProduct.name, Toast.LENGTH_SHORT).show();
-                    }
+                Toast.makeText(mContext, mProduct.name, Toast.LENGTH_SHORT).show();
+            }
 
-                    @Override
-                    public void onFailure(Call<Integer> call, Throwable t) {
-                        Toast.makeText(v.getContext(), R.string.shopping_mark_error, Toast.LENGTH_SHORT).show();
-                    }
-                });
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+                Toast.makeText(mContext, R.string.shopping_mark_error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
-                break;
+    private class SwipeProductListener extends SimpleSwipeListener {
+        @Override
+        public void onOpen(SwipeLayout layout) {
+            super.onOpen(layout);
+            if (layout.getDragEdge()==SwipeLayout.DragEdge.Left)
+                delShoppingList();
         }
     }
 }
