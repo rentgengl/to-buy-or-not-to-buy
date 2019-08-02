@@ -1,6 +1,7 @@
 package com.world.jteam.bonb.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.arch.paging.PagedList;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -29,6 +31,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -90,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public String market_logo;
     public View page_products;
     public View page_contacts;
+    public ImageButton nextPageButton;
 
 
     //Категории
@@ -157,6 +162,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Инициализация списка категорий
         initGroupMenu();
 
+        //Управление видимостью кнопки переключения страниц
+        ImageButton nextPageButton = this.findViewById(R.id.nextPageButton);
+        nextPageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Integer item = pager.getCurrentItem();
+
+                ImageButton nextPageButton = mThis.findViewById(R.id.nextPageButton);
+
+                if(item==1){
+                    item=0;
+                    nextPageButton.setRotation(-90);
+                }else{
+                    item=1;
+
+                    nextPageButton.setRotation(90);
+                }
+                pager.setCurrentItem(item, true);
+            }
+        });
         //Инициализация страниц
         initPager();
 
@@ -695,7 +720,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ((MainActivity.MarketFragmentPagerAdapter) pagerAdapter).page1 = page_products;
         ((MainActivity.MarketFragmentPagerAdapter) pagerAdapter).page2 = page_contacts;
 
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                if(i==0){
+                    nextPageButton.setRotation(-90);
+                }else{
+                    nextPageButton.setRotation(90);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
+
         pager.setAdapter(pagerAdapter);
+
+        //Управление видимостью кнопки переключения страниц
+        nextPageButton = this.findViewById(R.id.nextPageButton);
+        if(market_id==0){
+            nextPageButton.setVisibility(View.INVISIBLE);
+        }else{
+            nextPageButton.setVisibility(View.VISIBLE);
+        }
 
     }
 
