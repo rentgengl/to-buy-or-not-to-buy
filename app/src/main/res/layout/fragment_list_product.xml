@@ -17,7 +17,7 @@
             android:id="@+id/swipeLeft"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/darker_gray"
+            android:background="@android:color/holo_red_light"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -30,7 +30,7 @@
                 android:layout_weight="0"
                 android:padding="5dp"
                 android:scaleType="fitCenter"
-                app:srcCompat="@drawable/ic_del_sl" />
+                app:srcCompat="@drawable/ic_trash_w" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -39,7 +39,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:text="@string/shopping_del_head"
-                android:textColor="#E71408"
+                android:textColor="@android:color/white"
                 android:textSize="18sp" />
         </LinearLayout>
 
@@ -73,7 +73,7 @@
                         android:layout_width="55dp"
                         android:layout_height="55dp"
                         android:background="?android:selectableItemBackground"
-                        android:padding="5dp"
+                        android:padding="7dp"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_loupe"
                         app:srcCompat="@drawable/ic_loupe"

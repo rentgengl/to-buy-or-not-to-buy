@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -24,19 +25,30 @@ import com.world.jteam.bonb.media.CameraManager;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 
 public class BarcodeActivity extends AppCompatActivity {
     private static final int RC_HANDLE_CAMERA_PERM = 1;
-    BarcodeDetector mBarcodeDetector;
-    CameraSource mCameraSource;
-    SurfaceView cameraView;
+    private BarcodeDetector mBarcodeDetector;
+    private CameraSource mCameraSource;
+    private SurfaceView mCameraView;
+    private boolean mCloseAfterRead =true;
+    private BarcodeManager.OnAfterReadListener mOnAfterReadListener;
+    private String mLastBarcode;
+    private Date mLastDataReadBarcode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barcode);
-        cameraView = (SurfaceView) findViewById(R.id.camera_view);
+
+        //Обработаем вхождения
+        Intent intent = getIntent();
+        mCloseAfterRead=intent.getBooleanExtra("CloseAfterRead",mCloseAfterRead);
+        mOnAfterReadListener=(BarcodeManager.OnAfterReadListener) intent.getSerializableExtra("afterReadOK");
+
+        mCameraView = (SurfaceView) findViewById(R.id.camera_view);
 
         mBarcodeDetector = BarcodeManager.getBarcodeDetector(this,Barcode.EAN_13);
         if (!mBarcodeDetector.isOperational()) {
@@ -62,7 +74,7 @@ public class BarcodeActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        if (cameraView.getHolder().getSurface().isValid())
+        if (mCameraView.getHolder().getSurface().isValid())
             startCameraSource();
 
     }
@@ -118,16 +130,24 @@ public class BarcodeActivity extends AppCompatActivity {
             barcodes.add(barcode);
 
             if (Collections.frequency(barcodes,barcode)>=7){
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (Character.toString(barcode.charAt(0)).equals("2"))
-                            finishWithResult(RESULT_CANCELED,
-                                    getString(R.string.service_barcode)+": "+barcode);
-                        else
-                            finishWithResult(RESULT_OK,barcode);
-                    }
-                });
+                barcodes.clear();
+                Date dataRead=new Date();
+
+                if (mLastBarcode==null || !mLastBarcode.equals(barcode) || (dataRead.getTime()-mLastDataReadBarcode.getTime())/1000>=5) { //Затычка от мультизацикливания одно и того же штрихкода
+                    mLastBarcode=barcode;
+                    mLastDataReadBarcode=dataRead;
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (Character.toString(barcode.charAt(0)).equals("2"))
+                                readProcessing(RESULT_CANCELED,
+                                        getString(R.string.service_barcode) + ": " + barcode);
+                            else
+                                readProcessing(RESULT_OK, barcode);
+                        }
+                    });
+                }
             }
 
         }
@@ -136,7 +156,7 @@ public class BarcodeActivity extends AppCompatActivity {
     private void createSource(){
         mBarcodeDetector.setProcessor(new BarcodeDetectorProcessor());
 
-        cameraView.getHolder().addCallback(new SurfaceHolderCallback());
+        mCameraView.getHolder().addCallback(new SurfaceHolderCallback());
 
         Camera camera=Camera.open();
         Camera.Size cameraSize=camera.getParameters().getPreviewSize();
@@ -159,7 +179,7 @@ public class BarcodeActivity extends AppCompatActivity {
                 && grantResults.length != 0){
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 createSource();
-                if (cameraView.getHolder().getSurface().isValid())
+                if (mCameraView.getHolder().getSurface().isValid())
                     startCameraSource();
             } else {
                 finishWithResult(RESULT_CANCELED, getString(R.string.not_camera_permission));
@@ -171,10 +191,30 @@ public class BarcodeActivity extends AppCompatActivity {
     @SuppressWarnings("MissingPermission")
     private void startCameraSource(){
         try {
-            mCameraSource.start(cameraView.getHolder());
+            mCameraSource.start(mCameraView.getHolder());
         } catch (IOException e) {
             AppInstance.errorLog("Start camera", e.toString());
             finishWithResult(RESULT_CANCELED,getString(R.string.error_start_barcode_detector));
+        }
+    }
+
+    public void setCloseAfterRead(boolean closeAfterRead){
+        mCloseAfterRead=closeAfterRead;
+    }
+
+    public void setOnAfterReadListener(BarcodeManager.OnAfterReadListener onAfterReadListener){
+        mOnAfterReadListener=onAfterReadListener;
+    }
+
+    private void readProcessing(int resultCode, String barcode){
+        if (mCloseAfterRead){
+            finishWithResult(resultCode,barcode);
+        } else{
+            if (resultCode==RESULT_OK && mOnAfterReadListener!=null){
+                mOnAfterReadListener.onAfterReadOK(barcode);
+            } else {
+                Toast.makeText(this,barcode,Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

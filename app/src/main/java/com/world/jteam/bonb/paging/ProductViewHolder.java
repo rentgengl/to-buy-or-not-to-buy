@@ -142,9 +142,9 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
         view_minusSLButton.setVisibility(View.GONE);
         view_addSLButton.setVisibility(View.VISIBLE);
         view_delSLButton.setClickable(mProduct.inShoppingList==1 ? true : false);
-        view_delSLButton.setImageResource(mProduct.inShoppingList==1 ? R.drawable.ic_del_sl : R.drawable.ic_del_sl_inactive);
 
         if (mSearchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID) {
+            view_delSLButton.setImageResource(R.drawable.ic_trash_b);
             view_addSLButton.setVisibility(View.GONE);
             view_loupeSLButton.setVisibility(View.VISIBLE);
 
@@ -159,6 +159,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
 
             view_productCount.setText(""+mProduct.shoppingListCount);
         } else {
+            view_delSLButton.setImageResource(mProduct.inShoppingList==1 ? R.drawable.ic_del_sl : R.drawable.ic_del_sl_inactive);
             view_productCount.setText("");
         }
 
@@ -334,7 +335,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
                     mProduct.inShoppingList=0;
                     mProduct.shoppingListCount=0;
                     ModelGroup slg = AppInstance.getShoppingListGroup();
-                    if (slg.count!=null)
+                    if (slg.count!=null && mProduct.purchased==0)
                         slg.count = slg.count - 1;
                     if (mSearchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID) {
                         mAdapterStatic.removeItem(mProduct);

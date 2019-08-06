@@ -52,6 +52,7 @@ import com.world.jteam.bonb.geo.GeoManager;
 import com.world.jteam.bonb.ldrawer.ActionBarDrawerToggle;
 import com.world.jteam.bonb.ldrawer.DrawerArrowDrawable;
 import com.world.jteam.bonb.Constants;
+import com.world.jteam.bonb.media.BarcodeManager;
 import com.world.jteam.bonb.model.ModelContact;
 import com.world.jteam.bonb.model.ModelMarket;
 import com.world.jteam.bonb.model.ModelSearchResult;
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Идентификатор результата сканирования ШК
     private static final int BARCODE_REQUEST = 1;
+    private static final int BARCODE_SL_REQUEST = 4; //Для списка покупок
     //Режимы поиска по наименованию или группе
     public ModelSearchProductMethod mSearchMethod;
 
@@ -234,6 +236,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 AppInstance.setAutoGeoPosition(false);
             }
         }
+
+        //Управление списком покупок
+        ImageButton addBarcodeSLButton = page_products.findViewById(R.id.addBarcodeSLButtonPanel);
+        addBarcodeSLButton.setOnClickListener(this);
+        ImageButton addSLButton = page_products.findViewById(R.id.addSLButtonPanel);
+        addSLButton.setOnClickListener(this);
     }
 
     @Override
@@ -283,6 +291,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         //Ошибка сканирования ШК
                     }
                 }
+                break;
+            case BARCODE_SL_REQUEST:
+                pagingStart(); //Обновляем список покупок при любом раскладе
                 break;
             case SIGN_IN_SHOPPING_REQUEST:
                 //Обработчик авторизации
@@ -540,10 +551,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.setHasFixedSize(true);
 
         if (mSearchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID){
+            page_products.findViewById(R.id.product_search_panel).setVisibility(View.GONE);
+            page_products.findViewById(R.id.sl_add_panel).setVisibility(View.VISIBLE);
+
             mAdapterStatic=new ProductListAdapterStatic(R.id.swipeLayout, mSearchMethod);
             mAdapter=null;
             recyclerView.setAdapter(mAdapterStatic);
         } else {
+            page_products.findViewById(R.id.product_search_panel).setVisibility(View.VISIBLE);
+            page_products.findViewById(R.id.sl_add_panel).setVisibility(View.GONE);
+
             mAdapter = new ProductListAdapter(R.id.swipeLayout, mSearchMethod);
             mAdapterStatic=null;
             recyclerView.setAdapter(mAdapter);
@@ -910,11 +927,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClick(View v) {
+        int vID=v.getId();
 
-        if (v.getId() == R.id.search_panel_button) {
+        if (vID == R.id.search_panel_button) {
             //Получить ШК
             Intent barcodeIntent = new Intent(this, BarcodeActivity.class);
             startActivityForResult(barcodeIntent, BARCODE_REQUEST);
+        } else if (vID==R.id.addBarcodeSLButtonPanel) {
+            Intent barcodeIntent = new Intent(this, BarcodeActivity.class);
+            barcodeIntent.putExtra("CloseAfterRead",false);
+            barcodeIntent.putExtra("afterReadOK", new BarcodeReadListener());
+            startActivityForResult(barcodeIntent,BARCODE_SL_REQUEST);
+        } else if (vID==R.id.addSLButtonPanel) {
 
         } else {
             //Клик по группе
@@ -1035,4 +1059,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //endregion
+
+    //region Список покупок
+    private static class BarcodeReadListener implements BarcodeManager.OnAfterReadListener{
+        @Override
+        public void onAfterReadOK(String barcode) {
+            DataApi dataApi = SingletonRetrofit.getInstance().getDataApi();
+            Call<String> serviceCall = dataApi.addShoppingListProductEAN(
+                    AppInstance.getUser().id,
+                    barcode
+            );
+            SingletonRetrofit.enqueue(serviceCall, new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    String productName = response.body();
+                    if (productName!="")
+                        Toast.makeText(AppInstance.getAppContext(), "+1 : "+productName,Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(AppInstance.getAppContext(),AppInstance.getAppContext().getString(R.string.barcode_not_find),Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Toast.makeText(AppInstance.getAppContext(), R.string.shopping_add_error, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+    //endregion
+
 }

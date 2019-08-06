@@ -110,6 +110,12 @@ public interface DataApi {
     );
 
     @FormUrlEncoded
+    @POST("ShoppingList_Create_Item_By_EAN.php")
+    Call<String> addShoppingListProductEAN(@Field("user_id") int user_id,
+                                           @Field("EAN") String EAN
+    );
+
+    @FormUrlEncoded
     @POST("ShoppingList_Update_Item.php")
     Call<Integer> markShoppingListProduct(@Field("user_id") int user_id,
                                          @Field("product_id") int product_id,
