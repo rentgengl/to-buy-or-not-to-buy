@@ -316,6 +316,11 @@ public class AppInstance extends Application {
         return sShoppingListGroup;
     }
 
+    public static void addShoppingListGroupCount(int add){
+        if (sShoppingListGroup.count!=null)
+            sShoppingListGroup.count=sShoppingListGroup.count+add;
+    }
+
     //Гео
     public static boolean isAutoGeoPosition() {
         return sAutoGeoPosition;

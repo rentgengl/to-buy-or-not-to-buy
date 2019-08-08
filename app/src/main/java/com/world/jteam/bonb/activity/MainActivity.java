@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.arch.paging.PagedList;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -19,6 +20,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -939,7 +942,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             barcodeIntent.putExtra("afterReadOK", new BarcodeReadListener());
             startActivityForResult(barcodeIntent,BARCODE_SL_REQUEST);
         } else if (vID==R.id.addSLButtonPanel) {
-
+            startAddShoppingList();
         } else {
             //Клик по группе
             //Подгрузка списка товаров
@@ -1085,6 +1088,73 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
         }
+    }
+
+    private void startAddShoppingList(){
+        // get prompts.xml view
+        LayoutInflater li = LayoutInflater.from(this);
+        View addSLView = li.inflate(R.layout.activity_dialog_add_shopping_list, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(addSLView);
+
+        final EditText productNameSLView = addSLView.findViewById(R.id.productNameSL);
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                final String productNameSL=productNameSLView.getText().toString();
+                                if (productNameSL.equals(""))
+                                    return;
+
+                                DataApi dataApi = SingletonRetrofit.getInstance().getDataApi();
+                                Call<Integer> serviceCallInt = dataApi.addShoppingListProduct(
+                                        AppInstance.getUser().id,
+                                        Constants.SHOPPINGLIST_MANUAL_ID,
+                                        productNameSL
+                                );
+                                SingletonRetrofit.enqueue(serviceCallInt, new Callback<Integer>() {
+                                    @Override
+                                    public void onResponse(Call<Integer> call, Response<Integer> response) {
+                                        //pagingStart();
+                                        mAdapterStatic.addItem(productNameSL);
+
+                                        Toast.makeText(mThis, "+1 : "+productNameSL,Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Integer> call, Throwable t) {
+                                        Toast.makeText(mThis, R.string.shopping_add_error, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        })
+                .setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+
+        productNameSLView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                }
+            }
+        });
+
+        // show it
+        alertDialog.show();
     }
     //endregion
 

@@ -2,4 +2,5 @@
 <resources>
     <string name="default_user_name">Не авторизован</string>
     <string name="auth_error">Ошибка авторизации!</string>
+    <string name="user_not_auth">Пользователь не авторизован!</string>
 </resources>

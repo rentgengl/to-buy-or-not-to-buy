@@ -4,6 +4,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
+import com.world.jteam.bonb.AppInstance;
+import com.world.jteam.bonb.Constants;
+import com.world.jteam.bonb.model.ModelGroup;
 import com.world.jteam.bonb.model.ModelProduct;
 import com.world.jteam.bonb.model.ModelSearchProductMethod;
 import com.world.jteam.bonb.swipe.SwipeAdapterInterface;
@@ -79,6 +82,51 @@ public class ProductListAdapterStatic extends RecyclerView.Adapter<ProductViewHo
             mProductsList.remove(currentPos<toPos ? currentPos : currentPos+1);
 
             notifyItemMoved(currentPos,currentPos<toPos ? toPos-1 : toPos);
+        }
+    }
+
+    public void addItem(String productName){
+        ModelProduct currentProduct=null;
+        int addPos = -1;
+
+        for (int i=0;i<mProductsList.size();i++){
+            ModelProduct product=mProductsList.get(i);
+
+            if (currentProduct==null && product.name!=null && product.name.equals(productName))
+                currentProduct = product;
+
+            if (addPos<0 && product.purchased==1)
+                addPos=i;
+        }
+
+        if (currentProduct!=null){
+            //Есть продукт, увеличим количество
+            currentProduct.inShoppingList=1;
+
+            if (currentProduct.purchased==0) {
+                currentProduct.shoppingListCount = currentProduct.shoppingListCount + 1;
+
+            } else {
+                moveToPurchasedBorder(currentProduct);
+                currentProduct.purchased=0;
+
+                AppInstance.addShoppingListGroupCount(1);
+            }
+            notifyItemChanged(getPosition(currentProduct));
+
+        } else { //Новый
+            currentProduct=new ModelProduct();
+            currentProduct.name=productName;
+            currentProduct.id= Constants.SHOPPINGLIST_MANUAL_ID;
+            currentProduct.shoppingListCount=1;
+            currentProduct.inShoppingList=1;
+
+            if (addPos<0)
+                addPos=mProductsList.size();
+            mProductsList.add(addPos,currentProduct);
+            notifyItemInserted(addPos);
+
+            AppInstance.addShoppingListGroupCount(1);
         }
     }
 

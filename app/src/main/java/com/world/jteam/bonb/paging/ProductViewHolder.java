@@ -284,6 +284,11 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
     }
 
     private void addShoppingList(){
+        if (AppInstance.getUser().id<0){
+            Toast.makeText(mContext,mContext.getText(R.string.user_not_auth) ,Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         DataApi dataApi = SingletonRetrofit.getInstance().getDataApi();
         Call<Integer> serviceCallInt = dataApi.addShoppingListProduct(
                 AppInstance.getUser().id,
@@ -302,10 +307,8 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
                     mProduct.shoppingListCount = mProduct.shoppingListCount + 1;
                 }
                 mProduct.purchased=0;
-                ModelGroup slg = AppInstance.getShoppingListGroup();
-                if (slg.count!=null)
-                    slg.count = slg.count + 1;
 
+                AppInstance.addShoppingListGroupCount(1);
 
                 bindView();
 
@@ -334,15 +337,15 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
                 public void onResponse(Call<Integer> call, Response<Integer> response) {
                     mProduct.inShoppingList=0;
                     mProduct.shoppingListCount=0;
-                    ModelGroup slg = AppInstance.getShoppingListGroup();
-                    if (slg.count!=null && mProduct.purchased==0)
-                        slg.count = slg.count - 1;
+
+                    if (mProduct.purchased==0)
+                        AppInstance.addShoppingListGroupCount(-1);
                     if (mSearchMethod.searchGroup==Constants.SHOPPINGLIST_GROUP_ID) {
                         mAdapterStatic.removeItem(mProduct);
                     } else {
                         bindView();
-                        view_swipeLayout.close();
                     }
+                    view_swipeLayout.close();
 
                     Toast.makeText(mContext, mContext.getText(R.string.shopping_del) + " : " + mProduct.name, Toast.LENGTH_SHORT).show();
                 }
@@ -367,8 +370,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder  implements View.
             public void onResponse(Call<Integer> call, Response<Integer> response) {
                 mAdapterStatic.moveToPurchasedBorder(mProduct);
                 mProduct.purchased=1;
-                ModelGroup slg = AppInstance.getShoppingListGroup();
-                slg.count=slg.count-1;
+                AppInstance.addShoppingListGroupCount(-1);
                 bindView();
 
                 view_swipeLayout.close();
