@@ -1,12 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.world.jteam.bonb.activity.MainActivity">
+    tools:context="com.world.jteam.bonb.activity.SearchMarketActivity">
 
     <item
-        android:id="@+id/choose_markets"
-        android:icon="@drawable/ic_market"
-        android:title="markets"
+        android:id="@+id/choose_markets_setting"
+        android:icon="@drawable/ic_setting_w"
+        android:title="settings"
         app:showAsAction="always" />
-
 </menu>

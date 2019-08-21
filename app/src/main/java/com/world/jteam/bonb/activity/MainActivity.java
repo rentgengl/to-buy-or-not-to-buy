@@ -359,12 +359,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mDrawerLayout.openDrawer(mDrawerList);
                 }
                 break;
-            //Геопозиция
-            case R.id.choose_geo:
-                Intent geoIntent = new Intent(this, CoverageAreaActivity.class);
-                startActivity(geoIntent);
-                break;
 
+            //Маказины
             case R.id.choose_markets:
                 if(market_id!=0){
                     clearMarketId();

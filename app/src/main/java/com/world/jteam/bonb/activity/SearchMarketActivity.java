@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -13,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,6 +41,11 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
     private final AppCompatActivity mThis = this;
     private MarketListAdapter mMarketListAdapter;
 
+    //Геолокация
+    private int mCurrentRadiusArea=0;
+    private double mCurrentLat;
+    private double mCurrentLng;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -45,7 +53,7 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.activity_search_market);
 
         //Обработчик клика по кнопке выбоа на карте
-        Button searchButton = this.findViewById(R.id.search_market_panel_button);
+        ImageButton searchButton = this.findViewById(R.id.search_market_panel_button);
         searchButton.setOnClickListener(this);
 
         //Обработчик ввода текста в строку поиска
@@ -54,6 +62,51 @@ public class SearchMarketActivity extends AppCompatActivity implements View.OnCl
 
         searchByName("");
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        mCurrentRadiusArea=AppInstance.getRadiusArea();
+        mCurrentLat=AppInstance.getGeoPosition().latitude;
+        mCurrentLng=AppInstance.getGeoPosition().longitude;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //Обновление при изменении геолокации
+        if (        mCurrentRadiusArea!=0
+                &&
+                (mCurrentRadiusArea!=AppInstance.getRadiusArea()
+                        || mCurrentLat!=AppInstance.getGeoPosition().latitude
+                        || mCurrentLng!=AppInstance.getGeoPosition().longitude
+                )
+        ){
+            searchByName("");
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_markets, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            //Настройки
+            case R.id.choose_markets_setting:
+                Intent geoIntent = new Intent(this, CoverageAreaActivity.class);
+                startActivity(geoIntent);
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public void onClick(View v) {
